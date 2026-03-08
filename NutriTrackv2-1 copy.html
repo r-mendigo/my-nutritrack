@@ -1,0 +1,1154 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NutriTrack – Day 100+ 🔥</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "app-bg-dark": "#0f172a",
+              "card-dark": "#1e293b",
+              "text-dark-primary": "#f1f5f9",
+              "text-dark-secondary": "#94a3b8",
+              "accent-emerald": "#10b981",
+              "accent-teal": "#2dd4bf",
+              "status-good": "#34d399",
+              "status-low": "#fbbf24",
+              "status-high": "#f87171",
+              "nutri-emerald": {
+                50: "#ecfdf5",
+                100: "#d1fae5",
+                200: "#a7f3d0",
+                300: "#6ee7b7",
+                400: "#34d399",
+                500: "#10b981",
+                600: "#059669",
+                700: "#047857",
+                800: "#065f46",
+                900: "#064e3b",
+              },
+              "nutri-bluegray": {
+                50: "#f8fafc",
+                100: "#f1f5f9",
+                200: "#e2e8f0",
+                300: "#cbd5e1",
+                400: "#94a3b8",
+                500: "#64748b",
+                600: "#475569",
+                700: "#334155",
+                800: "#1e293b",
+                900: "#0f172a",
+              },
+            },
+            boxShadow: {
+              card: "0 4px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 6px -2px rgba(0, 0, 0, 0.05)",
+            },
+          },
+        },
+      };
+    </script>
+
+    <script>
+      // Force dark mode from system preference only (no toggle)
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    </script>
+
+    <style>
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        @apply bg-nutri-bluegray-50 text-nutri-bluegray-900
+               dark:bg-app-bg-dark dark:text-text-dark-primary
+               transition-colors duration-300 min-h-screen;
+      }
+
+      .card {
+        @apply bg-white dark:bg-card-dark rounded-2xl p-5 shadow-card
+               border border-nutri-bluegray-200 dark:border-nutri-bluegray-700;
+      }
+
+      .bg-nutri-bluegray-100 {
+        @apply bg-nutri-bluegray-100 dark:bg-card-dark
+               border-nutri-bluegray-200 dark:border-nutri-bluegray-700;
+      }
+
+      .dark #tcal,
+      .dark #tprot,
+      .dark #tfat,
+      .dark #tsug {
+        @apply text-text-dark-primary;
+      }
+
+      .status-low {
+        @apply text-amber-600 dark:text-amber-400;
+      }
+      .status-good {
+        @apply text-emerald-600 dark:text-emerald-400 font-semibold;
+      }
+      .status-high {
+        @apply text-rose-600 dark:text-rose-400;
+      }
+
+      .fire-emoji {
+        display: inline-block;
+        font-size: 1.4em;
+        animation: pulse-glow 2s infinite ease-in-out;
+      }
+
+      @keyframes pulse-glow {
+        0%,
+        100% {
+          filter: brightness(1) drop-shadow(0 0 8px #10b981);
+        }
+        50% {
+          filter: brightness(1.4) drop-shadow(0 0 16px #2dd4bf);
+        }
+      }
+
+      /* Emergency visibility for emerald buttons in dark mode */
+      .dark button.bg-nutri-emerald-600,
+      .dark button.bg-emerald-600 {
+        background-color: #10b981 !important;
+        color: white !important;
+        border: 1px solid #059669 !important;
+      }
+
+      .dark button:hover.bg-nutri-emerald-700,
+      .dark button:hover.bg-emerald-400 {
+        background-color: #2dd4bf !important;
+        box-shadow: 0 0 12px rgba(16, 185, 129, 0.5) !important;
+      }
+    </style>
+  </head>
+
+  <body class="min-h-screen" id="app-body">
+    <div class="max-w-3xl mx-auto p-5 pb-12">
+      <!-- HEADER + STREAK -->
+      <header
+        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
+      >
+        <div>
+          <h1
+            class="text-4xl font-bold bg-gradient-to-r from-nutri-emerald-600 to-teal-500 bg-clip-text text-transparent"
+          >
+            NutriTrack
+          </h1>
+          <div class="mt-1 flex items-center gap-2 text-lg">
+            <span>Day Streak:</span>
+            <span
+              id="streak"
+              class="font-bold text-nutri-emerald-700 dark:text-nutri-emerald-300"
+              >0</span
+            >
+            <span id="fire" class="fire-emoji">🔥</span>
+          </div>
+          <p
+            id="quote"
+            class="text-sm italic text-nutri-bluegray-500 dark:text-nutri-bluegray-400 mt-1"
+          ></p>
+          <button
+            onclick="newQuote()"
+            class="text-xs text-nutri-emerald-600 dark:text-nutri-emerald-400 hover:underline dark:hover:text-nutri-emerald-300"
+          >
+            new quote
+          </button>
+        </div>
+      </header>
+
+      <!-- DATE / WEIGHT / WORKOUT -->
+      <div class="card mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <input
+          id="date"
+          type="date"
+          class="border rounded-xl p-3 focus:ring-nutri-emerald-500 focus:border-nutri-emerald-500"
+        />
+
+        <div class="relative">
+          <input
+            id="weight"
+            type="number"
+            step="0.1"
+            min="30"
+            max="200"
+            placeholder="Weight"
+            class="border rounded-xl p-3 pr-12 text-center focus:ring-nutri-emerald-500 focus:border-nutri-emerald-500 w-full appearance-none [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          />
+          <span
+            class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-nutri-bluegray-500 dark:text-nutri-bluegray-400 font-medium"
+          >
+            kg
+          </span>
+        </div>
+
+        <select
+          id="workout"
+          class="border rounded-xl p-3 focus:ring-nutri-emerald-500 focus:border-nutri-emerald-500"
+        >
+          <option value="">No workout</option>
+          <option>Upper Body</option>
+          <option>Lower Body</option>
+          <option>Recovery Walk</option>
+          <option>Full Body</option>
+        </select>
+      </div>
+
+      <!-- TARGET REMINDER (editable) -->
+      <div
+        class="mb-6 text-sm text-nutri-bluegray-600 dark:text-nutri-bluegray-300 bg-nutri-bluegray-100 dark:bg-card-dark p-5 rounded-xl border border-nutri-bluegray-200 dark:border-nutri-bluegray-700"
+      >
+        <strong class="block text-base mb-3"
+          >Today's Targets (click to edit)</strong
+        >
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <label class="w-32 font-medium">Calories:</label>
+            <input
+              id="targetCal"
+              type="number"
+              value="1500"
+              class="w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500"
+            />
+            <span class="text-nutri-emerald-600">kcal</span>
+            <span class="text-xs text-nutri-bluegray-500">(max</span>
+            <input
+              id="maxCal"
+              type="number"
+              value="1700"
+              class="w-20 border rounded px-2 py-1 text-center text-sm"
+            />
+            <span class="text-xs">)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="w-32 font-medium">Protein:</label>
+            <input
+              id="targetProt"
+              type="number"
+              value="100"
+              class="w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500"
+            />
+            <span class="text-nutri-emerald-600">g</span>
+            <span class="text-xs text-nutri-bluegray-500">(up to</span>
+            <input
+              id="maxProt"
+              type="number"
+              value="130"
+              class="w-20 border rounded px-2 py-1 text-center text-sm"
+            />
+            <span class="text-xs">+)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="w-32 font-medium">Fat:</label>
+            <input
+              id="targetFat"
+              type="number"
+              value="50"
+              class="w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500"
+            />
+            <span class="text-nutri-emerald-600">g</span>
+            <span class="text-xs text-nutri-bluegray-500">(up to</span>
+            <input
+              id="maxFat"
+              type="number"
+              value="70"
+              class="w-20 border rounded px-2 py-1 text-center text-sm"
+            />
+            <span class="text-xs">g)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="w-32 font-medium">Sugar:</label>
+            <span class="text-rose-600">≤</span>
+            <input
+              id="targetSug"
+              type="number"
+              value="30"
+              class="w-24 border rounded px-2 py-1 text-center focus:ring-rose-500"
+            />
+            <span class="text-rose-600">g</span>
+            <span class="text-xs text-nutri-bluegray-500">(max</span>
+            <input
+              id="maxSug"
+              type="number"
+              value="45"
+              class="w-20 border rounded px-2 py-1 text-center text-sm"
+            />
+            <span class="text-xs">g)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOD LOOKUP -->
+      <div class="card mb-6">
+        <div class="flex gap-3">
+          <input
+            id="foodInput"
+            placeholder="Type food (chicken, rice, egg...)"
+            class="flex-1 border rounded-xl p-3 focus:ring-nutri-emerald-500 focus:border-nutri-emerald-500"
+          />
+          <button
+            onclick="lookupFood()"
+            class="bg-nutri-emerald-600 hover:bg-nutri-emerald-700 text-white px-6 rounded-xl font-medium transition shadow-md dark:bg-emerald-600 dark:hover:bg-emerald-400 dark:shadow-emerald-500/30"
+          >
+            Search
+          </button>
+        </div>
+        <div
+          id="lookupResults"
+          class="mt-4 space-y-2 max-h-60 overflow-y-auto"
+        ></div>
+      </div>
+
+      <!-- MEALS -->
+      <div id="mealContainer" class="grid gap-6 mb-8"></div>
+
+      <!-- TOTALS -->
+      <div class="card mb-8">
+        <h3 class="font-semibold text-lg mb-4">Today's Totals</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+          <div>
+            <div id="tcal" class="text-3xl font-bold">0</div>
+            <div class="text-xs uppercase tracking-wide">kcal</div>
+            <div id="calStatus" class="text-sm mt-1"></div>
+          </div>
+          <div>
+            <div id="tprot" class="text-3xl font-bold">0</div>
+            <div class="text-xs uppercase tracking-wide">protein (g)</div>
+            <div id="protStatus" class="text-sm mt-1"></div>
+          </div>
+          <div>
+            <div id="tfat" class="text-3xl font-bold">0</div>
+            <div class="text-xs uppercase tracking-wide">fat (g)</div>
+            <div id="fatStatus" class="text-sm mt-1"></div>
+          </div>
+          <div>
+            <div id="tsug" class="text-3xl font-bold">0</div>
+            <div class="text-xs uppercase tracking-wide">sugar (g)</div>
+            <div id="sugStatus" class="text-sm mt-1"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+        <button
+          onclick="saveDay()"
+          class="bg-nutri-emerald-600 hover:bg-nutri-emerald-700 text-white font-semibold p-4 rounded-xl transition shadow-md dark:bg-emerald-600 dark:hover:bg-emerald-400 dark:shadow-emerald-500/30 hover:shadow-lg hover:scale-[1.02]"
+        >
+          Save Day
+        </button>
+        <button
+          onclick="clearToday()"
+          class="bg-rose-100 hover:bg-rose-200 text-rose-800 dark:bg-rose-800/60 dark:hover:bg-rose-700/80 dark:text-rose-100 font-semibold p-4 rounded-xl transition"
+        >
+          Clear Today
+        </button>
+        <button
+          onclick="showReport()"
+          class="border-2 border-nutri-emerald-600 text-nutri-emerald-700 dark:border-nutri-emerald-400 dark:text-nutri-emerald-300 hover:bg-nutri-emerald-50 dark:hover:bg-nutri-emerald-900/30 font-semibold p-4 rounded-xl transition"
+        >
+          Your Report 💪🏻
+        </button>
+      </div>
+
+      <!-- HISTORY -->
+      <section>
+        <h3 class="font-semibold text-lg mb-4">History</h3>
+        <div id="history" class="space-y-3"></div>
+      </section>
+    </div>
+
+    <script>
+      // ──────────────────────────────────────────────── Data & Constants ─────
+
+      const USDA_API_KEY = "vjxEpD0ilePhCR5bQTNsiLs0ieTg0CgXEn6O9e83";
+
+      let nutritionData =
+        JSON.parse(localStorage.getItem("nutritionData")) || [];
+      let currentDate = new Date().toISOString().split("T")[0];
+
+      // Read targets dynamically from inputs (fallback to defaults)
+
+      function getTargets() {
+        return {
+          cal: {
+            target: Number(document.getElementById("targetCal")?.value) || 1500,
+            max: Number(document.getElementById("maxCal")?.value) || 1700,
+          },
+          prot: {
+            target: Number(document.getElementById("targetProt")?.value) || 100,
+            max: Number(document.getElementById("maxProt")?.value) || 130,
+          },
+          fat: {
+            target: Number(document.getElementById("targetFat")?.value) || 50,
+            max: Number(document.getElementById("maxFat")?.value) || 70,
+          },
+          sug: {
+            target: Number(document.getElementById("targetSug")?.value) || 30,
+            max: Number(document.getElementById("maxSug")?.value) || 45,
+          },
+        };
+      }
+
+      // ──────────────────────────────────────────────── Init ─────
+
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("date").value = currentDate;
+
+        // Load last saved weight
+        if (nutritionData.length > 0) {
+          const lastEntry = nutritionData[nutritionData.length - 1];
+          if (lastEntry.weight != null && !isNaN(lastEntry.weight)) {
+            document.getElementById("weight").value = lastEntry.weight;
+          }
+        }
+
+        loadStreak();
+        renderMeals();
+        renderHistory();
+        newQuote();
+        addInputListeners();
+      });
+
+      document.getElementById("foodInput").addEventListener("focus", () => {
+        document.getElementById("lookupResults").innerHTML = "";
+      });
+
+      // ──────────────────────────────────────────────── Meals ─────
+
+      function renderMeals() {
+        const container = document.getElementById("mealContainer");
+        container.innerHTML = "";
+
+        meals.forEach((m) => {
+          const section = document.createElement("div");
+          section.className = "card";
+          section.innerHTML = `
+                  <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">${m.emoji} ${m.name}</h3>
+                    <div class="flex gap-3">
+                      <button onclick="addFoodRow('${m.id}')" class="text-nutri-emerald-600 hover:text-nutri-emerald-800 text-sm font-medium">+ Add food</button>
+                      <button onclick="clearMeal('${m.id}')" class="text-rose-600 hover:text-rose-800 text-sm">Clear</button>
+                    </div>
+                  </div>
+                  <div id="${m.id}_foods" class="space-y-3">
+                    ${createFoodRowHTML(m.id, 0)}
+                  </div>
+                `;
+          container.appendChild(section);
+        });
+      }
+
+      function createFoodRowHTML(mealId, index) {
+        return `
+                <div class="grid grid-cols-5 gap-3 items-center food-row" data-index="${index}">
+                  <input placeholder="kcal"   type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500" data-field="cal">
+                  <input placeholder="prot"   type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500" data-field="prot">
+                  <input placeholder="fat"    type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500" data-field="fat">
+                  <input placeholder="sugar"  type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500" data-field="sug">
+                  <button onclick="removeFoodRow(this)" class="text-rose-500 hover:text-rose-700 text-sm">×</button>
+                </div>
+              `;
+      }
+
+      function addFoodRow(mealId) {
+        const container = document.getElementById(mealId + "_foods");
+        const index = container.children.length;
+        container.insertAdjacentHTML(
+          "beforeend",
+          createFoodRowHTML(mealId, index),
+        );
+        addInputListeners();
+      }
+
+      function removeFoodRow(btn) {
+        btn.closest(".food-row").remove();
+        computeTotals();
+      }
+
+      // ──────────────────────────────────────────────── Totals & Status ─────
+
+      function computeTotals() {
+        let totals = { cal: 0, prot: 0, fat: 0, sug: 0 };
+
+        meals.forEach((m) => {
+          const rows = document.querySelectorAll(`#${m.id}_foods .food-row`);
+          rows.forEach((row) => {
+            totals.cal +=
+              Number(row.querySelector('[data-field="cal"]').value) || 0;
+            totals.prot +=
+              Number(row.querySelector('[data-field="prot"]').value) || 0;
+            totals.fat +=
+              Number(row.querySelector('[data-field="fat"]').value) || 0;
+            totals.sug +=
+              Number(row.querySelector('[data-field="sug"]').value) || 0;
+          });
+        });
+
+        document.getElementById("tcal").textContent = Math.round(totals.cal);
+        document.getElementById("tprot").textContent = Math.round(totals.prot);
+        document.getElementById("tfat").textContent = Math.round(totals.fat);
+        document.getElementById("tsug").textContent = Math.round(totals.sug);
+
+        const t = getTargets(); // ← Use dynamic targets
+
+        updateStatus(
+          "cal",
+          totals.cal,
+          t.cal.target,
+          t.cal.max,
+          document.getElementById("calStatus"),
+        );
+        updateStatus(
+          "prot",
+          totals.prot,
+          t.prot.target,
+          t.prot.max,
+          document.getElementById("protStatus"),
+        );
+        updateStatus(
+          "fat",
+          totals.fat,
+          t.fat.target,
+          t.fat.max,
+          document.getElementById("fatStatus"),
+        );
+        updateStatus(
+          "sug",
+          totals.sug,
+          t.sug.target,
+          t.sug.max,
+          document.getElementById("sugStatus"),
+        );
+      }
+
+      function updateStatus(key, value, target, max, el) {
+        if (value < target * 0.8) {
+          el.textContent = "Below target";
+          el.className = "status-low text-sm";
+        } else if (value <= max) {
+          el.textContent = "Good range ✓";
+          el.className = "status-good text-sm";
+        } else {
+          el.textContent = "Above max ⚠";
+          el.className = "status-high text-sm";
+        }
+      }
+
+      function addInputListeners() {
+        document.querySelectorAll('input[type="number"]').forEach((inp) => {
+          inp.removeEventListener("input", computeTotals);
+          inp.addEventListener("input", computeTotals);
+        });
+      }
+
+      // ──────────────────────────────────────────────── Clear ─────
+
+      function clearMeal(mealId) {
+        document.getElementById(mealId + "_foods").innerHTML =
+          createFoodRowHTML(mealId, 0);
+        computeTotals();
+      }
+
+      function clearToday() {
+        const hasData = [
+          ...document.querySelectorAll('input[type="number"]'),
+        ].some((i) => i.value.trim() !== "");
+        if (!hasData) {
+          alert("Nothing to clear today.");
+          return;
+        }
+        if (!confirm("Clear today's data?")) return;
+
+        renderMeals();
+        computeTotals();
+      }
+
+      // ──────────────────────────────────────────────── Save / History ─────
+
+      function saveDay() {
+        const date = document.getElementById("date").value;
+        if (nutritionData.some((e) => e.date === date)) {
+          if (!confirm(`Overwrite data for ${date}?`)) return;
+          nutritionData = nutritionData.filter((e) => e.date !== date);
+        }
+
+        const entry = {
+          date,
+          weight: Number(document.getElementById("weight").value) || null,
+          workout: document.getElementById("workout").value || "",
+          meals: {},
+        };
+
+        meals.forEach((m) => {
+          const rows = document.querySelectorAll(`#${m.id}_foods .food-row`);
+          entry.meals[m.id] = [];
+          rows.forEach((row) => {
+            entry.meals[m.id].push({
+              cal: Number(row.querySelector('[data-field="cal"]').value) || 0,
+              prot: Number(row.querySelector('[data-field="prot"]').value) || 0,
+              fat: Number(row.querySelector('[data-field="fat"]').value) || 0,
+              sug: Number(row.querySelector('[data-field="sug"]').value) || 0,
+            });
+          });
+        });
+
+        nutritionData.push(entry);
+        localStorage.setItem("nutritionData", JSON.stringify(nutritionData));
+
+        updateStreak();
+        renderHistory();
+        alert(`Day ${date} saved! Keep going! 💪`);
+      }
+
+      function renderHistory() {
+        const container = document.getElementById("history");
+        container.innerHTML = "";
+
+        [...nutritionData].reverse().forEach((e) => {
+          let cal = 0,
+            prot = 0,
+            fat = 0,
+            sug = 0;
+          Object.values(e.meals)
+            .flat()
+            .forEach((f) => {
+              cal += f.cal;
+              prot += f.prot;
+              fat += f.fat;
+              sug += f.sug;
+            });
+
+          const t = getTargets(); // dynamic targets for status
+
+          const calStatus =
+            cal < t.cal.target * 0.8 ? "↓" : cal > t.cal.max ? "↑" : "✓";
+          const protStatus =
+            prot < t.prot.target * 0.8 ? "↓" : prot > t.prot.max ? "↑" : "✓";
+          const fatStatus =
+            fat < t.fat.target * 0.8 ? "↓" : fat > t.fat.max ? "↑" : "✓";
+          const sugStatus =
+            sug < t.sug.target * 0.8 ? "↓" : sug > t.sug.max ? "↑" : "✓";
+
+          const workoutText = e.workout ? ` • ${e.workout}` : "";
+
+          const div = document.createElement("div");
+          div.className =
+            "card flex justify-between items-center py-3 px-4 text-sm";
+
+          div.innerHTML = `
+                  <div>
+                    <div class="font-medium">${e.date}</div>
+                    <div class="text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
+                      ${Math.round(cal)} kcal ${calStatus} •
+                      ${Math.round(prot)}g prot ${protStatus} •
+                      ${Math.round(fat)}g fat ${fatStatus} •
+                      ${Math.round(sug)}g sug ${sugStatus}
+                      ${workoutText}
+                    </div>
+                  </div>
+                  <button onclick="deleteDay('${e.date}')" class="text-rose-500 hover:text-rose-700 text-lg">🗑</button>
+                `;
+
+          container.appendChild(div);
+        });
+      }
+
+      function deleteDay(date) {
+        if (!confirm(`Delete ${date}?`)) return;
+        nutritionData = nutritionData.filter((d) => d.date !== date);
+        localStorage.setItem("nutritionData", JSON.stringify(nutritionData));
+        renderHistory();
+        updateStreak();
+      }
+
+      // ──────────────────────────────────────────────── Lookup ─────
+
+      const meals = [
+        { id: "breakfast", emoji: "☀", name: "Breakfast" },
+        { id: "lunch", emoji: "🍱", name: "Lunch" },
+        { id: "snack", emoji: "🥜", name: "Snack" },
+        { id: "dinner", emoji: "🌙", name: "Dinner" },
+      ];
+      const pinoyFallback = {
+        adobo: { cal: 280, prot: 28, fat: 18, sug: 3 },
+        "chicken adobo": { cal: 250, prot: 25, fat: 15, sug: 2 },
+        "pork adobo": { cal: 320, prot: 28, fat: 22, sug: 4 },
+        sinigang: { cal: 200, prot: 22, fat: 8, sug: 4 },
+        "pork sinigang": { cal: 220, prot: 24, fat: 10, sug: 5 },
+        "beef sinigang": { cal: 240, prot: 26, fat: 12, sug: 4 },
+        "kare kare": { cal: 380, prot: 30, fat: 25, sug: 6 },
+        lechon: { cal: 420, prot: 35, fat: 30, sug: 0 },
+        sisig: { cal: 340, prot: 32, fat: 24, sug: 3 },
+        lumpia: { cal: 130, prot: 6, fat: 7, sug: 1 },
+        "vegetable lumpia": { cal: 100, prot: 4, fat: 5, sug: 2 },
+        "pancit canton": { cal: 240, prot: 14, fat: 10, sug: 5 },
+        "pancit bihon": { cal: 220, prot: 12, fat: 8, sug: 4 },
+        "halo halo": { cal: 320, prot: 7, fat: 10, sug: 50 },
+        bibingka: { cal: 360, prot: 7, fat: 14, sug: 40 },
+        tocino: { cal: 300, prot: 20, fat: 18, sug: 15 },
+        longganisa: { cal: 280, prot: 18, fat: 20, sug: 10 },
+        caldereta: { cal: 350, prot: 28, fat: 22, sug: 5 },
+        "beef caldereta": { cal: 370, prot: 30, fat: 24, sug: 6 },
+        pinakbet: { cal: 180, prot: 12, fat: 8, sug: 6 },
+        kinilaw: { cal: 200, prot: 25, fat: 10, sug: 2 },
+        tinola: { cal: 220, prot: 26, fat: 8, sug: 3 },
+        tapsilog: { cal: 450, prot: 30, fat: 25, sug: 5 },
+        bulalo: { cal: 380, prot: 32, fat: 28, sug: 4 },
+        bistek: { cal: 300, prot: 28, fat: 18, sug: 5 },
+        laing: { cal: 250, prot: 10, fat: 20, sug: 4 },
+        "kwek kwek": { cal: 120, prot: 6, fat: 8, sug: 2 },
+        ensaymada: { cal: 350, prot: 6, fat: 15, sug: 25 },
+        puto: { cal: 150, prot: 3, fat: 5, sug: 10 },
+        turon: { cal: 200, prot: 2, fat: 8, sug: 20 },
+        "buko pie": { cal: 320, prot: 4, fat: 18, sug: 25 },
+        "leche flan": { cal: 300, prot: 6, fat: 12, sug: 40 },
+        // New ones you requested
+        "pande coco": { cal: 320, prot: 6, fat: 12, sug: 35 }, // pandesal with coconut filling, 1 large piece
+        ensaymada: { cal: 350, prot: 6, fat: 15, sug: 25 }, // classic buttery ensaymada, 1 piece
+        biko: { cal: 280, prot: 4, fat: 8, sug: 40 }, // sticky rice cake with latik, per medium slice
+        "nilagang baka": { cal: 320, prot: 32, fat: 18, sug: 3 }, // beef nilaga with veggies & broth, 1 bowl
+        "nilagang baboy": { cal: 300, prot: 28, fat: 20, sug: 3 }, // pork nilaga, 1 bowl
+        "gatang gabi": { cal: 220, prot: 6, fat: 14, sug: 5 }, // taro in coconut milk (laing-style), per serving
+        "pork barbecue": { cal: 280, prot: 25, fat: 18, sug: 10 }, // 2–3 sticks
+        "chicken barbecue": { cal: 260, prot: 26, fat: 15, sug: 12 }, // 2–3 sticks
+        "paksiw na bisugo": { cal: 240, prot: 28, fat: 12, sug: 4 }, // vinegar-stewed threadfin bream, per serving
+        "pritong galunggong": { cal: 260, prot: 30, fat: 14, sug: 0 }, // fried mackerel scad, 1–2 pieces
+        "scrambled egg": { cal: 180, prot: 12, fat: 14, sug: 1 }, // 2 eggs scrambled (plain or with a little oil)
+        // Add more as needed!
+      };
+
+      const mockDB = {
+        rice: { cal: 200, prot: 4, fat: 1, sug: 0 },
+        "white rice": { cal: 205, prot: 4.3, fat: 0.4, sug: 0 },
+        chicken: { cal: 165, prot: 31, fat: 3.6, sug: 0 },
+        "grilled chicken": { cal: 165, prot: 31, fat: 3.6, sug: 0 },
+        egg: { cal: 78, prot: 6.3, fat: 5, sug: 0.6 },
+        "boiled egg": { cal: 78, prot: 6.3, fat: 5, sug: 0.6 },
+        avocado: { cal: 160, prot: 2, fat: 15, sug: 0.7 },
+        salmon: { cal: 208, prot: 20, fat: 13, sug: 0 },
+        banana: { cal: 90, prot: 1.1, fat: 0.3, sug: 12 },
+        oats: { cal: 380, prot: 13, fat: 7, sug: 1 },
+      };
+
+      function lookupFood() {
+        const term = document.getElementById("foodInput").value.trim();
+        if (!term) return;
+
+        const results = document.getElementById("lookupResults");
+        results.innerHTML =
+          '<p class="text-nutri-bluegray-500 dark:text-nutri-bluegray-400 p-3">Searching...</p>';
+
+        const lowerTerm = term.toLowerCase();
+
+        // Quick Pinoy fallback – show first if any partial match
+        let fallbackShown = false;
+        for (const key in pinoyFallback) {
+          if (lowerTerm.includes(key.toLowerCase())) {
+            const vals = pinoyFallback[key];
+            const div = document.createElement("div");
+            div.className =
+              "flex justify-between items-center p-3 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl hover:bg-nutri-emerald-50 dark:hover:bg-nutri-emerald-900/30 cursor-pointer transition border border-transparent dark:border-nutri-bluegray-700";
+            div.innerHTML = `
+        <div>
+          <div class="font-medium">${key} (Pinoy favorite)</div>
+          <div class="text-xs text-nutri-bluegray-500 dark:text-nutri-bluegray-400">approx. per serving</div>
+        </div>
+        <div class="text-sm text-right">
+          ${vals.cal} kcal • ${vals.prot}p • ${vals.fat}f • ${vals.sug}s
+        </div>
+      `;
+            div.onclick = () => applyFoodToCurrentMeal(vals);
+            results.appendChild(div);
+            fallbackShown = true;
+          }
+        }
+
+        // API search (Open Food Facts)
+        const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(term)}&search_simple=1&json=1&page_size=10`;
+
+        fetch(url)
+          .then((r) => r.json())
+          .then((data) => {
+            if (fallbackShown) {
+              const hr = document.createElement("hr");
+              hr.className =
+                "my-2 border-nutri-bluegray-200 dark:border-nutri-bluegray-700";
+              results.appendChild(hr);
+            } else {
+              results.innerHTML = "";
+            }
+
+            if (!data.products || data.products.length === 0) {
+              if (!fallbackShown) {
+                results.innerHTML +=
+                  '<p class="text-rose-600 dark:text-rose-400 p-3">No matches found in database.</p>';
+              }
+              return;
+            }
+
+            data.products.slice(0, 8).forEach((product) => {
+              const nutriments = product.nutriments || {};
+              const cal = Math.round(
+                nutriments["energy-kcal"] || nutriments.energy_kcal || 0,
+              );
+              const prot = Math.round(nutriments.proteins || 0);
+              const fat = Math.round(nutriments.fat || 0);
+              const sug = Math.round(nutriments.sugars || 0);
+
+              const name =
+                product.product_name || product.generic_name || "Unknown";
+              const serving = product.serving_quantity
+                ? `${product.serving_quantity} ${product.serving_size || "g"}`
+                : "per 100g";
+
+              const div = document.createElement("div");
+              div.className =
+                "flex justify-between items-center p-3 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl hover:bg-nutri-emerald-50 dark:hover:bg-nutri-emerald-900/30 cursor-pointer transition border border-transparent dark:border-nutri-bluegray-700";
+              div.innerHTML = `
+          <div>
+            <div class="font-medium">${name}</div>
+            <div class="text-xs text-nutri-bluegray-500 dark:text-nutri-bluegray-400">${serving}</div>
+          </div>
+          <div class="text-sm text-right">
+            ${cal} kcal • ${prot}p • ${fat}f • ${sug}s
+          </div>
+        `;
+              div.onclick = () =>
+                applyFoodToCurrentMeal({ cal, prot, fat, sug });
+              results.appendChild(div);
+            });
+          })
+          .catch((err) => {
+            console.error("Open Food Facts error:", err);
+            if (!fallbackShown) {
+              results.innerHTML =
+                '<p class="text-rose-600 dark:text-rose-400 p-3">Error searching — check connection.</p>';
+            }
+          });
+      }
+      function applyFoodToCurrentMeal(food) {
+        const mealId = getCurrentMeal();
+        const container = document.getElementById(mealId + "_foods");
+
+        const lastRow = container.lastElementChild;
+        const isFilled =
+          lastRow &&
+          [...lastRow.querySelectorAll("input")].some(
+            (i) => i.value.trim() !== "",
+          );
+
+        if (isFilled || !lastRow) {
+          addFoodRow(mealId);
+        }
+
+        const row = container.lastElementChild;
+        row.querySelector('[data-field="cal"]').value = food.cal;
+        row.querySelector('[data-field="prot"]').value = food.prot;
+        row.querySelector('[data-field="fat"]').value = food.fat;
+        row.querySelector('[data-field="sug"]').value = food.sug;
+
+        computeTotals();
+        document.getElementById("foodInput").value = "";
+        document.getElementById("lookupResults").innerHTML = "";
+      }
+
+      // ──────────────────────────────────────────────── Helpers ─────
+
+      function getCurrentMeal() {
+        const h = new Date().getHours();
+        if (h < 11) return "breakfast";
+        if (h < 15) return "lunch";
+        if (h < 18) return "snack";
+        return "dinner";
+      }
+
+      // ──────────────────────────────────────────────── Streak ─────
+
+      function loadStreak() {
+        if (nutritionData.length === 0) {
+          document.getElementById("streak").textContent = "0";
+          return;
+        }
+
+        nutritionData.sort((a, b) => a.date.localeCompare(b.date));
+
+        let streak = 0;
+        let prev = null;
+
+        for (let entry of nutritionData) {
+          if (!prev) {
+            streak = 1;
+            prev = entry.date;
+            continue;
+          }
+
+          const diff =
+            (new Date(entry.date) - new Date(prev)) / (1000 * 60 * 60 * 24);
+          if (diff === 1) {
+            streak++;
+          } else if (diff > 1) {
+            streak = 1;
+          }
+          prev = entry.date;
+        }
+
+        if (nutritionData.some((e) => e.date === currentDate)) {
+          // already included
+        } else if (
+          prev &&
+          (new Date(currentDate) - new Date(prev)) / (1000 * 60 * 60 * 24) === 1
+        ) {
+          streak++;
+        }
+
+        document.getElementById("streak").textContent = streak;
+      }
+
+      function updateStreak() {
+        loadStreak();
+      }
+
+      function getAverageKcalAllTime() {
+        if (nutritionData.length === 0) return 0;
+        let total = 0;
+        nutritionData.forEach((e) => {
+          let sum = 0;
+          Object.values(e.meals)
+            .flat()
+            .forEach((f) => (sum += f.cal));
+          total += sum;
+        });
+        return Math.round(total / nutritionData.length);
+      }
+
+      function getAverageProteinAllTime() {
+        if (nutritionData.length === 0) return 0;
+        let total = 0;
+        nutritionData.forEach((e) => {
+          let sum = 0;
+          Object.values(e.meals)
+            .flat()
+            .forEach((f) => (sum += f.prot));
+          total += sum;
+        });
+        return Math.round(total / nutritionData.length);
+      }
+
+      // ──────────────────────────────────────────────── Quotes ─────
+
+      // ──────────────────────────────────────────────── Quotes ─────
+      function newQuote() {
+        const randomQuote = [
+          "Consistency beats intensity.",
+          "Small steps daily create big results.",
+          "Discipline builds freedom.",
+          "Progress > perfection.",
+          "You already made it to day 100 — the rest is just momentum.",
+          "I love you, but I don't need you.",
+        ];
+
+        const q = randomQuote[Math.floor(Math.random() * randomQuote.length)];
+        document.getElementById("quote").textContent = q;
+      }
+
+      // ──────────────────────────────────────────────── Report ─────
+      function showReport() {
+        const modal = document.createElement("div");
+        modal.className =
+          "fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4";
+        modal.innerHTML = `
+          <div class="bg-white dark:bg-card-dark rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-2xl font-bold">Your Progress Report</h2>
+              <button class="text-rose-600 hover:text-rose-800 text-3xl leading-none" onclick="this.closest('.fixed').remove()">×</button>
+            </div>
+
+            <!-- Summary stats (no streak card anymore) -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-center">
+              <div class="p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
+                <div class="text-2xl font-bold">${nutritionData.length}</div>
+                <div class="text-sm">Days Tracked</div>
+              </div>
+              <div class="p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
+                <div class="text-2xl font-bold">${getAverageKcalAllTime()}</div>
+                <div class="text-sm">Avg kcal (all time)</div>
+              </div>
+              <div class="p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
+                <div class="text-2xl font-bold">${getAverageProteinAllTime()}</div>
+                <div class="text-sm">Avg protein (all time)</div>
+              </div>
+            </div>
+
+            <!-- Chart -->
+            <canvas id="progressChart" class="w-full h-80 mb-8"></canvas>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left">
+                <thead class="bg-nutri-bluegray-100 dark:bg-nutri-bluegray-800">
+                  <tr>
+                    <th class="p-3">Date</th>
+                    <th class="p-3">kcal</th>
+                    <th class="p-3">Protein (g)</th>
+                    <th class="p-3">Workout</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${nutritionData
+                    .slice(-14)
+                    .reverse()
+                    .map((e) => {
+                      let kcalSum = 0,
+                        protSum = 0;
+                      Object.values(e.meals)
+                        .flat()
+                        .forEach((f) => {
+                          kcalSum += f.cal;
+                          protSum += f.prot;
+                        });
+                      return `
+                      <tr class="border-b dark:border-nutri-bluegray-700">
+                        <td class="p-3">${e.date}</td>
+                        <td class="p-3">${Math.round(kcalSum)}</td>
+                        <td class="p-3">${Math.round(protSum)}</td>
+                        <td class="p-3">${e.workout || "-"}</td>
+                      </tr>
+                    `;
+                    })
+                    .join("")}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Chart creation (with safety delay)
+        setTimeout(() => {
+          const canvas = document.getElementById("progressChart");
+          if (!canvas) {
+            console.warn("Chart canvas not found");
+            return;
+          }
+
+          const sorted = [...nutritionData].sort((a, b) =>
+            a.date.localeCompare(b.date),
+          );
+          const labels = sorted.map((e) => e.date.slice(5));
+          const kcalData = sorted.map((e) => {
+            let sum = 0;
+            Object.values(e.meals)
+              .flat()
+              .forEach((f) => (sum += f.cal));
+            return sum;
+          });
+          const protData = sorted.map((e) => {
+            let sum = 0;
+            Object.values(e.meals)
+              .flat()
+              .forEach((f) => (sum += f.prot));
+            return sum;
+          });
+
+          new Chart(canvas, {
+            type: "line",
+            data: {
+              labels,
+              datasets: [
+                {
+                  label: "Daily kcal",
+                  data: kcalData,
+                  borderColor: "#10b981",
+                  backgroundColor: "rgba(16, 185, 129, 0.15)",
+                  tension: 0.3,
+                  fill: true,
+                  yAxisID: "y",
+                },
+                {
+                  label: "Daily protein (g)",
+                  data: protData,
+                  borderColor: "#8b5cf6",
+                  backgroundColor: "rgba(139, 92, 246, 0.15)",
+                  tension: 0.3,
+                  fill: true,
+                  yAxisID: "y1",
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              interaction: { mode: "index", intersect: false },
+              scales: {
+                y: {
+                  type: "linear",
+                  display: true,
+                  position: "left",
+                  title: { display: true, text: "kcal" },
+                },
+                y1: {
+                  type: "linear",
+                  display: true,
+                  position: "right",
+                  title: { display: true, text: "Protein (g)" },
+                  grid: { drawOnChartArea: false },
+                },
+                x: { title: { display: true, text: "Date" } },
+              },
+              plugins: {
+                annotation: {
+                  annotations: {
+                    targetLine: {
+                      type: "line",
+                      yMin: 1500,
+                      yMax: 1500,
+                      borderColor: "#ef4444",
+                      borderWidth: 2,
+                      borderDash: [6, 6],
+                      label: {
+                        enabled: true,
+                        content: "Target 1500 kcal",
+                        position: "end",
+                        backgroundColor: "#ef4444",
+                        color: "white",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }, 0);
+      }
+
+      // ──────────────────────────────────────────────── Quotes ─────
+
+      const quotes = [
+        "Consistency beats intensity.",
+        "Small steps daily create big results.",
+        "Discipline builds freedom.",
+        "Progress > perfection.",
+        "You already made it to day 100 — the rest is just momentum.",
+        "I love you, but I don't need you.",
+      ];
+
+      function newQuote() {
+        const q = quotes[Math.floor(Math.random() * quotes.length)];
+        document.getElementById("quote").textContent = q;
+      }
+    </script>
+  </body>
+</html>
