@@ -750,6 +750,10 @@
         "paksiw na bisugo": { cal: 240, prot: 28, fat: 12, sug: 4 }, // vinegar-stewed threadfin bream, per serving
         "pritong galunggong": { cal: 260, prot: 30, fat: 14, sug: 0 }, // fried mackerel scad, 1–2 pieces
         "scrambled egg": { cal: 180, prot: 12, fat: 14, sug: 1 }, // 2 eggs scrambled (plain or with a little oil)
+        "baguio beans pork": { cal: 150, prot: 12, fat: 10, sug: 3 },
+        "white rice 110g": { cal: 143, prot: 3, fat: 0, sug: 0 },
+        "coffee milk sugar": { cal: 42, prot: 1, fat: 0, sug: 10 },
+        "sourdough pb": { cal: 270, prot: 10, fat: 9, sug: 4 },
         // Add more as needed!
       };
 
@@ -777,28 +781,27 @@
         const lowerTerm = term.toLowerCase();
 
         // Quick Pinoy fallback – show first if any partial match
-        let fallbackShown = false;
-        for (const key in pinoyFallback) {
-          if (lowerTerm.includes(key.toLowerCase())) {
-            const vals = pinoyFallback[key];
-            const div = document.createElement("div");
-            div.className =
-              "flex justify-between items-center p-3 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl hover:bg-nutri-emerald-50 dark:hover:bg-nutri-emerald-900/30 cursor-pointer transition border border-transparent dark:border-nutri-bluegray-700";
-            div.innerHTML = `
-        <div>
-          <div class="font-medium">${key} (Pinoy favorite)</div>
-          <div class="text-xs text-nutri-bluegray-500 dark:text-nutri-bluegray-400">approx. per serving</div>
-        </div>
-        <div class="text-sm text-right">
-          ${vals.cal} kcal • ${vals.prot}p • ${vals.fat}f • ${vals.sug}s
-        </div>
-      `;
-            div.onclick = () => applyFoodToCurrentMeal(vals);
-            results.appendChild(div);
-            fallbackShown = true;
-          }
-        }
-
+        // Quick Pinoy fallback – match if search contains the key (very forgiving)
+let fallbackShown = false;
+for (const key in pinoyFallback) {
+  if (lowerTerm.includes(key.toLowerCase()) || key.toLowerCase().includes(lowerTerm)) {
+    const vals = pinoyFallback[key];
+    const div = document.createElement("div");
+    div.className = "flex justify-between items-center p-3 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl hover:bg-nutri-emerald-50 dark:hover:bg-nutri-emerald-900/30 cursor-pointer transition border border-transparent dark:border-nutri-bluegray-700";
+    div.innerHTML = `
+      <div>
+        <div class="font-medium">${key} (Pinoy favorite)</div>
+        <div class="text-xs text-nutri-bluegray-500 dark:text-nutri-bluegray-400">approx. per serving</div>
+      </div>
+      <div class="text-sm text-right">
+        ${vals.cal} kcal • ${vals.prot}p • ${vals.fat}f • ${vals.sug}s
+      </div>
+    `;
+    div.onclick = () => applyFoodToCurrentMeal(vals);
+    results.appendChild(div);
+    fallbackShown = true;
+  }
+}
         // API search (Open Food Facts)
         const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(term)}&search_simple=1&json=1&page_size=10`;
 
@@ -1174,4 +1177,5 @@
     </script>
   </body>
 </html>
+
 
