@@ -571,12 +571,102 @@
       }
 
       function addInputListeners() {
-        document.querySelectorAll('input[type="number"]').forEach((inp) => {
-          inp.removeEventListener("input", computeTotals);
-          inp.addEventListener("input", computeTotals);
-        });
-      }
+  document.querySelectorAll('input[type="number"]').forEach(inp => {
+    inp.removeEventListener("input", computeTotals);
+    inp.addEventListener("input", computeTotals);
 
+    // Auto-save meals on change
+    inp.removeEventListener("input", autoSaveMeals);
+    inp.addEventListener("input", autoSaveMeals);
+  });
+}
+
+// Auto-save all current meal inputs
+function autoSaveMeals() {
+  const mealsData = {};
+
+  meals.forEach(m => {
+    const rows = document.querySelectorAll(`#${m.id}_foods .food-row`);
+    mealsData[m.id] = [];
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll('input[type="number"]');
+      mealsData[m.id].push({
+        cal: inputs[0].value || "",
+        prot: inputs[1].value || "",
+        fat: inputs[2].value || "",
+        sug: inputs[3].value || ""
+      });
+    });
+  });
+
+  localStorage.setItem("nutriTempMeals", JSON.stringify(mealsData));
+}
+
+// Load saved temp meals on page load
+function loadTempMeals() {
+  const saved = localStorage.getItem("nutriTempMeals");
+  if (saved) {
+    const data = JSON.parse(saved);
+    meals.forEach(m => {
+      const container = document.getElementById(m.id + "_foods");
+      container.innerHTML = ""; // clear existing rows
+      if (data[m.id] && data[m.id].length > 0) {
+        data[m.id].forEach((item, index) => {
+          addFoodRow(m.id); // add row
+          const row = container.children[index];
+          row.querySelector('[data-field="cal"]').value = item.cal;
+          row.querySelector('[data-field="prot"]').value = item.prot;
+          row.querySelector('[data-field="fat"]').value = item.fat;
+          row.querySelector('[data-field="sug"]').value = item.sug;
+        });
+      } else {
+        // Add one empty row if no saved data
+        addFoodRow(m.id);
+      }
+    });
+    computeTotals(); // update totals
+  }
+}
+
+// Call loadTempMeals in DOMContentLoaded
+document.addEventListener("DOMContentLoaded", () => {
+  // ... your other init code ...
+  loadTempMeals();  // add this line
+});
+      
+// Auto-save live fields (weight, workout, date) on change
+function autoSaveLiveFields() {
+  const weight = document.getElementById("weight").value;
+  const workout = document.getElementById("workout").value;
+  const date = document.getElementById("date").value;
+
+  const liveData = { weight, workout, date };
+  localStorage.setItem("nutriLiveFields", JSON.stringify(liveData));
+}
+
+// Load saved live fields on page load
+function loadLiveFields() {
+  const saved = localStorage.getItem("nutriLiveFields");
+  if (saved) {
+    const data = JSON.parse(saved);
+    if (data.weight) document.getElementById("weight").value = data.weight;
+    if (data.workout) document.getElementById("workout").value = data.workout;
+    if (data.date) document.getElementById("date").value = data.date;
+  }
+}
+
+// Call load when page opens
+document.addEventListener("DOMContentLoaded", () => {
+  loadLiveFields();  // add this line
+  // ... your existing code ...
+});
+
+// Auto-save on any change to weight/workout/date
+document.getElementById("weight").addEventListener("input", autoSaveLiveFields);
+document.getElementById("workout").addEventListener("change", autoSaveLiveFields);
+document.getElementById("date").addEventListener("change", autoSaveLiveFields);
+
+      
       // ──────────────────────────────────────────────── Clear ─────
 
       function clearMeal(mealId) {
@@ -597,6 +687,9 @@
 
         renderMeals();
         computeTotals();
+
+        localStorage.removeItem("nutriTempMeals");
+localStorage.removeItem("nutriLiveFields");
       }
 
       // ──────────────────────────────────────────────── Save / History ─────
@@ -634,6 +727,8 @@
         updateStreak();
         renderHistory();
         alert(`Day ${date} saved! Keep going! 💪`);
+        localStorage.removeItem("nutriTempMeals");
+localStorage.removeItem("nutriLiveFields");
       }
 
       function renderHistory() {
@@ -1202,6 +1297,7 @@ for (const key in pinoyFallback) {
     </script>
   </body>
 </html>
+
 
 
 
