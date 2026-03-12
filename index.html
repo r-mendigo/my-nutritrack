@@ -8,12 +8,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
-     <link rel="icon" type="image/png" href="r-icon5.jpg" />
-     <link rel="apple-touch-icon" href="r-icon5.jpg" />
 
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%2310b981' width='100' height='100' rx='20'/%3E%3Ctext x='50' y='72' font-family='serif' font-size='60' font-weight='bold' text-anchor='middle' fill='%23000000'%3ER%3C/text%3E%3Crect x='5' y='5' width='90' height='90' rx='15' fill='none' stroke='%23ffd700' stroke-width='4'/%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%2310b981' width='100' height='100' rx='20'/%3E%3Ctext x='50' y='72' font-family='serif' font-size='60' font-weight='bold' text-anchor='middle' fill='%23000000'%3ER%3C/text%3E%3Crect x='5' y='5' width='90' height='90' rx='15' fill='none' stroke='%23ffd700' stroke-width='4'/%3E%3C/svg%3E">
-    
+    <link rel="icon" type="image/png" href="r-icon5.jpg" />
+    <link rel="apple-touch-icon" href="r-icon5.jpg" />
+
     <script>
       tailwind.config = {
         darkMode: "class",
@@ -81,9 +79,14 @@
       .card {
         @apply bg-white dark:bg-card-dark rounded-2xl p-5 shadow-card border border-nutri-bluegray-200 dark:border-nutri-bluegray-700;
       }
-      .bg-nutri-bluegray-100 {
-        @apply bg-nutri-bluegray-100 dark:bg-card-dark border-nutri-bluegray-200 dark:border-nutri-bluegray-700;
+      /* Fixed: Separated the conflicting classes */
+      .bg-nutri-bluegray-100-light {
+        @apply bg-nutri-bluegray-100 border-nutri-bluegray-200;
       }
+      .dark .bg-nutri-bluegray-100-dark {
+        @apply bg-card-dark border-nutri-bluegray-700;
+      }
+
       .dark #tcal,
       .dark #tprot,
       .dark #tfat,
@@ -112,6 +115,13 @@
         50% {
           filter: brightness(1.4) drop-shadow(0 0 16px #2dd4bf);
         }
+      }
+      /* Added for food results styling */
+      .food-result-item {
+        @apply flex justify-between items-center p-3 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl hover:bg-nutri-emerald-50 dark:hover:bg-nutri-emerald-900/30 cursor-pointer mb-2 border border-transparent transition-all;
+      }
+      .food-result-item.personalized {
+        @apply border-l-4 border-l-nutri-emerald-500 bg-nutri-emerald-50/50 dark:bg-nutri-emerald-900/20;
       }
     </style>
   </head>
@@ -153,7 +163,7 @@
         <input
           id="date"
           type="date"
-          class="border rounded-xl p-3 focus:ring-nutri-emerald-500 focus:border-nutri-emerald-500"
+          class="border rounded-xl p-3 focus:ring-nutri-emerald-500 focus:border-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
         />
         <div class="relative">
           <input
@@ -163,7 +173,7 @@
             min="30"
             max="200"
             placeholder="Weight"
-            class="border rounded-xl p-3 pr-12 text-center focus:ring-nutri-emerald-500 focus:border-nutri-emerald-500 w-full"
+            class="border rounded-xl p-3 pr-12 text-center focus:ring-nutri-emerald-500 focus:border-nutri-emerald-500 w-full dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
           />
           <span
             class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-nutri-bluegray-500 dark:text-nutri-bluegray-400 font-medium"
@@ -172,7 +182,7 @@
         </div>
         <select
           id="workout"
-          class="border rounded-xl p-3 focus:ring-nutri-emerald-500 focus:border-nutri-emerald-500"
+          class="border rounded-xl p-3 focus:ring-nutri-emerald-500 focus:border-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
         >
           <option value="">No workout</option>
           <option>Upper Body</option>
@@ -182,85 +192,170 @@
         </select>
       </div>
 
-      <div
-        class="mb-6 text-sm text-nutri-bluegray-600 dark:text-nutri-bluegray-300 bg-nutri-bluegray-100 dark:bg-card-dark p-5 rounded-xl border border-nutri-bluegray-200 dark:border-nutri-bluegray-700"
-      >
-        <strong class="block text-base mb-3"
-          >Today's Targets (click to edit)</strong
+      <!--Calories Marker (for you not to get Lost in the ocean of codes)-->
+      <div class="flex flex-col md:flex-row gap-4 items-start mb-6">
+        <div
+          class="flex-1 text-sm text-nutri-bluegray-600 dark:text-nutri-bluegray-300 bg-nutri-bluegray-100 dark:bg-card-dark p-5 rounded-xl border border-nutri-emerald-200 shadow-sm dark:border-nutri-emerald-900/30"
         >
-        <div class="space-y-2">
-          <div class="flex items-center gap-2">
-            <label class="w-32 font-medium">Calories:</label>
-            <input
-              id="targetCal"
-              type="number"
-              value="1500"
-              class="w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500"
-            />
-            <span class="text-nutri-emerald-600">kcal</span>
-            <span class="text-xs text-nutri-bluegray-500">(max</span>
-            <input
-              id="maxCal"
-              type="number"
-              value="1700"
-              class="w-20 border rounded px-2 py-1 text-center text-sm"
-            />
-            <span class="text-xs">)</span>
+          <strong class="block text-base mb-3"
+            >Today's Targets (click to edit)</strong
+          >
+
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <label class="w-24 md:w-32 font-medium">Calories:</label>
+              <input
+                id="targetCal"
+                type="number"
+                value="1500"
+                class="w-20 md:w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+              />
+              <span class="text-nutri-emerald-600">kcal</span>
+              <span class="text-xs text-nutri-bluegray-500">max</span>
+              <input
+                id="maxCal"
+                type="number"
+                value="1700"
+                class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+              />
+            </div>
+
+            <!--Protein Marker (for you not to get Lost in the ocean of codes)-->
+
+            <div class="flex items-center gap-2">
+              <label class="w-24 md:w-32 font-medium">Proteins:</label>
+              <input
+                id="targetProt"
+                type="number"
+                value="100"
+                class="w-20 md:w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+              />
+              <span class="text-nutri-emerald-600">grams</span>
+              <span class="text-xs text-nutri-bluegray-500">up to</span>
+              <input
+                id="maxProt"
+                type="number"
+                value="130"
+                class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+              />
+              <!--<span class="text-xs">)</span>-->
+            </div>
+
+            <!--Protein Marker (for you not to get Lost in the ocean of codes)-->
+
+            <!--Fat Marker (for you not to get Lost in the ocean of codes)-->
+
+            <div class="flex items-center gap-2">
+              <label class="w-24 md:w-32 font-medium">Fats:</label>
+              <input
+                id="targetFat"
+                type="number"
+                value="50"
+                class="w-20 md:w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+              />
+              <span class="text-nutri-emerald-600">grams</span>
+              <span class="text-xs text-nutri-bluegray-500">up to</span>
+              <input
+                id="maxFat"
+                type="number"
+                value="70"
+                class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+              />
+              <!--<span class="text-xs">)</span>-->
+            </div>
+            <!--Fat Marker (for you not to get Lost in the ocean of codes)-->
+
+            <!--Sugar Marker (for you not to get Lost in the ocean of codes)-->
+
+            <div class="flex items-center gap-2">
+              <label class="w-24 md:w-32 font-medium">Sugar:</label>
+              <input
+                id="targetSug"
+                type="number"
+                value="30"
+                class="w-20 md:w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+              />
+              <span class="text-nutri-emerald-600">grams</span>
+              <span class="text-xs text-nutri-bluegray-500">up to</span>
+              <input
+                id="maxSug"
+                type="number"
+                value="45"
+                class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+              />
+              <!--<span class="text-xs">)</span>-->
+            </div>
+            <!--Sugar Marker (for you not to get Lost in the ocean of codes)-->
           </div>
-          <div class="flex items-center gap-2">
-            <label class="w-32 font-medium">Protein:</label>
-            <input
-              id="targetProt"
-              type="number"
-              value="100"
-              class="w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500"
-            />
-            <span class="text-nutri-emerald-600">g</span>
-            <span class="text-xs text-nutri-bluegray-500">(up to</span>
-            <input
-              id="maxProt"
-              type="number"
-              value="130"
-              class="w-20 border rounded px-2 py-1 text-center text-sm"
-            />
-            <span class="text-xs">+)</span>
+        </div>
+
+        <div
+          class="w-full md:w-80 p-5 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl shadow-sm border border-nutri-emerald-200 dark:border-nutri-emerald-900/30"
+        >
+          <h3
+            class="text-sm font-semibold text-nutri-emerald-700 dark:text-nutri-emerald-300 mb-4 text-center"
+          >
+            Remaining Today
+          </h3>
+          <div class="grid grid-cols-2 gap-4 text-center">
+            <div>
+              <div
+                class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
+                id="remainCal"
+              >
+                900
+              </div>
+              <div
+                class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
+              >
+                Calories
+              </div>
+            </div>
+            <div>
+              <div
+                class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
+                id="remainProt"
+              >
+                74
+              </div>
+              <div
+                class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
+              >
+                Protein (g)
+              </div>
+            </div>
+            <div>
+              <div
+                class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
+                id="remainFat"
+              >
+                26
+              </div>
+              <div
+                class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
+              >
+                Fat (g)
+              </div>
+            </div>
+            <div>
+              <div
+                class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
+                id="remainSug"
+              >
+                0
+              </div>
+              <div
+                class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
+              >
+                Sugar (g)
+              </div>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <label class="w-32 font-medium">Fat:</label>
-            <input
-              id="targetFat"
-              type="number"
-              value="50"
-              class="w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500"
-            />
-            <span class="text-nutri-emerald-600">g</span>
-            <span class="text-xs text-nutri-bluegray-500">(up to</span>
-            <input
-              id="maxFat"
-              type="number"
-              value="70"
-              class="w-20 border rounded px-2 py-1 text-center text-sm"
-            />
-            <span class="text-xs">g)</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <label class="w-32 font-medium">Sugar:</label>
-            <span class="text-rose-600">≤</span>
-            <input
-              id="targetSug"
-              type="number"
-              value="30"
-              class="w-24 border rounded px-2 py-1 text-center focus:ring-rose-500"
-            />
-            <span class="text-rose-600">g</span>
-            <span class="text-xs text-nutri-bluegray-500">(max</span>
-            <input
-              id="maxSug"
-              type="number"
-              value="45"
-              class="w-20 border rounded px-2 py-1 text-center text-sm"
-            />
-            <span class="text-xs">g)</span>
+          <div
+            id="remainPercent"
+            class="mt-4 text-center text-xs font-medium text-nutri-emerald-700 dark:text-nutri-emerald-300"
+          >
+            <!--You have about 60% more to eat healthy! 💪🏼-->
           </div>
         </div>
       </div>
@@ -270,7 +365,7 @@
           <input
             id="foodInput"
             placeholder="Type food (chicken, rice, egg...)"
-            class="flex-1 border rounded-xl p-3 focus:ring-nutri-emerald-500 focus:border-nutri-emerald-500"
+            class="flex-1 border rounded-xl p-3 focus:ring-nutri-emerald-500 focus:border-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
           />
           <button
             onclick="lookupFood()"
@@ -283,31 +378,81 @@
           id="lookupResults"
           class="mt-4 space-y-2 max-h-60 overflow-y-auto"
         ></div>
+
+        <!-- Add Personalized Food Button -->
+        <div
+          class="mt-4 pt-4 border-t border-nutri-bluegray-200 dark:border-nutri-bluegray-700"
+        >
+          <button
+            onclick="showAddPersonalizedFoodModal()"
+            class="w-full border-2 border-dashed border-nutri-emerald-400 text-nutri-emerald-600 dark:text-nutri-emerald-400 hover:bg-nutri-emerald-50 dark:hover:bg-nutri-emerald-900/30 font-medium p-3 rounded-xl transition flex items-center justify-center gap-2"
+          >
+            <span>+</span> Add My Own Pinoy Food
+          </button>
+        </div>
       </div>
 
       <div id="mealContainer" class="grid gap-6 mb-8"></div>
 
       <div class="card mb-8">
-        <h3 class="font-semibold text-lg mb-4">Today's Totals</h3>
+        <h3 class="font-semibold text-lg mb-4 dark:text-text-dark-primary">
+          Today's Totals
+        </h3>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
           <div>
-            <div id="tcal" class="text-3xl font-bold">0</div>
-            <div class="text-xs uppercase tracking-wide">kcal</div>
+            <div
+              id="tcal"
+              class="text-3xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary"
+            >
+              0
+            </div>
+            <div
+              class="text-xs uppercase tracking-wide text-nutri-bluegray-600 dark:text-text-dark-secondary"
+            >
+              kcal
+            </div>
             <div id="calStatus" class="text-sm mt-1"></div>
           </div>
           <div>
-            <div id="tprot" class="text-3xl font-bold">0</div>
-            <div class="text-xs uppercase tracking-wide">protein (g)</div>
+            <div
+              id="tprot"
+              class="text-3xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary"
+            >
+              0
+            </div>
+            <div
+              class="text-xs uppercase tracking-wide text-nutri-bluegray-600 dark:text-text-dark-secondary"
+            >
+              protein (g)
+            </div>
             <div id="protStatus" class="text-sm mt-1"></div>
           </div>
           <div>
-            <div id="tfat" class="text-3xl font-bold">0</div>
-            <div class="text-xs uppercase tracking-wide">fat (g)</div>
+            <div
+              id="tfat"
+              class="text-3xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary"
+            >
+              0
+            </div>
+            <div
+              class="text-xs uppercase tracking-wide text-nutri-bluegray-600 dark:text-text-dark-secondary"
+            >
+              fat (g)
+            </div>
             <div id="fatStatus" class="text-sm mt-1"></div>
           </div>
           <div>
-            <div id="tsug" class="text-3xl font-bold">0</div>
-            <div class="text-xs uppercase tracking-wide">sugar (g)</div>
+            <div
+              id="tsug"
+              class="text-3xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary"
+            >
+              0
+            </div>
+            <div
+              class="text-xs uppercase tracking-wide text-nutri-bluegray-600 dark:text-text-dark-secondary"
+            >
+              sugar (g)
+            </div>
             <div id="sugStatus" class="text-sm mt-1"></div>
           </div>
         </div>
@@ -330,19 +475,265 @@
           onclick="showReport()"
           class="border-2 border-nutri-emerald-600 text-nutri-emerald-700 dark:border-nutri-emerald-400 dark:text-nutri-emerald-300 hover:bg-nutri-emerald-50 dark:hover:bg-nutri-emerald-900/30 font-semibold p-4 rounded-xl transition"
         >
-          Your Report 💪🏻
+          Your Report 📝
         </button>
       </div>
-
       <section>
-        <h3 class="font-semibold text-lg mb-4">History</h3>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-semibold text-lg dark:text-text-dark-primary">
+            History
+          </h3>
+          <div class="flex gap-2">
+            <button
+              onclick="toggleHistoryView()"
+              id="historyToggle"
+              class="bg-nutri-bluegray-100 hover:bg-nutri-bluegray-200 text-nutri-bluegray-700 dark:bg-nutri-bluegray-800 dark:hover:bg-nutri-bluegray-700 dark:text-nutri-bluegray-300 px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5"
+            >
+              📅 Show All
+            </button>
+            <button
+              onclick="exportData()"
+              class="bg-nutri-emerald-100 hover:bg-nutri-emerald-200 text-nutri-emerald-700 dark:bg-nutri-emerald-900/50 dark:hover:bg-nutri-emerald-900 dark:text-nutri-emerald-300 px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5"
+            >
+              📤 Export
+            </button>
+            <button
+              onclick="document.getElementById('importFile').click()"
+              class="bg-nutri-bluegray-100 hover:bg-nutri-bluegray-200 text-nutri-bluegray-700 dark:bg-nutri-bluegray-800 dark:hover:bg-nutri-bluegray-700 dark:text-nutri-bluegray-300 px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5"
+            >
+              📥 Import
+            </button>
+            <input
+              type="file"
+              id="importFile"
+              accept=".json"
+              class="hidden"
+              onchange="importData(this)"
+            />
+          </div>
+        </div>
         <div id="history" class="space-y-3"></div>
       </section>
     </div>
 
+    <!-- Modal for Adding Personalized Food -->
+    <div
+      id="addFoodModal"
+      class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 hidden"
+    >
+      <div class="bg-white dark:bg-card-dark rounded-2xl p-6 max-w-md w-full">
+        <div class="flex justify-between items-center mb-4">
+          <h3
+            class="text-xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary"
+          >
+            Add Personalized Food
+          </h3>
+          <button
+            onclick="closeAddFoodModal()"
+            class="text-rose-600 hover:text-rose-800 text-2xl"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="space-y-3">
+          <input
+            id="newFoodName"
+            type="text"
+            placeholder="Food name (e.g., My Special Adobo)"
+            class="w-full border rounded-xl p-3 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+          />
+          <div class="grid grid-cols-2 gap-3">
+            <input
+              id="newFoodCal"
+              type="number"
+              placeholder="Calories"
+              class="border rounded-xl p-3 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+            />
+            <input
+              id="newFoodProt"
+              type="number"
+              placeholder="Protein (g)"
+              class="border rounded-xl p-3 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+            />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <input
+              id="newFoodFat"
+              type="number"
+              placeholder="Fat (g)"
+              class="border rounded-xl p-3 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+            />
+            <input
+              id="newFoodSug"
+              type="number"
+              placeholder="Sugar (g)"
+              class="border rounded-xl p-3 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+            />
+          </div>
+          <button
+            onclick="savePersonalizedFood()"
+            class="w-full bg-nutri-emerald-600 hover:bg-nutri-emerald-700 text-white font-semibold p-3 rounded-xl transition mt-2"
+          >
+            Save to My Foods
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Load personalized foods from localStorage
+      function loadPersonalizedFoods() {
+        const saved = localStorage.getItem("personalizedPinoyFoods");
+        return saved ? JSON.parse(saved) : {};
+      }
+
+      // Save personalized foods to localStorage
+      function savePersonalizedFoods(foods) {
+        localStorage.setItem("personalizedPinoyFoods", JSON.stringify(foods));
+      }
+
+      // Merge default and personalized foods
+      function getAllFoods() {
+        const personalized = loadPersonalizedFoods();
+        return { ...pinoyFallback, ...personalized };
+      }
+
+      // Modal functions
+      function showAddPersonalizedFoodModal() {
+        document.getElementById("addFoodModal").classList.remove("hidden");
+      }
+
+      function closeAddFoodModal() {
+        document.getElementById("addFoodModal").classList.add("hidden");
+        // Clear inputs
+        document.getElementById("newFoodName").value = "";
+        document.getElementById("newFoodCal").value = "";
+        document.getElementById("newFoodProt").value = "";
+        document.getElementById("newFoodFat").value = "";
+        document.getElementById("newFoodSug").value = "";
+      }
+
+      function savePersonalizedFood() {
+        const name = document
+          .getElementById("newFoodName")
+          .value.trim()
+          .toLowerCase();
+        const cal =
+          parseFloat(document.getElementById("newFoodCal").value) || 0;
+        const prot =
+          parseFloat(document.getElementById("newFoodProt").value) || 0;
+        const fat =
+          parseFloat(document.getElementById("newFoodFat").value) || 0;
+        const sug =
+          parseFloat(document.getElementById("newFoodSug").value) || 0;
+
+        if (!name) {
+          alert("Please enter a food name");
+          return;
+        }
+
+        if (cal <= 0) {
+          alert("Please enter valid calories");
+          return;
+        }
+
+        const personalized = loadPersonalizedFoods();
+
+        // Check if already exists in default foods
+        if (pinoyFallback[name]) {
+          if (
+            !confirm(
+              `"${name}" already exists in default foods. Overwrite with your version?`,
+            )
+          ) {
+            return;
+          }
+        }
+
+        personalized[name] = { cal, prot, fat, sug };
+        savePersonalizedFoods(personalized);
+
+        alert(`"${name}" saved to your personalized foods!`);
+        closeAddFoodModal();
+
+        // If search is active, refresh results
+        const searchTerm = document.getElementById("foodInput").value.trim();
+        if (searchTerm) {
+          lookupFood();
+        }
+      }
+
+      // Updated lookup function
+      function lookupFood() {
+        const term = document
+          .getElementById("foodInput")
+          .value.trim()
+          .toLowerCase();
+        const results = document.getElementById("lookupResults");
+        const allFoods = getAllFoods();
+        const personalized = loadPersonalizedFoods();
+
+        if (!term) {
+          results.innerHTML = "";
+          return;
+        }
+
+        results.innerHTML = "";
+        let found = false;
+
+        for (const name in allFoods) {
+          if (name.toLowerCase().includes(term)) {
+            const vals = allFoods[name];
+            const isPersonalized = personalized.hasOwnProperty(name);
+            const div = document.createElement("div");
+
+            div.className = `food-result-item ${isPersonalized ? "personalized" : ""}`;
+
+            const sourceBadge = isPersonalized
+              ? '<span class="text-xs bg-nutri-emerald-100 dark:bg-nutri-emerald-900 text-nutri-emerald-700 dark:text-nutri-emerald-300 px-2 py-0.5 rounded-full ml-2">My Food</span>'
+              : '<span class="text-xs text-nutri-bluegray-400">Pinoy Favorite</span>';
+
+            div.innerHTML = `
+              <div class="flex-1">
+                <div class="font-medium text-nutri-bluegray-900 dark:text-text-dark-primary flex items-center">
+                  ${name}
+                  ${sourceBadge}
+                </div>
+              </div>
+              <div class="text-sm text-right text-nutri-bluegray-700 dark:text-text-dark-secondary">
+                ${vals.cal} kcal • ${vals.prot}p • ${vals.fat}f • ${vals.sug}s
+              </div>
+            `;
+
+            div.onclick = () => {
+              applyFoodToCurrentMeal(vals, name);
+              results.innerHTML = "";
+              document.getElementById("foodInput").value = "";
+            };
+
+            results.appendChild(div);
+            found = true;
+          }
+        }
+
+        if (!found) {
+          results.innerHTML = `
+            <div class="p-4 text-center text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
+              <p class="mb-2">No foods found matching "${term}"</p>
+              <button onclick="showAddPersonalizedFoodModal(); document.getElementById('newFoodName').value = '${term}'" 
+                class="text-nutri-emerald-600 hover:underline text-sm">
+                Add "${term}" as your personalized food
+              </button>
+            </div>
+          `;
+        }
+      }
+    </script>
+
+    <!-- Main App Script -->
     <script>
       const meals = [
-        { id: "breakfast", emoji: "☀", name: "Breakfast" },
+        { id: "breakfast", emoji: "🌞", name: "Breakfast" },
         { id: "lunch", emoji: "🍱", name: "Lunch" },
         { id: "snack", emoji: "🥜", name: "Snack" },
         { id: "dinner", emoji: "🌙", name: "Dinner" },
@@ -403,10 +794,10 @@
           section.className = "card";
           section.innerHTML = `
             <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-semibold">${m.emoji} ${m.name}</h3>
+              <h3 class="text-lg font-semibold dark:text-text-dark-primary">${m.emoji} ${m.name}</h3>
               <div class="flex gap-3">
-                <button onclick="addFoodRow('${m.id}')" class="text-nutri-emerald-600 hover:text-nutri-emerald-800 text-sm font-medium">+ Add food</button>
-                <button onclick="clearMeal('${m.id}')" class="text-rose-600 hover:text-rose-800 text-sm">Clear</button>
+                <button onclick="addFoodRow('${m.id}')" class="text-nutri-emerald-600 hover:text-nutri-emerald-800 dark:text-nutri-emerald-400 dark:hover:text-nutri-emerald-300 text-sm font-medium">+ Add food</button>
+                <button onclick="clearMeal('${m.id}')" class="text-rose-600 hover:text-rose-800 dark:text-rose-400 dark:hover:text-rose-300 text-sm">Clear</button>
               </div>
             </div>
             <div id="${m.id}_foods" class="space-y-3">
@@ -419,15 +810,15 @@
 
       function createFoodRowHTML(mealId, index) {
         return `
-    <div class="grid grid-cols-6 gap-3 items-center food-row" data-index="${index}">
-      <input placeholder="food name" type="text" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 col-span-1 text-sm" data-field="name">
-      <input placeholder="kcal" type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500" data-field="cal">
-      <input placeholder="prot" type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500" data-field="prot">
-      <input placeholder="fat" type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500" data-field="fat">
-      <input placeholder="sugar" type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500" data-field="sug">
-      <button onclick="removeFoodRow(this)" class="text-rose-500 hover:text-rose-700 text-sm">×</button>
-    </div>
-  `;
+          <div class="grid grid-cols-6 gap-3 items-center food-row" data-index="${index}">
+            <input placeholder="food name" type="text" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 col-span-1 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="name">
+            <input placeholder="kcal" type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="cal">
+            <input placeholder="prot" type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="prot">
+            <input placeholder="fat" type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="fat">
+            <input placeholder="sugar" type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="sug">
+            <button onclick="removeFoodRow(this)" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-sm">×</button>
+          </div>
+        `;
       }
 
       function addFoodRow(mealId) {
@@ -551,6 +942,30 @@
         document.getElementById("tfat").textContent = Math.round(totals.fat);
         document.getElementById("tsug").textContent = Math.round(totals.sug);
 
+        const targetCal =
+          parseInt(document.getElementById("targetCal")?.value) || 1500;
+        const targetProt =
+          parseInt(document.getElementById("targetProt")?.value) || 100;
+        const targetFat =
+          parseInt(document.getElementById("targetFat")?.value) || 50;
+        const targetSug =
+          parseInt(document.getElementById("targetSug")?.value) || 30;
+
+        const remainCal = Math.max(0, Math.round(targetCal - totals.cal));
+        const remainProt = Math.max(0, Math.round(targetProt - totals.prot));
+        const remainFat = Math.max(0, Math.round(targetFat - totals.fat));
+        const remainSug = Math.max(0, Math.round(targetSug - totals.sug));
+
+        document.getElementById("remainCal").textContent = remainCal;
+        document.getElementById("remainProt").textContent = remainProt;
+        document.getElementById("remainFat").textContent = remainFat;
+        document.getElementById("remainSug").textContent = remainSug;
+
+        const remainPercentValue =
+          targetCal > 0 ? Math.round((remainCal / targetCal) * 100) : 0;
+        document.getElementById("remainPercent").textContent =
+          `You have about ${remainPercentValue}% more to eat healthy! 🥑`;
+
         const t = getTargets();
         updateStatus(
           "cal",
@@ -583,6 +998,7 @@
       }
 
       function updateStatus(key, value, target, max, el) {
+        if (!el) return;
         if (value < target * 0.8) {
           el.textContent = "Below target";
           el.className = "status-low text-sm";
@@ -696,12 +1112,12 @@
             "card flex justify-between items-center py-3 px-4 text-sm";
           div.innerHTML = `
             <div>
-              <div class="font-medium text-nutri-bluegray-900 dark:text-nutri-bluegray-100">${e.date}</div>
+              <div class="font-medium text-nutri-bluegray-900 dark:text-text-dark-primary">${e.date}</div>
               <div class="text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
                 ${Math.round(cal)} kcal ${calStatus} • ${Math.round(prot)}g prot ${protStatus} • ${Math.round(fat)}g fat ${fatStatus} • ${Math.round(sug)}g sug ${sugStatus}${workoutText}
               </div>
             </div>
-            <button onclick="deleteDay('${e.date}')" class="text-rose-500 hover:text-rose-700 text-lg">🗑</button>
+            <button onclick="deleteDay('${e.date}')" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-lg">🗑</button>
           `;
           container.appendChild(div);
         });
@@ -713,445 +1129,6 @@
         localStorage.setItem("nutritionData", JSON.stringify(nutritionData));
         renderHistory();
         updateStreak();
-      }
-
-      const pinoyFallback = {
-        adobo: { cal: 280, prot: 28, fat: 18, sug: 3 },
-        "chicken adobo": { cal: 250, prot: 25, fat: 15, sug: 2 },
-        "pork adobo": { cal: 320, prot: 28, fat: 22, sug: 4 },
-        sinigang: { cal: 200, prot: 22, fat: 8, sug: 4 },
-        "pork sinigang": { cal: 220, prot: 24, fat: 10, sug: 5 },
-        "beef sinigang": { cal: 240, prot: 26, fat: 12, sug: 4 },
-        "kare kare": { cal: 380, prot: 30, fat: 25, sug: 6 },
-        lechon: { cal: 420, prot: 35, fat: 30, sug: 0 },
-        sisig: { cal: 340, prot: 32, fat: 24, sug: 3 },
-        lumpia: { cal: 130, prot: 6, fat: 7, sug: 1 },
-        "vegetable lumpia": { cal: 100, prot: 4, fat: 5, sug: 2 },
-        "pancit canton": { cal: 240, prot: 14, fat: 10, sug: 5 },
-        "pancit bihon": { cal: 220, prot: 12, fat: 8, sug: 4 },
-        "halo halo": { cal: 320, prot: 7, fat: 10, sug: 50 },
-        bibingka: { cal: 360, prot: 7, fat: 14, sug: 40 },
-        tocino: { cal: 300, prot: 20, fat: 18, sug: 15 },
-        longganisa: { cal: 280, prot: 18, fat: 20, sug: 10 },
-        caldereta: { cal: 350, prot: 28, fat: 22, sug: 5 },
-        "beef caldereta": { cal: 370, prot: 30, fat: 24, sug: 6 },
-        pinakbet: { cal: 180, prot: 12, fat: 8, sug: 6 },
-        kinilaw: { cal: 200, prot: 25, fat: 10, sug: 2 },
-        tinola: { cal: 220, prot: 26, fat: 8, sug: 3 },
-        tapsilog: { cal: 450, prot: 30, fat: 25, sug: 5 },
-        bulalo: { cal: 380, prot: 32, fat: 28, sug: 4 },
-        bistek: { cal: 300, prot: 28, fat: 18, sug: 5 },
-        laing: { cal: 250, prot: 10, fat: 20, sug: 4 },
-        "kwek kwek": { cal: 120, prot: 6, fat: 8, sug: 2 },
-        ensaymada: { cal: 350, prot: 6, fat: 15, sug: 25 },
-        puto: { cal: 150, prot: 3, fat: 5, sug: 10 },
-        turon: { cal: 200, prot: 2, fat: 8, sug: 20 },
-        "buko pie": { cal: 320, prot: 4, fat: 18, sug: 25 },
-        "leche flan": { cal: 300, prot: 6, fat: 12, sug: 40 },
-        "pande coco": { cal: 320, prot: 6, fat: 12, sug: 35 },
-        biko: { cal: 280, prot: 4, fat: 8, sug: 40 },
-        "nilagang baka": { cal: 320, prot: 32, fat: 18, sug: 3 },
-        "nilagang baboy": { cal: 300, prot: 28, fat: 20, sug: 3 },
-        "gatang gabi": { cal: 220, prot: 6, fat: 14, sug: 5 },
-        "pork barbecue": { cal: 280, prot: 25, fat: 18, sug: 10 },
-        "chicken barbecue": { cal: 260, prot: 26, fat: 15, sug: 12 },
-        "paksiw na bisugo": { cal: 240, prot: 28, fat: 12, sug: 4 },
-        "pritong galunggong": { cal: 260, prot: 30, fat: 14, sug: 0 },
-        "scrambled egg": { cal: 180, prot: 12, fat: 14, sug: 1 },
-        "sauteed baguio beans with ground pork": {
-          cal: 150,
-          prot: 12,
-          fat: 10,
-          sug: 3,
-        },
-        "white rice 110g": { cal: 143, prot: 3, fat: 0, sug: 0 },
-        "coffee with milk and 2 tsp brown sugar": {
-          cal: 42,
-          prot: 1,
-          fat: 0,
-          sug: 10,
-        },
-        "sourdough bread 2 slices with 1 tbsp crunchy pb": {
-          cal: 270,
-          prot: 10,
-          fat: 9,
-          sug: 4,
-        },
-        "baguio beans": { cal: 35, prot: 2, fat: 0, sug: 4 },
-        "sauteed baguio beans": { cal: 120, prot: 5, fat: 8, sug: 5 },
-        "string beans": { cal: 31, prot: 1.8, fat: 0.1, sug: 3.6 },
-        sitaw: { cal: 47, prot: 2.8, fat: 0.4, sug: 4.9 },
-        "ginisang sitaw": { cal: 110, prot: 4, fat: 7, sug: 5 },
-        ampalaya: { cal: 19, prot: 0.8, fat: 0.2, sug: 2.5 },
-        "ginisang ampalaya": { cal: 95, prot: 3, fat: 7, sug: 4 },
-        talong: { cal: 25, prot: 1, fat: 0.2, sug: 3 },
-        "tortang talong": { cal: 180, prot: 8, fat: 12, sug: 5 },
-        okra: { cal: 33, prot: 2, fat: 0.1, sug: 1.5 },
-        "ginisang okra": { cal: 90, prot: 3, fat: 6, sug: 3 },
-        kalabasa: { cal: 26, prot: 1, fat: 0.1, sug: 2.8 },
-        "ginisang kalabasa": { cal: 100, prot: 3, fat: 7, sug: 4 },
-        pechay: { cal: 13, prot: 1.5, fat: 0.2, sug: 1.2 },
-        "ginisang pechay": { cal: 80, prot: 3, fat: 6, sug: 2 },
-        kangkong: { cal: 19, prot: 2.6, fat: 0.3, sug: 1.2 },
-        "adobong kangkong": { cal: 110, prot: 4, fat: 8, sug: 3 },
-        sayote: { cal: 19, prot: 0.8, fat: 0.1, sug: 2.6 },
-        "ginisang sayote": { cal: 85, prot: 2, fat: 6, sug: 4 },
-        repolyo: { cal: 25, prot: 1.3, fat: 0.1, sug: 3.2 },
-        "ginisang repolyo": { cal: 95, prot: 3, fat: 7, sug: 4 },
-        broccoli: { cal: 34, prot: 2.8, fat: 0.4, sug: 1.7 },
-        "ginisang broccoli": { cal: 110, prot: 4, fat: 8, sug: 3 },
-        carrots: { cal: 41, prot: 0.9, fat: 0.2, sug: 4.7 },
-        "ginisang carrots": { cal: 100, prot: 2, fat: 7, sug: 6 },
-        patatas: { cal: 77, prot: 2, fat: 0.1, sug: 0.8 },
-        "ginisang patatas": { cal: 140, prot: 3, fat: 8, sug: 2 },
-        camote: { cal: 86, prot: 1.6, fat: 0.1, sug: 4.2 },
-        "ginisang camote": { cal: 150, prot: 2, fat: 8, sug: 6 },
-
-        // Your existing foods...
-
-        // You requested these:
-        "ginisang mongo": { cal: 180, prot: 12, fat: 6, sug: 8 }, // mung bean soup with shrimp/malunggay
-        "pritong galunggong": { cal: 260, prot: 30, fat: 14, sug: 0 }, // already in your list but here it is
-        pandesal: { cal: 140, prot: 4, fat: 2, sug: 4 }, // per piece (approx 45g)
-        "pandesal with palaman": { cal: 220, prot: 6, fat: 8, sug: 8 }, // with butter/cheese spread
-
-        // More Pinoy breakfast favorites
-        "garlic rice": { cal: 280, prot: 5, fat: 12, sug: 0 }, // sinangag
-        tapsilog: { cal: 450, prot: 30, fat: 25, sug: 5 }, // already have but popular
-        longsilog: { cal: 420, prot: 22, fat: 28, sug: 12 },
-        tocilog: { cal: 440, prot: 24, fat: 26, sug: 18 },
-        hotsilog: { cal: 380, prot: 18, fat: 24, sug: 8 },
-        cornsilog: { cal: 460, prot: 26, fat: 22, sug: 6 }, // corned beef silog
-        spamsilog: { cal: 520, prot: 28, fat: 32, sug: 8 },
-        bangsilog: { cal: 380, prot: 32, fat: 18, sug: 2 }, // bangus silog
-        daingsilog: { cal: 360, prot: 30, fat: 16, sug: 2 },
-
-        // Noodles & Pasta
-        "pancit malabon": { cal: 320, prot: 16, fat: 14, sug: 6 },
-        "pancit palabok": { cal: 340, prot: 18, fat: 16, sug: 8 },
-        "pancit sotanghon": { cal: 280, prot: 12, fat: 10, sug: 4 },
-        "spaghetti pinoy style": { cal: 380, prot: 16, fat: 18, sug: 24 }, // sweet style
-        "carbonara pinoy": { cal: 420, prot: 20, fat: 28, sug: 8 },
-        "macaroni salad": { cal: 340, prot: 12, fat: 22, sug: 16 },
-        palabok: { cal: 340, prot: 18, fat: 16, sug: 8 },
-
-        // Beef dishes
-        "beef steak tagalog": { cal: 320, prot: 32, fat: 20, sug: 6 },
-        "beef tapa": { cal: 340, prot: 35, fat: 22, sug: 8 },
-        "beef pares": { cal: 380, prot: 30, fat: 24, sug: 10 },
-        "beef mami": { cal: 320, prot: 22, fat: 14, sug: 6 },
-        "beef mami with egg": { cal: 400, prot: 28, fat: 20, sug: 6 },
-        lomi: { cal: 360, prot: 18, fat: 20, sug: 8 },
-        batchoy: { cal: 380, prot: 26, fat: 22, sug: 4 },
-        "beef nilaga": { cal: 320, prot: 32, fat: 18, sug: 3 }, // already have as nilagang baka
-
-        // Pork dishes
-        "pork menudo": { cal: 340, prot: 26, fat: 24, sug: 8 },
-        "pork afritada": { cal: 360, prot: 28, fat: 26, sug: 10 },
-        "pork estofado": { cal: 380, prot: 30, fat: 28, sug: 12 },
-        "pork binagoongan": { cal: 320, prot: 28, fat: 22, sug: 6 },
-        "pork dinuguan": { cal: 280, prot: 24, fat: 18, sug: 4 },
-        "pork sisig": { cal: 340, prot: 32, fat: 24, sug: 3 }, // already have sisig
-        "crispy pata": { cal: 580, prot: 42, fat: 42, sug: 2 },
-        "lechon kawali": { cal: 480, prot: 38, fat: 36, sug: 0 },
-        "pork chop": { cal: 320, prot: 30, fat: 22, sug: 0 },
-        "pork steak": { cal: 340, prot: 32, fat: 24, sug: 4 },
-        "pork bbq": { cal: 280, prot: 25, fat: 18, sug: 10 }, // already have
-        liempo: { cal: 420, prot: 32, fat: 32, sug: 4 }, // grilled pork belly
-
-        // Chicken dishes
-        "chicken inasal": { cal: 320, prot: 35, fat: 18, sug: 8 },
-        "chicken tinola": { cal: 220, prot: 26, fat: 8, sug: 3 }, // already have tinola
-        "chicken sopas": { cal: 280, prot: 18, fat: 14, sug: 8 },
-        "chicken arroz caldo": { cal: 320, prot: 22, fat: 12, sug: 6 },
-        "chicken goto": { cal: 260, prot: 20, fat: 10, sug: 4 },
-        "fried chicken pinoy": { cal: 380, prot: 32, fat: 26, sug: 4 },
-        "chicken lollipop": { cal: 340, prot: 28, fat: 22, sug: 6 },
-        "chicken wings": { cal: 360, prot: 30, fat: 24, sug: 8 },
-        "chicken adobo sa gata": { cal: 380, prot: 28, fat: 28, sug: 4 },
-
-        // Seafood
-        "sinigang na hipon": { cal: 180, prot: 28, fat: 6, sug: 4 },
-        "sinigang na bangus": { cal: 220, prot: 30, fat: 10, sug: 4 },
-        "sinigang na salmon": { cal: 280, prot: 32, fat: 16, sug: 4 },
-        "pinaputok na isda": { cal: 240, prot: 32, fat: 12, sug: 3 },
-        escabeche: { cal: 260, prot: 28, fat: 14, sug: 12 },
-        "daing na bangus": { cal: 280, prot: 34, fat: 14, sug: 2 },
-        tuyo: { cal: 220, prot: 38, fat: 8, sug: 0 },
-        tinapa: { cal: 240, prot: 36, fat: 10, sug: 0 },
-        dilis: { cal: 200, prot: 34, fat: 8, sug: 0 }, // anchovies
-        "pusit adobo": { cal: 220, prot: 32, fat: 8, sug: 4 },
-        "ginataang pusit": { cal: 260, prot: 30, fat: 16, sug: 6 },
-        tahong: { cal: 150, prot: 24, fat: 4, sug: 3 }, // mussels
-        "ginataang tahong": { cal: 220, prot: 26, fat: 14, sug: 6 },
-        hipon: { cal: 100, prot: 24, fat: 0, sug: 0 }, // shrimp per 100g
-        "ginataang hipon": { cal: 200, prot: 26, fat: 14, sug: 6 },
-        "halabos na hipon": { cal: 120, prot: 24, fat: 2, sug: 0 },
-        "camaron rebosado": { cal: 280, prot: 22, fat: 18, sug: 4 },
-
-        // Vegetables & Gulay
-        pinakbet: { cal: 180, prot: 12, fat: 8, sug: 6 }, // already have
-        "ginataang sitaw at kalabasa": { cal: 160, prot: 6, fat: 10, sug: 8 },
-        "ginataang langka": { cal: 200, prot: 4, fat: 14, sug: 10 }, // jackfruit
-        "ginataang santol": { cal: 220, prot: 4, fat: 16, sug: 12 },
-        "monggo with chicharon": { cal: 240, prot: 14, fat: 14, sug: 8 },
-        "monggo with tinapa": { cal: 260, prot: 20, fat: 12, sug: 8 },
-        chopsuey: { cal: 160, prot: 10, fat: 8, sug: 8 },
-        "lumpiang sariwa": { cal: 180, prot: 8, fat: 8, sug: 12 },
-        "lumpiang ubod": { cal: 160, prot: 6, fat: 6, sug: 10 },
-        "fresh lumpia": { cal: 180, prot: 8, fat: 8, sug: 12 },
-        "lumpiang shanghai": { cal: 240, prot: 12, fat: 14, sug: 4 },
-        "tortang talong": { cal: 180, prot: 8, fat: 12, sug: 5 }, // already have
-
-        // Snacks & Merienda
-        "kwek kwek": { cal: 120, prot: 6, fat: 8, sug: 2 }, // already have
-        tokneneng: { cal: 140, prot: 8, fat: 10, sug: 2 },
-        fishball: { cal: 160, prot: 12, fat: 8, sug: 4 }, // per serving with sauce
-        kikiam: { cal: 180, prot: 10, fat: 12, sug: 6 },
-        squidball: { cal: 140, prot: 10, fat: 8, sug: 4 },
-        kornik: { cal: 160, prot: 4, fat: 10, sug: 2 }, // fried corn
-        chicharon: { cal: 280, prot: 32, fat: 16, sug: 0 },
-        "chicharon bulaklak": { cal: 380, prot: 28, fat: 32, sug: 0 },
-        isaw: { cal: 220, prot: 24, fat: 14, sug: 4 },
-        betamax: { cal: 180, prot: 20, fat: 10, sug: 2 }, // chicken blood
-        adidas: { cal: 240, prot: 28, fat: 14, sug: 4 }, // chicken feet
-        helmet: { cal: 200, prot: 24, fat: 12, sug: 2 }, // chicken head
-
-        // Rice meals & combos
-        "chao fan": { cal: 420, prot: 18, fat: 18, sug: 6 }, // Chinese fried rice
-        "yang chow": { cal: 460, prot: 20, fat: 20, sug: 8 },
-        "hainanese chicken rice": { cal: 520, prot: 32, fat: 22, sug: 6 },
-        congee: { cal: 180, prot: 8, fat: 4, sug: 2 }, // lugaw plain
-        "congee with egg": { cal: 260, prot: 14, fat: 10, sug: 2 },
-        "congee with chicken": { cal: 280, prot: 22, fat: 8, sug: 2 },
-
-        // Kakanin & Desserts
-        "puto bumbong": { cal: 220, prot: 3, fat: 6, sug: 28 },
-        "sapin sapin": { cal: 280, prot: 5, fat: 10, sug: 32 },
-        "maja blanca": { cal: 240, prot: 4, fat: 12, sug: 24 },
-        "cassava cake": { cal: 320, prot: 5, fat: 14, sug: 36 },
-        kutsinta: { cal: 180, prot: 2, fat: 4, sug: 28 },
-        cuchinta: { cal: 180, prot: 2, fat: 4, sug: 28 }, // same as kutsinta
-        "pichi pichi": { cal: 200, prot: 2, fat: 6, sug: 30 },
-        suman: { cal: 220, prot: 4, fat: 6, sug: 32 },
-        "suman sa lihiya": { cal: 240, prot: 4, fat: 8, sug: 34 },
-        espasol: { cal: 280, prot: 5, fat: 10, sug: 36 },
-        kalamay: { cal: 320, prot: 4, fat: 12, sug: 42 },
-        nilupak: { cal: 260, prot: 3, fat: 10, sug: 28 },
-        binatog: { cal: 200, prot: 6, fat: 8, sug: 24 },
-        taho: { cal: 180, prot: 12, fat: 6, sug: 22 },
-        "sago at gulaman": { cal: 160, prot: 1, fat: 0, sug: 38 },
-        "buko salad": { cal: 280, prot: 5, fat: 16, sug: 28 },
-        "fruit salad": { cal: 240, prot: 4, fat: 12, sug: 32 },
-        "macaroni fruit salad": { cal: 320, prot: 8, fat: 16, sug: 36 },
-        "ube halaya": { cal: 280, prot: 3, fat: 10, sug: 38 },
-        "leche flan": { cal: 300, prot: 6, fat: 12, sug: 40 }, // already have
-
-        // Breads & Pastries
-        "spanish bread": { cal: 280, prot: 6, fat: 10, sug: 22 },
-        monay: { cal: 240, prot: 6, fat: 6, sug: 16 },
-        kalihim: { cal: 260, prot: 6, fat: 8, sug: 20 }, // pan de regla
-        "pan de coco": { cal: 320, prot: 6, fat: 12, sug: 35 }, // already have
-        "cheese bread": { cal: 300, prot: 8, fat: 12, sug: 18 },
-        hopia: { cal: 240, prot: 6, fat: 10, sug: 24 }, // mongo or baboy
-        "hopia baboy": { cal: 260, prot: 8, fat: 12, sug: 22 },
-        "bicho bicho": { cal: 280, prot: 4, fat: 12, sug: 26 },
-        pilipit: { cal: 240, prot: 4, fat: 10, sug: 22 },
-        cascaron: { cal: 260, prot: 4, fat: 12, sug: 18 },
-        "turon malagkit": { cal: 280, prot: 4, fat: 10, sug: 32 },
-        maruya: { cal: 220, prot: 3, fat: 8, sug: 24 }, // banana fritters
-        "kamote cue": { cal: 240, prot: 2, fat: 8, sug: 36 },
-        "banana cue": { cal: 260, prot: 3, fat: 10, sug: 38 },
-        "camote cue": { cal: 240, prot: 2, fat: 8, sug: 36 }, // same as kamote cue
-
-        // Drinks & Beverages
-        "kapeng barako": { cal: 5, prot: 0, fat: 0, sug: 0 }, // black coffee
-        "kapeng barako with sugar": { cal: 25, prot: 0, fat: 0, sug: 6 },
-        "tsokolate de batirol": { cal: 180, prot: 4, fat: 8, sug: 24 },
-        milo: { cal: 120, prot: 4, fat: 4, sug: 16 },
-        ovaltine: { cal: 110, prot: 3, fat: 3, sug: 18 },
-        salabat: { cal: 40, prot: 0, fat: 0, sug: 10 }, // ginger tea
-        "pandan tea": { cal: 30, prot: 0, fat: 0, sug: 8 },
-        "buko juice": { cal: 80, prot: 1, fat: 0, sug: 18 },
-        "buko juice with milk": { cal: 140, prot: 3, fat: 6, sug: 20 },
-        "sago't gulaman": { cal: 160, prot: 1, fat: 0, sug: 38 },
-        "melon juice": { cal: 100, prot: 1, fat: 0, sug: 24 },
-        "mango shake": { cal: 180, prot: 2, fat: 2, sug: 36 },
-        "avocado shake": { cal: 220, prot: 3, fat: 12, sug: 18 },
-        "buko shake": { cal: 200, prot: 3, fat: 10, sug: 22 },
-        "pineapple juice": { cal: 130, prot: 1, fat: 0, sug: 32 },
-        "calamansi juice": { cal: 80, prot: 1, fat: 0, sug: 20 },
-        "guyabano juice": { cal: 120, prot: 1, fat: 0, sug: 28 },
-        "duhat juice": { cal: 140, prot: 1, fat: 0, sug: 34 },
-
-        // Fast food & Chains (approximate)
-        "jollibee chickenjoy": { cal: 450, prot: 32, fat: 32, sug: 4 },
-        "jollibee spaghetti": { cal: 520, prot: 22, fat: 24, sug: 28 },
-        "jollibee burger steak": { cal: 480, prot: 28, fat: 28, sug: 12 },
-        "jollibee yum burger": { cal: 380, prot: 18, fat: 20, sug: 12 },
-        "jollibee cheese yum": { cal: 420, prot: 20, fat: 24, sug: 12 },
-        "jollibee palabok": { cal: 460, prot: 24, fat: 22, sug: 10 },
-        "mcdonalds cheeseburger": { cal: 300, prot: 15, fat: 12, sug: 7 },
-        "mcdonalds fried chicken": { cal: 420, prot: 35, fat: 28, sug: 0 },
-        "chowking chao fan": { cal: 440, prot: 20, fat: 20, sug: 6 },
-        "chowking siomai": { cal: 180, prot: 12, fat: 10, sug: 4 }, // per serving
-        "chowking siopao asado": { cal: 320, prot: 14, fat: 10, sug: 18 },
-        "chowking siopao bola bola": { cal: 340, prot: 16, fat: 12, sug: 16 },
-        "kfc chicken": { cal: 380, prot: 32, fat: 26, sug: 2 },
-        "greenwich pizza": { cal: 280, prot: 14, fat: 14, sug: 8 }, // per slice
-        "greenwich lasagna": { cal: 420, prot: 24, fat: 26, sug: 16 },
-        "yellow cab pizza": { cal: 320, prot: 16, fat: 18, sug: 6 }, // per slice
-
-        // International with Pinoy twist
-        "kare kareng pata": { cal: 480, prot: 38, fat: 36, sug: 8 },
-        "kare kareng buntot": { cal: 420, prot: 42, fat: 28, sug: 6 }, // oxtail
-        "adobong manok sa gata": { cal: 380, prot: 32, fat: 28, sug: 4 },
-        "adobong baboy sa gata": { cal: 460, prot: 34, fat: 36, sug: 6 },
-        "ginataang manok": { cal: 360, prot: 32, fat: 24, sug: 6 },
-        "ginataang baboy": { cal: 440, prot: 34, fat: 34, sug: 6 },
-        "ginataang tilapia": { cal: 280, prot: 32, fat: 16, sug: 4 },
-        "paksiw na lechon": { cal: 360, prot: 32, fat: 24, sug: 8 },
-        "lechon paksiw": { cal: 360, prot: 32, fat: 24, sug: 8 }, // same
-
-        // Regional specialties
-        "la paz batchoy": { cal: 420, prot: 28, fat: 26, sug: 6 },
-        "pancit molo": { cal: 320, prot: 22, fat: 14, sug: 6 },
-        inubaran: { cal: 280, prot: 18, fat: 16, sug: 8 }, // Aklan chicken
-        kbl: { cal: 320, prot: 16, fat: 14, sug: 10 }, // Ilonggo stew
-        binakol: { cal: 260, prot: 28, fat: 12, sug: 6 }, // chicken with coconut water
-        tinumok: { cal: 220, prot: 12, fat: 14, sug: 6 }, // Bicol taro leaves
-        "ginataang labong": { cal: 180, prot: 6, fat: 12, sug: 4 }, // bamboo shoots
-        dinengdeng: { cal: 160, prot: 10, fat: 8, sug: 6 }, // Ilocano vegetable stew
-        pinapaitan: { cal: 280, prot: 26, fat: 18, sug: 4 }, // Ilocano bitter stew
-        igado: { cal: 320, prot: 28, fat: 20, sug: 6 }, // Ilocano pork liver
-        "poqui poqui": { cal: 200, prot: 8, fat: 14, sug: 8 }, // Ilocano eggplant
-        bagnet: { cal: 520, prot: 42, fat: 40, sug: 0 }, // Ilocano crispy pork
-        "longganisa iloco": { cal: 320, prot: 22, fat: 24, sug: 12 },
-        "longganisa lucban": { cal: 340, prot: 24, fat: 26, sug: 14 },
-        "longganisa calumpit": { cal: 300, prot: 20, fat: 22, sug: 10 },
-        "chorizo bilbao": { cal: 360, prot: 24, fat: 28, sug: 8 },
-
-        // More soups & stews
-        "suam na mais": { cal: 180, prot: 8, fat: 8, sug: 10 }, // corn soup
-        "ginisang togue": { cal: 140, prot: 8, fat: 8, sug: 6 }, // bean sprouts
-        "ginisang upo": { cal: 100, prot: 4, fat: 6, sug: 8 }, // bottle gourd
-        "ginisang patola": { cal: 80, prot: 3, fat: 4, sug: 6 }, // luffa
-        "tinolang tahong": { cal: 160, prot: 20, fat: 6, sug: 4 },
-        "tinolang isda": { cal: 200, prot: 28, fat: 8, sug: 4 },
-        sarsiado: { cal: 280, prot: 26, fat: 18, sug: 10 }, // fish with tomato sauce
-        sarciado: { cal: 280, prot: 26, fat: 18, sug: 10 }, // alternate spelling
-        "sweet and sour fish": { cal: 320, prot: 24, fat: 16, sug: 24 },
-        "sweet and sour pork": { cal: 420, prot: 28, fat: 26, sug: 28 },
-        "sweet and sour chicken": { cal: 380, prot: 32, fat: 22, sug: 26 },
-
-        // Breakfast items
-        "itlog na maalat": { cal: 80, prot: 6, fat: 6, sug: 0 }, // salted egg per piece
-        "itlog na pula": { cal: 80, prot: 6, fat: 6, sug: 0 }, // same
-        "kesong puti": { cal: 120, prot: 8, fat: 10, sug: 2 }, // white cheese
-        "keso de bola": { cal: 140, prot: 10, fat: 12, sug: 0 }, // edam cheese
-        "pan de sal": { cal: 140, prot: 4, fat: 2, sug: 4 }, // same as pandesal
-        "pan de sal with palaman": { cal: 220, prot: 6, fat: 8, sug: 8 },
-        "sardines with rice": { cal: 380, prot: 22, fat: 18, sug: 8 },
-        "corned beef with rice": { cal: 460, prot: 26, fat: 24, sug: 6 },
-        "beef loaf with rice": { cal: 420, prot: 20, fat: 22, sug: 8 },
-        "meatloaf with rice": { cal: 420, prot: 20, fat: 22, sug: 8 },
-
-        // Add more as needed...
-      };
-
-      function lookupFood() {
-        const term = document.getElementById("foodInput").value.trim();
-        if (!term) return;
-
-        const results = document.getElementById("lookupResults");
-        results.innerHTML =
-          '<p class="text-nutri-bluegray-500 dark:text-nutri-bluegray-400 p-3">Searching...</p>';
-
-        const lowerTerm = term.toLowerCase();
-        let fallbackShown = false;
-
-        for (const key in pinoyFallback) {
-          if (lowerTerm.includes(key.toLowerCase())) {
-            const vals = pinoyFallback[key];
-            const div = document.createElement("div");
-            div.className =
-              "flex justify-between items-center p-3 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl hover:bg-nutri-emerald-50 dark:hover:bg-nutri-emerald-900/30 cursor-pointer transition border border-transparent dark:border-nutri-bluegray-700";
-            div.innerHTML = `
-              <div>
-                <div class="font-medium text-nutri-bluegray-900 dark:text-nutri-bluegray-100">${key} (Pinoy favorite)</div>
-                <div class="text-xs text-nutri-bluegray-500 dark:text-nutri-bluegray-400">approx. per serving</div>
-              </div>
-              <div class="text-sm text-nutri-bluegray-600 dark:text-nutri-bluegray-300 text-right">
-                ${vals.cal} kcal • ${vals.prot}p • ${vals.fat}f • ${vals.sug}s
-              </div>
-            `;
-            div.onclick = () => applyFoodToCurrentMeal(vals, key);
-            results.appendChild(div);
-            fallbackShown = true;
-          }
-        }
-
-        // Use direct API for GitHub Pages (no CORS proxy needed)
-        const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(term)}&search_simple=1&json=1&page_size=10`;
-
-        fetch(url)
-          .then((r) => r.json())
-          .then((data) => {
-            if (fallbackShown) {
-              const hr = document.createElement("hr");
-              hr.className =
-                "my-2 border-nutri-bluegray-200 dark:border-nutri-bluegray-700";
-              results.appendChild(hr);
-            } else {
-              results.innerHTML = "";
-            }
-
-            if (!data.products || data.products.length === 0) {
-              if (!fallbackShown) {
-                results.innerHTML +=
-                  '<p class="text-rose-600 dark:text-rose-400 p-3">No matches found in database.</p>';
-              }
-              return;
-            }
-
-            data.products.slice(0, 8).forEach((product) => {
-              const nutriments = product.nutriments || {};
-              const cal = Math.round(
-                nutriments["energy-kcal"] || nutriments.energy_kcal || 0,
-              );
-              const prot = Math.round(nutriments.proteins || 0);
-              const fat = Math.round(nutriments.fat || 0);
-              const sug = Math.round(nutriments.sugars || 0);
-              const name =
-                product.product_name || product.generic_name || "Unknown";
-              const serving = product.serving_quantity
-                ? `${product.serving_quantity} ${product.serving_size || "g"}`
-                : "per 100g";
-
-              const div = document.createElement("div");
-              div.className =
-                "flex justify-between items-center p-3 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl hover:bg-nutri-emerald-50 dark:hover:bg-nutri-emerald-900/30 cursor-pointer transition border border-transparent dark:border-nutri-bluegray-700";
-              div.innerHTML = `
-                <div>
-                  <div class="font-medium text-nutri-bluegray-900 dark:text-nutri-bluegray-100">${name}</div>
-                  <div class="text-xs text-nutri-bluegray-500 dark:text-nutri-bluegray-400">${serving}</div>
-                </div>
-                <div class="text-sm text-nutri-bluegray-600 dark:text-nutri-bluegray-300 text-right">
-                  ${cal} kcal • ${prot}p • ${fat}f • ${sug}s
-                </div>
-              `;
-              div.onclick = () =>
-                applyFoodToCurrentMeal({ cal, prot, fat, sug }, name);
-              results.appendChild(div);
-            });
-          })
-          .catch((err) => {
-            console.error("Open Food Facts error:", err);
-            if (!fallbackShown) {
-              results.innerHTML =
-                '<p class="text-rose-600 dark:text-rose-400 p-3">Error searching — check connection.</p>';
-            }
-          });
       }
 
       function applyFoodToCurrentMeal(food, foodName) {
@@ -1265,7 +1242,6 @@
         "You already made it to day 100 — the rest is just momentum.",
         "I love you, but I don't need you.",
       ];
-
       function newQuote() {
         const q = quotes[Math.floor(Math.random() * quotes.length)];
         document.getElementById("quote").textContent = q;
@@ -1429,13 +1405,144 @@
           });
         }, 0);
       }
+      // Export all data to JSON file
+      function exportData() {
+        const data = {
+          nutritionData: nutritionData,
+          personalizedFoods: loadPersonalizedFoods(),
+          exportDate: new Date().toISOString(),
+          appName: "NutriTrack",
+        };
+
+        const dataStr = JSON.stringify(data, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `nutritrack-backup-${new Date().toISOString().split("T")[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        alert("📤 Data exported! Check your Downloads folder.");
+      }
+
+      // Import data from JSON file
+      function importData(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        if (!confirm("⚠️ This will REPLACE your current data. Continue?")) {
+          input.value = "";
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            const data = JSON.parse(e.target.result);
+
+            if (data.nutritionData) {
+              nutritionData = data.nutritionData;
+              localStorage.setItem(
+                "nutritionData",
+                JSON.stringify(nutritionData),
+              );
+            }
+
+            if (data.personalizedFoods) {
+              savePersonalizedFoods(data.personalizedFoods);
+            }
+
+            // Refresh everything
+            renderHistory();
+            updateStreak();
+            loadTempMeals();
+
+            alert("📥 Data imported successfully! Welcome back! 🎉");
+          } catch (err) {
+            alert(
+              "❌ Error reading file. Make sure it's a valid NutriTrack backup.",
+            );
+            console.error(err);
+          }
+          input.value = "";
+        };
+        reader.readAsText(file);
+      }
+      let showingAllHistory = false;
+
+      function toggleHistoryView() {
+        showingAllHistory = !showingAllHistory;
+        const btn = document.getElementById("historyToggle");
+        btn.innerHTML = showingAllHistory ? "📅 Show Recent" : "📅 Show All";
+        renderHistory();
+      }
+
+      function renderHistory() {
+        const container = document.getElementById("history");
+        container.innerHTML = "";
+
+        // Sort by date, newest first
+        let displayData = [...nutritionData].reverse();
+
+        // If not showing all, limit to last 30 days (or last 10 entries if less)
+        if (!showingAllHistory && displayData.length > 3) {
+          displayData = displayData.slice(0, 3);
+        }
+
+        displayData.forEach((e) => {
+          let cal = 0,
+            prot = 0,
+            fat = 0,
+            sug = 0;
+          Object.values(e.meals)
+            .flat()
+            .forEach((f) => {
+              cal += f.cal;
+              prot += f.prot;
+              fat += f.fat;
+              sug += f.sug;
+            });
+
+          const t = getTargets();
+          const calStatus =
+            cal < t.cal.target * 0.8 ? "↓" : cal > t.cal.max ? "↑" : "✓";
+          const protStatus =
+            prot < t.prot.target * 0.8 ? "↓" : prot > t.prot.max ? "↑" : "✓";
+          const fatStatus =
+            fat < t.fat.target * 0.8 ? "↓" : fat > t.fat.max ? "↑" : "✓";
+          const sugStatus =
+            sug < t.sug.target * 0.8 ? "↓" : sug > t.sug.max ? "↑" : "✓";
+
+          const workoutText = e.workout ? ` • ${e.workout}` : "";
+          const div = document.createElement("div");
+          div.className =
+            "card flex justify-between items-center py-3 px-4 text-sm";
+          div.innerHTML = `
+      <div>
+        <div class="font-medium text-nutri-bluegray-900 dark:text-text-dark-primary">${e.date}</div>
+        <div class="text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
+          ${Math.round(cal)} kcal ${calStatus} • ${Math.round(prot)}g prot ${protStatus} • ${Math.round(fat)}g fat ${fatStatus} • ${Math.round(sug)}g sug ${sugStatus}${workoutText}
+        </div>
+      </div>
+      <button onclick="deleteDay('${e.date}')" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-lg">🗑</button>
+    `;
+          container.appendChild(div);
+        });
+
+        // Show hint if entries are hidden
+        if (!showingAllHistory && nutritionData.length > 10) {
+          const hint = document.createElement("div");
+          hint.className =
+            "text-center text-xs text-nutri-bluegray-400 dark:text-nutri-bluegray-500 mt-2";
+          hint.innerHTML = `Showing last 10 entries • ${nutritionData.length - 10} older entries hidden`;
+          container.appendChild(hint);
+        }
+      }
     </script>
+    <script src="foods.js"></script>
   </body>
 </html>
-
-
-
-
-
-
-
