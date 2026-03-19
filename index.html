@@ -79,7 +79,7 @@
       .card {
         @apply bg-white dark:bg-card-dark rounded-2xl p-5 shadow-card border border-nutri-bluegray-200 dark:border-nutri-bluegray-700;
       }
-      /* Fixed: Separated the conflicting classes */
+
       .bg-nutri-bluegray-100-light {
         @apply bg-nutri-bluegray-100 border-nutri-bluegray-200;
       }
@@ -116,7 +116,7 @@
           filter: brightness(1.4) drop-shadow(0 0 16px #2dd4bf);
         }
       }
-      /* Added for food results styling */
+
       .food-result-item {
         @apply flex justify-between items-center p-3 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl hover:bg-nutri-emerald-50 dark:hover:bg-nutri-emerald-900/30 cursor-pointer mb-2 border border-transparent transition-all;
       }
@@ -192,7 +192,6 @@
         </select>
       </div>
 
-      <!--Calories Marker (for you not to get Lost in the ocean of codes)-->
       <div class="flex flex-col md:flex-row gap-4 items-start mb-6">
         <div
           class="flex-1 text-sm text-nutri-bluegray-600 dark:text-nutri-bluegray-300 bg-nutri-bluegray-100 dark:bg-card-dark p-5 rounded-xl border border-nutri-emerald-200 shadow-sm dark:border-nutri-emerald-900/30"
@@ -207,6 +206,7 @@
               <input
                 id="targetCal"
                 type="number"
+                step="0.01"
                 value="1500"
                 class="w-20 md:w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
               />
@@ -215,18 +215,18 @@
               <input
                 id="maxCal"
                 type="number"
+                step="0.01"
                 value="1700"
                 class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
               />
             </div>
-
-            <!--Protein Marker (for you not to get Lost in the ocean of codes)-->
 
             <div class="flex items-center gap-2">
               <label class="w-24 md:w-32 font-medium">Proteins:</label>
               <input
                 id="targetProt"
                 type="number"
+                step="0.01"
                 value="100"
                 class="w-20 md:w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
               />
@@ -235,21 +235,18 @@
               <input
                 id="maxProt"
                 type="number"
+                step="0.01"
                 value="130"
                 class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
               />
-              <!--<span class="text-xs">)</span>-->
             </div>
-
-            <!--Protein Marker (for you not to get Lost in the ocean of codes)-->
-
-            <!--Fat Marker (for you not to get Lost in the ocean of codes)-->
 
             <div class="flex items-center gap-2">
               <label class="w-24 md:w-32 font-medium">Fats:</label>
               <input
                 id="targetFat"
                 type="number"
+                step="0.01"
                 value="50"
                 class="w-20 md:w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
               />
@@ -258,20 +255,18 @@
               <input
                 id="maxFat"
                 type="number"
+                step="0.01"
                 value="70"
                 class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
               />
-              <!--<span class="text-xs">)</span>-->
             </div>
-            <!--Fat Marker (for you not to get Lost in the ocean of codes)-->
-
-            <!--Sugar Marker (for you not to get Lost in the ocean of codes)-->
 
             <div class="flex items-center gap-2">
               <label class="w-24 md:w-32 font-medium">Sugar:</label>
               <input
                 id="targetSug"
                 type="number"
+                step="0.01"
                 value="30"
                 class="w-20 md:w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
               />
@@ -280,12 +275,11 @@
               <input
                 id="maxSug"
                 type="number"
+                step="0.01"
                 value="45"
                 class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
               />
-              <!--<span class="text-xs">)</span>-->
             </div>
-            <!--Sugar Marker (for you not to get Lost in the ocean of codes)-->
           </div>
         </div>
 
@@ -354,9 +348,7 @@
           <div
             id="remainPercent"
             class="mt-4 text-center text-xs font-medium text-nutri-emerald-700 dark:text-nutri-emerald-300"
-          >
-            <!--You have about 60% more to eat healthy! 💪🏼-->
-          </div>
+          ></div>
         </div>
       </div>
 
@@ -379,7 +371,6 @@
           class="mt-4 space-y-2 max-h-60 overflow-y-auto"
         ></div>
 
-        <!-- Add Personalized Food Button -->
         <div
           class="mt-4 pt-4 border-t border-nutri-bluegray-200 dark:border-nutri-bluegray-700"
         >
@@ -516,7 +507,6 @@
       </section>
     </div>
 
-    <!-- Modal for Adding Personalized Food -->
     <div
       id="addFoodModal"
       class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 hidden"
@@ -546,12 +536,14 @@
             <input
               id="newFoodCal"
               type="number"
+              step="0.01"
               placeholder="Calories"
               class="border rounded-xl p-3 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
             />
             <input
               id="newFoodProt"
               type="number"
+              step="0.01"
               placeholder="Protein (g)"
               class="border rounded-xl p-3 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
             />
@@ -560,12 +552,14 @@
             <input
               id="newFoodFat"
               type="number"
+              step="0.01"
               placeholder="Fat (g)"
               class="border rounded-xl p-3 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
             />
             <input
               id="newFoodSug"
               type="number"
+              step="0.01"
               placeholder="Sugar (g)"
               class="border rounded-xl p-3 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
             />
@@ -581,31 +575,26 @@
     </div>
 
     <script>
-      // Load personalized foods from localStorage
       function loadPersonalizedFoods() {
         const saved = localStorage.getItem("personalizedPinoyFoods");
         return saved ? JSON.parse(saved) : {};
       }
 
-      // Save personalized foods to localStorage
       function savePersonalizedFoods(foods) {
         localStorage.setItem("personalizedPinoyFoods", JSON.stringify(foods));
       }
 
-      // Merge default and personalized foods
       function getAllFoods() {
         const personalized = loadPersonalizedFoods();
         return { ...pinoyFallback, ...personalized };
       }
 
-      // Modal functions
       function showAddPersonalizedFoodModal() {
         document.getElementById("addFoodModal").classList.remove("hidden");
       }
 
       function closeAddFoodModal() {
         document.getElementById("addFoodModal").classList.add("hidden");
-        // Clear inputs
         document.getElementById("newFoodName").value = "";
         document.getElementById("newFoodCal").value = "";
         document.getElementById("newFoodProt").value = "";
@@ -639,7 +628,6 @@
 
         const personalized = loadPersonalizedFoods();
 
-        // Check if already exists in default foods
         if (pinoyFallback[name]) {
           if (
             !confirm(
@@ -656,14 +644,12 @@
         alert(`"${name}" saved to your personalized foods!`);
         closeAddFoodModal();
 
-        // If search is active, refresh results
         const searchTerm = document.getElementById("foodInput").value.trim();
         if (searchTerm) {
           lookupFood();
         }
       }
 
-      // Updated lookup function
       function lookupFood() {
         const term = document
           .getElementById("foodInput")
@@ -730,7 +716,6 @@
       }
     </script>
 
-    <!-- Main App Script -->
     <script>
       const meals = [
         { id: "breakfast", emoji: "🌞", name: "Breakfast" },
@@ -741,7 +726,39 @@
 
       let nutritionData =
         JSON.parse(localStorage.getItem("nutritionData")) || [];
-      let currentDate = new Date().toISOString().split("T")[0];
+      let currentDate = getLocalDateString();
+
+      function getLocalDateString(date = new Date()) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function parseLocalDate(dateStr) {
+        const [year, month, day] = dateStr.split("-").map(Number);
+        return new Date(year, month - 1, day);
+      }
+
+      function diffDays(dateA, dateB) {
+        const msPerDay = 1000 * 60 * 60 * 24;
+        const utcA = Date.UTC(
+          dateA.getFullYear(),
+          dateA.getMonth(),
+          dateA.getDate(),
+        );
+        const utcB = Date.UTC(
+          dateB.getFullYear(),
+          dateB.getMonth(),
+          dateB.getDate(),
+        );
+        return Math.round((utcA - utcB) / msPerDay);
+      }
+
+      function formatNumber(value, decimals = 2) {
+        const num = Number(value) || 0;
+        return Number.isInteger(num) ? String(num) : num.toFixed(decimals);
+      }
 
       function getTargets() {
         return {
@@ -768,17 +785,21 @@
         document.getElementById("date").value = currentDate;
 
         if (nutritionData.length > 0) {
-          const lastEntry = nutritionData[nutritionData.length - 1];
-          if (lastEntry.weight != null && !isNaN(lastEntry.weight)) {
+          const lastEntry = [...nutritionData]
+            .sort((a, b) => a.date.localeCompare(b.date))
+            .at(-1);
+          if (lastEntry?.weight != null && !isNaN(lastEntry.weight)) {
             document.getElementById("weight").value = lastEntry.weight;
           }
         }
 
-        loadStreak();
         renderMeals();
         loadTempMeals();
         loadLiveFields();
+        loadStreak();
         renderHistory();
+        addInputListeners();
+        computeTotals();
         newQuote();
       });
 
@@ -812,10 +833,10 @@
         return `
           <div class="grid grid-cols-6 gap-3 items-center food-row" data-index="${index}">
             <input placeholder="food name" type="text" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 col-span-1 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="name">
-            <input placeholder="kcal" type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="cal">
-            <input placeholder="prot" type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="prot">
-            <input placeholder="fat" type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="fat">
-            <input placeholder="sugar" type="number" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="sug">
+            <input placeholder="kcal" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="cal">
+            <input placeholder="prot" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="prot">
+            <input placeholder="fat" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="fat">
+            <input placeholder="sugar" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="sug">
             <button onclick="removeFoodRow(this)" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-sm">×</button>
           </div>
         `;
@@ -901,13 +922,36 @@
 
       function loadLiveFields() {
         const saved = localStorage.getItem("nutriLiveFields");
-        if (saved) {
+        if (!saved) {
+          document.getElementById("date").value = currentDate;
+          return;
+        }
+
+        try {
           const data = JSON.parse(saved);
-          if (data.weight)
+          if (data.weight) {
             document.getElementById("weight").value = data.weight;
-          if (data.workout)
+          }
+          if (data.workout) {
             document.getElementById("workout").value = data.workout;
-          if (data.date) document.getElementById("date").value = data.date;
+          }
+
+          const savedDate = data.date;
+          const shouldKeepSavedDate =
+            savedDate &&
+            (savedDate === currentDate ||
+              nutritionData.some((entry) => entry.date === savedDate));
+
+          document.getElementById("date").value = shouldKeepSavedDate
+            ? savedDate
+            : currentDate;
+
+          if (!shouldKeepSavedDate) {
+            autoSaveLiveFields();
+          }
+        } catch (error) {
+          console.error("Error loading live fields:", error);
+          document.getElementById("date").value = currentDate;
         }
       }
 
@@ -937,34 +981,40 @@
           });
         });
 
-        document.getElementById("tcal").textContent = Math.round(totals.cal);
-        document.getElementById("tprot").textContent = Math.round(totals.prot);
-        document.getElementById("tfat").textContent = Math.round(totals.fat);
-        document.getElementById("tsug").textContent = Math.round(totals.sug);
+        document.getElementById("tcal").textContent = formatNumber(totals.cal);
+        document.getElementById("tprot").textContent = formatNumber(
+          totals.prot,
+        );
+        document.getElementById("tfat").textContent = formatNumber(totals.fat);
+        document.getElementById("tsug").textContent = formatNumber(totals.sug);
 
         const targetCal =
-          parseInt(document.getElementById("targetCal")?.value) || 1500;
+          Number(document.getElementById("targetCal")?.value) || 1500;
         const targetProt =
-          parseInt(document.getElementById("targetProt")?.value) || 100;
+          Number(document.getElementById("targetProt")?.value) || 100;
         const targetFat =
-          parseInt(document.getElementById("targetFat")?.value) || 50;
+          Number(document.getElementById("targetFat")?.value) || 50;
         const targetSug =
-          parseInt(document.getElementById("targetSug")?.value) || 30;
+          Number(document.getElementById("targetSug")?.value) || 30;
 
-        const remainCal = Math.max(0, Math.round(targetCal - totals.cal));
-        const remainProt = Math.max(0, Math.round(targetProt - totals.prot));
-        const remainFat = Math.max(0, Math.round(targetFat - totals.fat));
-        const remainSug = Math.max(0, Math.round(targetSug - totals.sug));
+        const remainCal = Math.max(0, targetCal - totals.cal);
+        const remainProt = Math.max(0, targetProt - totals.prot);
+        const remainFat = Math.max(0, targetFat - totals.fat);
+        const remainSug = Math.max(0, targetSug - totals.sug);
 
-        document.getElementById("remainCal").textContent = remainCal;
-        document.getElementById("remainProt").textContent = remainProt;
-        document.getElementById("remainFat").textContent = remainFat;
-        document.getElementById("remainSug").textContent = remainSug;
+        document.getElementById("remainCal").textContent =
+          formatNumber(remainCal);
+        document.getElementById("remainProt").textContent =
+          formatNumber(remainProt);
+        document.getElementById("remainFat").textContent =
+          formatNumber(remainFat);
+        document.getElementById("remainSug").textContent =
+          formatNumber(remainSug);
 
         const remainPercentValue =
-          targetCal > 0 ? Math.round((remainCal / targetCal) * 100) : 0;
+          targetCal > 0 ? Math.max(0, (remainCal / targetCal) * 100) : 0;
         document.getElementById("remainPercent").textContent =
-          `You have about ${remainPercentValue}% more to eat healthy! 🥑`;
+          `You have about ${formatNumber(remainPercentValue)}% more to eat healthy! 🥑`;
 
         const t = getTargets();
         updateStatus(
@@ -1079,50 +1129,6 @@
         localStorage.removeItem("nutriLiveFields");
       }
 
-      function renderHistory() {
-        const container = document.getElementById("history");
-        container.innerHTML = "";
-        [...nutritionData].reverse().forEach((e) => {
-          let cal = 0,
-            prot = 0,
-            fat = 0,
-            sug = 0;
-          Object.values(e.meals)
-            .flat()
-            .forEach((f) => {
-              cal += f.cal;
-              prot += f.prot;
-              fat += f.fat;
-              sug += f.sug;
-            });
-
-          const t = getTargets();
-          const calStatus =
-            cal < t.cal.target * 0.8 ? "↓" : cal > t.cal.max ? "↑" : "✓";
-          const protStatus =
-            prot < t.prot.target * 0.8 ? "↓" : prot > t.prot.max ? "↑" : "✓";
-          const fatStatus =
-            fat < t.fat.target * 0.8 ? "↓" : fat > t.fat.max ? "↑" : "✓";
-          const sugStatus =
-            sug < t.sug.target * 0.8 ? "↓" : sug > t.sug.max ? "↑" : "✓";
-
-          const workoutText = e.workout ? ` • ${e.workout}` : "";
-          const div = document.createElement("div");
-          div.className =
-            "card flex justify-between items-center py-3 px-4 text-sm";
-          div.innerHTML = `
-            <div>
-              <div class="font-medium text-nutri-bluegray-900 dark:text-text-dark-primary">${e.date}</div>
-              <div class="text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
-                ${Math.round(cal)} kcal ${calStatus} • ${Math.round(prot)}g prot ${protStatus} • ${Math.round(fat)}g fat ${fatStatus} • ${Math.round(sug)}g sug ${sugStatus}${workoutText}
-              </div>
-            </div>
-            <button onclick="deleteDay('${e.date}')" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-lg">🗑</button>
-          `;
-          container.appendChild(div);
-        });
-      }
-
       function deleteDay(date) {
         if (!confirm(`Delete ${date}?`)) return;
         nutritionData = nutritionData.filter((d) => d.date !== date);
@@ -1173,35 +1179,38 @@
           return;
         }
 
-        nutritionData.sort((a, b) => a.date.localeCompare(b.date));
-        let streak = 0;
-        let prev = null;
+        const uniqueDates = [
+          ...new Set(nutritionData.map((entry) => entry.date)),
+        ].sort((a, b) => a.localeCompare(b));
 
-        for (let entry of nutritionData) {
-          if (!prev) {
-            streak = 1;
-            prev = entry.date;
-            continue;
-          }
-          const diff =
-            (new Date(entry.date) - new Date(prev)) / (1000 * 60 * 60 * 24);
+        let streak = 1;
+        let runningStreak = 1;
+
+        for (let i = 1; i < uniqueDates.length; i++) {
+          const diff = diffDays(
+            parseLocalDate(uniqueDates[i]),
+            parseLocalDate(uniqueDates[i - 1]),
+          );
+
           if (diff === 1) {
-            streak++;
+            runningStreak += 1;
           } else if (diff > 1) {
-            streak = 1;
+            runningStreak = 1;
           }
-          prev = entry.date;
+
+          streak = runningStreak;
         }
 
-        if (
-          !nutritionData.some((e) => e.date === currentDate) &&
-          prev &&
-          (new Date(currentDate) - new Date(prev)) / (1000 * 60 * 60 * 24) === 1
-        ) {
-          streak++;
+        const lastSavedDate = uniqueDates.at(-1);
+        const todayDiff = lastSavedDate
+          ? diffDays(parseLocalDate(currentDate), parseLocalDate(lastSavedDate))
+          : 0;
+
+        if (!uniqueDates.includes(currentDate) && todayDiff === 1) {
+          streak += 1;
         }
 
-        document.getElementById("streak").textContent = streak;
+        document.getElementById("streak").textContent = String(streak);
       }
 
       function updateStreak() {
@@ -1405,7 +1414,6 @@
           });
         }, 0);
       }
-      // Export all data to JSON file
       function exportData() {
         const data = {
           nutritionData: nutritionData,
@@ -1429,7 +1437,6 @@
         alert("📤 Data exported! Check your Downloads folder.");
       }
 
-      // Import data from JSON file
       function importData(input) {
         const file = input.files[0];
         if (!file) return;
@@ -1456,7 +1463,6 @@
               savePersonalizedFoods(data.personalizedFoods);
             }
 
-            // Refresh everything
             renderHistory();
             updateStreak();
             loadTempMeals();
@@ -1485,10 +1491,8 @@
         const container = document.getElementById("history");
         container.innerHTML = "";
 
-        // Sort by date, newest first
         let displayData = [...nutritionData].reverse();
 
-        // If not showing all, limit to last 30 days (or last 10 entries if less)
         if (!showingAllHistory && displayData.length > 3) {
           displayData = displayData.slice(0, 3);
         }
@@ -1533,7 +1537,6 @@
           container.appendChild(div);
         });
 
-        // Show hint if entries are hidden
         if (!showingAllHistory && nutritionData.length > 10) {
           const hint = document.createElement("div");
           hint.className =
