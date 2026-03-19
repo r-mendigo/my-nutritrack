@@ -127,7 +127,7 @@
   </head>
 
   <body class="min-h-screen" id="app-body">
-    <div class="max-w-3xl mx-auto p-5 pb-12">
+    <div class="max-w-5xl mx-auto p-4 sm:p-5 pb-12">
       <header
         class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
       >
@@ -192,105 +192,220 @@
         </select>
       </div>
 
-      <div class="flex flex-col md:flex-row gap-4 items-start mb-6">
-        <div
-          class="flex-1 text-sm text-nutri-bluegray-600 dark:text-nutri-bluegray-300 bg-nutri-bluegray-100 dark:bg-card-dark p-5 rounded-xl border border-nutri-emerald-200 shadow-sm dark:border-nutri-emerald-900/30"
-        >
-          <strong class="block text-base mb-3"
-            >Today's Targets (click to edit)</strong
+      <!-- Top Dashboard -->
+      <div
+        class="grid grid-cols-1 xl:grid-cols-[1.2fr_0.9fr] gap-4 mb-6 items-start"
+      >
+        <!-- LEFT COLUMN -->
+        <div class="space-y-4">
+          <!-- Today's Targets -->
+          <div
+            class="text-sm text-nutri-bluegray-600 dark:text-nutri-bluegray-300 bg-nutri-bluegray-100 dark:bg-card-dark p-5 rounded-xl border border-nutri-emerald-200 shadow-sm dark:border-nutri-emerald-900/30"
           >
+            <strong class="block text-base mb-3">
+              Today's Targets (click to edit)
+            </strong>
 
-          <div class="space-y-2">
-            <div class="flex items-center gap-2">
-              <label class="w-24 md:w-32 font-medium">Calories:</label>
-              <input
-                id="targetCal"
-                type="number"
-                step="0.01"
-                value="1500"
-                class="w-20 md:w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
-              />
-              <span class="text-nutri-emerald-600">kcal</span>
-              <span class="text-xs text-nutri-bluegray-500">max</span>
-              <input
-                id="maxCal"
-                type="number"
-                step="0.01"
-                value="1700"
-                class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
-              />
+            <div class="space-y-2">
+              <div class="flex items-center gap-2">
+                <label class="w-24 md:w-32 font-medium">Calories:</label>
+                <input
+                  id="targetCal"
+                  type="number"
+                  value="1500"
+                  class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+                />
+                <span class="text-nutri-emerald-700 dark:text-nutri-emerald-300"
+                  >kcal</span
+                >
+                <span class="text-xs text-nutri-bluegray-500">max</span>
+                <input
+                  id="maxCal"
+                  type="number"
+                  value="1700"
+                  class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+                />
+              </div>
+
+              <div class="flex items-center gap-2">
+                <label class="w-24 md:w-32 font-medium">Proteins:</label>
+                <input
+                  id="targetProt"
+                  type="number"
+                  value="100"
+                  class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+                />
+                <span class="text-nutri-emerald-700 dark:text-nutri-emerald-300"
+                  >grams</span
+                >
+                <span class="text-xs text-nutri-bluegray-500">up to</span>
+                <input
+                  id="maxProt"
+                  type="number"
+                  value="130"
+                  class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+                />
+              </div>
+
+              <div class="flex items-center gap-2">
+                <label class="w-24 md:w-32 font-medium">Fats:</label>
+                <input
+                  id="targetFat"
+                  type="number"
+                  value="50"
+                  class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+                />
+                <span class="text-nutri-emerald-700 dark:text-nutri-emerald-300"
+                  >grams</span
+                >
+                <span class="text-xs text-nutri-bluegray-500">up to</span>
+                <input
+                  id="maxFat"
+                  type="number"
+                  value="70"
+                  class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+                />
+              </div>
+
+              <div class="flex items-center gap-2">
+                <label class="w-24 md:w-32 font-medium">Sugar:</label>
+                <input
+                  id="targetSug"
+                  type="number"
+                  value="30"
+                  class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+                />
+                <span class="text-nutri-emerald-700 dark:text-nutri-emerald-300"
+                  >grams</span
+                >
+                <span class="text-xs text-nutri-bluegray-500">up to</span>
+                <input
+                  id="maxSug"
+                  type="number"
+                  value="45"
+                  class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
+                />
+              </div>
             </div>
+          </div>
 
-            <div class="flex items-center gap-2">
-              <label class="w-24 md:w-32 font-medium">Proteins:</label>
-              <input
-                id="targetProt"
-                type="number"
-                step="0.01"
-                value="100"
-                class="w-20 md:w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
-              />
-              <span class="text-nutri-emerald-600">grams</span>
-              <span class="text-xs text-nutri-bluegray-500">up to</span>
-              <input
-                id="maxProt"
-                type="number"
-                step="0.01"
-                value="130"
-                class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
-              />
+          <!-- Best Next Meal -->
+          <div class="mt-0">
+            <button
+              id="bestMealBtn"
+              type="button"
+              class="w-full rounded-xl bg-nutri-emerald-600 hover:bg-nutri-emerald-700 text-white font-semibold py-3 px-4 transition"
+            >
+              Best Next Meal
+            </button>
+
+            <div
+              id="bestMealResult"
+              class="hidden mt-3 rounded-xl border border-nutri-bluegray-200 dark:border-nutri-bluegray-700 bg-white/70 dark:bg-nutri-bluegray-900/50 p-4 space-y-2"
+            >
+              <div
+                id="bestMealTitle"
+                class="font-semibold text-nutri-bluegray-900 dark:text-text-dark-primary"
+              ></div>
+              <div
+                id="bestMealText"
+                class="text-sm text-nutri-bluegray-700 dark:text-text-dark-secondary"
+              ></div>
+              <ul
+                id="bestMealFoods"
+                class="list-disc pl-5 space-y-1 text-sm text-nutri-bluegray-700 dark:text-text-dark-secondary"
+              ></ul>
             </div>
+          </div>
 
-            <div class="flex items-center gap-2">
-              <label class="w-24 md:w-32 font-medium">Fats:</label>
-              <input
-                id="targetFat"
-                type="number"
-                step="0.01"
-                value="50"
-                class="w-20 md:w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
-              />
-              <span class="text-nutri-emerald-600">grams</span>
-              <span class="text-xs text-nutri-bluegray-500">up to</span>
-              <input
-                id="maxFat"
-                type="number"
-                step="0.01"
-                value="70"
-                class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
-              />
-            </div>
+          <!-- Today's Total Live Chart -->
+          <div
+            class="rounded-2xl border border-nutri-emerald-200 bg-white/70 dark:bg-nutri-bluegray-900/50 p-4"
+          >
+            <h3
+              class="text-lg font-semibold text-nutri-bluegray-900 dark:text-text-dark-primary mb-4"
+            >
+              Today's Total Live Chart
+            </h3>
 
-            <div class="flex items-center gap-2">
-              <label class="w-24 md:w-32 font-medium">Sugar:</label>
-              <input
-                id="targetSug"
-                type="number"
-                step="0.01"
-                value="30"
-                class="w-20 md:w-24 border rounded px-2 py-1 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
-              />
-              <span class="text-nutri-emerald-600">grams</span>
-              <span class="text-xs text-nutri-bluegray-500">up to</span>
-              <input
-                id="maxSug"
-                type="number"
-                step="0.01"
-                value="45"
-                class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
-              />
+            <div class="space-y-4">
+              <div>
+                <div class="flex justify-between text-sm mb-1">
+                  <span>Calories</span>
+                  <span id="chartCalLabel">0 / 1500</span>
+                </div>
+                <div
+                  class="h-3 rounded-full bg-nutri-bluegray-100 dark:bg-nutri-bluegray-800 overflow-hidden"
+                >
+                  <div
+                    id="chartCalBar"
+                    class="h-full rounded-full bg-nutri-emerald-500"
+                    style="width: 0%"
+                  ></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-sm mb-1">
+                  <span>Protein</span>
+                  <span id="chartProtLabel">0 / 100</span>
+                </div>
+                <div
+                  class="h-3 rounded-full bg-nutri-bluegray-100 dark:bg-nutri-bluegray-800 overflow-hidden"
+                >
+                  <div
+                    id="chartProtBar"
+                    class="h-full rounded-full bg-sky-500"
+                    style="width: 0%"
+                  ></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-sm mb-1">
+                  <span>Fat</span>
+                  <span id="chartFatLabel">0 / 50</span>
+                </div>
+                <div
+                  class="h-3 rounded-full bg-nutri-bluegray-100 dark:bg-nutri-bluegray-800 overflow-hidden"
+                >
+                  <div
+                    id="chartFatBar"
+                    class="h-full rounded-full bg-amber-500"
+                    style="width: 0%"
+                  ></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-sm mb-1">
+                  <span>Sugar</span>
+                  <span id="chartSugLabel">0 / 30</span>
+                </div>
+                <div
+                  class="h-3 rounded-full bg-nutri-bluegray-100 dark:bg-nutri-bluegray-800 overflow-hidden"
+                >
+                  <div
+                    id="chartSugBar"
+                    class="h-full rounded-full bg-rose-500"
+                    style="width: 0%"
+                  ></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
+        <!-- RIGHT COLUMN -->
         <div
-          class="w-full md:w-80 p-5 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl shadow-sm border border-nutri-emerald-200 dark:border-nutri-emerald-900/30"
+          class="w-full p-5 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl shadow-sm border border-nutri-emerald-200 dark:border-nutri-emerald-900/30"
         >
           <h3
             class="text-sm font-semibold text-nutri-emerald-700 dark:text-nutri-emerald-300 mb-4 text-center"
           >
             Remaining Today
           </h3>
+
           <div class="grid grid-cols-2 gap-4 text-center">
             <div>
               <div
@@ -305,12 +420,13 @@
                 Calories
               </div>
             </div>
+
             <div>
               <div
                 class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
                 id="remainProt"
               >
-                74
+                40
               </div>
               <div
                 class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
@@ -318,12 +434,13 @@
                 Protein (g)
               </div>
             </div>
+
             <div>
               <div
                 class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
                 id="remainFat"
               >
-                26
+                20
               </div>
               <div
                 class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
@@ -331,12 +448,13 @@
                 Fat (g)
               </div>
             </div>
+
             <div>
               <div
                 class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
                 id="remainSug"
               >
-                0
+                12
               </div>
               <div
                 class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
@@ -345,15 +463,36 @@
               </div>
             </div>
           </div>
+
           <div
             id="remainPercent"
             class="mt-4 text-center text-xs font-medium text-nutri-emerald-700 dark:text-nutri-emerald-300"
           ></div>
+
+          <div
+            id="macroAnalysis"
+            class="mt-4 rounded-xl bg-white/70 dark:bg-nutri-bluegray-900/50 border border-nutri-bluegray-200 dark:border-nutri-bluegray-700 p-4 text-sm text-nutri-bluegray-700 dark:text-text-dark-secondary space-y-3"
+          >
+            <div
+              class="font-semibold text-nutri-bluegray-900 dark:text-text-dark-primary"
+            >
+              Smart Analysis
+            </div>
+
+            <div id="analysisSummary">
+              Start logging your meals and I’ll guide your next move.
+            </div>
+
+            <div
+              id="analysisRecommendation"
+              class="text-nutri-emerald-700 dark:text-nutri-emerald-300 font-medium"
+            ></div>
+          </div>
         </div>
       </div>
 
       <div class="card mb-6">
-        <div class="flex gap-3">
+        <div class="flex flex-col sm:flex-row gap-3">
           <input
             id="foodInput"
             placeholder="Type food (chicken, rice, egg...)"
@@ -831,13 +970,13 @@
 
       function createFoodRowHTML(mealId, index) {
         return `
-          <div class="grid grid-cols-6 gap-3 items-center food-row" data-index="${index}">
-            <input placeholder="food name" type="text" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 col-span-1 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="name">
-            <input placeholder="kcal" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="cal">
-            <input placeholder="prot" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="prot">
-            <input placeholder="fat" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="fat">
-            <input placeholder="sugar" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="sug">
-            <button onclick="removeFoodRow(this)" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-sm">×</button>
+          <div class="grid grid-cols-2 sm:grid-cols-6 gap-3 items-center food-row" data-index="${index}">
+            <input placeholder="food name" type="text" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 col-span-2 sm:col-span-1 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="name">
+            <input placeholder="kcal" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="cal">
+            <input placeholder="prot" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="prot">
+            <input placeholder="fat" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="fat">
+            <input placeholder="sugar" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="sug">
+            <button onclick="removeFoodRow(this)" class="col-span-2 sm:col-span-1 text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-sm font-semibold py-2">Remove</button>
           </div>
         `;
       }
@@ -964,9 +1103,488 @@
       document
         .getElementById("date")
         .addEventListener("change", autoSaveLiveFields);
+      function formatSmartNumber(value) {
+        return Number.isInteger(value)
+          ? String(value)
+          : Number(value).toFixed(1);
+      }
 
+      function getFoodSuggestionPool() {
+        return [
+          {
+            name: "Chicken breast",
+            type: "protein",
+            calories: 165,
+            protein: 31,
+            fat: 3.6,
+            sugar: 0,
+            tags: ["lean", "high-protein", "low-fat"],
+          },
+          {
+            name: "Tuna in water",
+            type: "protein",
+            calories: 120,
+            protein: 26,
+            fat: 1,
+            sugar: 0,
+            tags: ["lean", "high-protein", "low-fat"],
+          },
+          {
+            name: "Egg whites",
+            type: "protein",
+            calories: 52,
+            protein: 11,
+            fat: 0.2,
+            sugar: 0.7,
+            tags: ["lean", "low-calorie", "high-protein"],
+          },
+          {
+            name: "Shrimp",
+            type: "protein",
+            calories: 99,
+            protein: 24,
+            fat: 0.3,
+            sugar: 0,
+            tags: ["lean", "low-fat", "high-protein"],
+          },
+          {
+            name: "White fish",
+            type: "protein",
+            calories: 110,
+            protein: 23,
+            fat: 1.5,
+            sugar: 0,
+            tags: ["lean", "light", "high-protein"],
+          },
+          {
+            name: "Greek yogurt non-fat",
+            type: "protein",
+            calories: 90,
+            protein: 15,
+            fat: 0,
+            sugar: 4,
+            tags: ["lean", "snack", "high-protein"],
+          },
+          {
+            name: "Tokwa / firm tofu",
+            type: "protein",
+            calories: 80,
+            protein: 10,
+            fat: 4,
+            sugar: 1,
+            tags: ["plant", "light", "protein"],
+          },
+          {
+            name: "Steamed rice",
+            type: "carb",
+            calories: 130,
+            protein: 2.5,
+            fat: 0.3,
+            sugar: 0,
+            tags: ["carb", "pinoy", "energy"],
+          },
+          {
+            name: "Boiled potato",
+            type: "carb",
+            calories: 87,
+            protein: 2,
+            fat: 0.1,
+            sugar: 1.2,
+            tags: ["carb", "light", "filling"],
+          },
+          {
+            name: "Oats",
+            type: "carb",
+            calories: 150,
+            protein: 5,
+            fat: 3,
+            sugar: 1,
+            tags: ["carb", "fiber", "steady-energy"],
+          },
+          {
+            name: "Banana",
+            type: "carb",
+            calories: 105,
+            protein: 1.3,
+            fat: 0.3,
+            sugar: 14,
+            tags: ["fruit", "energy"],
+          },
+          {
+            name: "Sautéed cabbage",
+            type: "veg",
+            calories: 35,
+            protein: 1.5,
+            fat: 1,
+            sugar: 3,
+            tags: ["veg", "light", "pinoy"],
+          },
+          {
+            name: "Pechay / bok choy",
+            type: "veg",
+            calories: 20,
+            protein: 2,
+            fat: 0.2,
+            sugar: 1,
+            tags: ["veg", "light", "pinoy"],
+          },
+          {
+            name: "Ampalaya with egg whites",
+            type: "mixed",
+            calories: 85,
+            protein: 10,
+            fat: 2,
+            sugar: 2,
+            tags: ["pinoy", "light", "protein-forward"],
+          },
+          {
+            name: "Tinolang manok (lean pieces)",
+            type: "mixed",
+            calories: 180,
+            protein: 24,
+            fat: 6,
+            sugar: 2,
+            tags: ["pinoy", "comfort", "protein-forward"],
+          },
+          {
+            name: "Sinigang na isda",
+            type: "mixed",
+            calories: 160,
+            protein: 22,
+            fat: 4,
+            sugar: 3,
+            tags: ["pinoy", "light", "protein-forward"],
+          },
+          {
+            name: "Inihaw na bangus",
+            type: "mixed",
+            calories: 210,
+            protein: 23,
+            fat: 12,
+            sugar: 0,
+            tags: ["pinoy", "protein"],
+          },
+          {
+            name: "Chicken adobo (lean, light sauce)",
+            type: "mixed",
+            calories: 210,
+            protein: 25,
+            fat: 9,
+            sugar: 2,
+            tags: ["pinoy", "protein-forward"],
+          },
+        ];
+      }
+
+      function getBestSuggestionSet(totals, targets) {
+        const remainCal = Math.max(0, targets.cal.target - totals.cal);
+        const remainProt = Math.max(0, targets.prot.target - totals.prot);
+        const remainFat = Math.max(0, targets.fat.target - totals.fat);
+        const remainSug = Math.max(0, targets.sug.target - totals.sug);
+
+        const overCal = Math.max(0, totals.cal - targets.cal.max);
+        const overFat = Math.max(0, totals.fat - targets.fat.max);
+        const overSug = Math.max(0, totals.sug - targets.sug.max);
+
+        if (totals.cal === 0 && totals.prot === 0) {
+          return {
+            title: "Best first meal",
+            text: "Start with a protein-first meal so your day begins strong instead of chasing protein later.",
+            foods: [
+              "2 whole eggs + extra egg whites",
+              "Greek yogurt non-fat",
+              "Chicken breast with rice",
+              "Tinolang manok (lean pieces)",
+            ],
+          };
+        }
+
+        if (overFat > 0 && remainProt > 0) {
+          return {
+            title: "Lean protein rescue meal",
+            text: "Fat is already high, so the next meal should push protein up without adding much oil.",
+            foods: [
+              "Tuna in water",
+              "Chicken breast",
+              "Egg whites",
+              "Shrimp or white fish",
+              "Sinigang na isda",
+            ],
+          };
+        }
+
+        if (overSug > 0 && remainProt > 0) {
+          return {
+            title: "Savory protein next meal",
+            text: "Sugar is already high, so stay away from sweet snacks and keep the next meal savory and protein-led.",
+            foods: [
+              "Chicken breast with vegetables",
+              "Tokwa with pechay",
+              "Egg whites + pechay",
+              "Tinolang manok",
+            ],
+          };
+        }
+
+        if (remainProt >= 25 && remainCal >= 250) {
+          return {
+            title: "High-protein main meal",
+            text: "You still need a meaningful amount of protein and calories, so go for a real meal, not just a snack.",
+            foods: [
+              "Chicken breast + rice + cabbage",
+              "Sinigang na isda + rice",
+              "Tinolang manok + rice",
+              "Tuna + boiled potato + vegetables",
+            ],
+          };
+        }
+
+        if (remainProt >= 20 && remainCal < 250) {
+          return {
+            title: "Tight-calorie protein fix",
+            text: "Protein is still low, but calories are limited now. Choose compact lean protein.",
+            foods: [
+              "Tuna in water",
+              "Egg whites",
+              "Greek yogurt non-fat",
+              "Shrimp",
+              "White fish",
+            ],
+          };
+        }
+
+        if (remainFat <= 5 && remainProt > 0) {
+          return {
+            title: "Very lean next meal",
+            text: "You are close to your fat limit, so keep the next meal very clean and simple.",
+            foods: [
+              "Egg whites",
+              "Tuna in water",
+              "White fish",
+              "Chicken breast with pechay",
+            ],
+          };
+        }
+
+        if (remainCal >= 300 && remainProt < 15) {
+          return {
+            title: "Balanced top-up meal",
+            text: "Protein is nearly okay, so you can use the remaining calories for a balanced meal.",
+            foods: [
+              "Rice + chicken adobo (lean)",
+              "Oats + Greek yogurt",
+              "Boiled potato + white fish",
+              "Inihaw na bangus + vegetables",
+            ],
+          };
+        }
+
+        if (remainProt <= 10 && remainCal <= 150) {
+          return {
+            title: "Light finish",
+            text: "You are close to your targets. Keep the final intake small and controlled.",
+            foods: [
+              "Greek yogurt non-fat",
+              "Egg whites",
+              "Small serving of tofu",
+              "Light broth-based soup",
+            ],
+          };
+        }
+
+        return {
+          title: "Balanced next meal",
+          text: "A protein-priority meal still makes the most sense for the rest of today.",
+          foods: [
+            "Chicken breast + vegetables",
+            "Fish + rice",
+            "Tokwa + pechay",
+            "Tinolang manok",
+          ],
+        };
+      }
+
+      function getLowCalHighProteinRecommendations(totals, targets) {
+        const remainCal = Math.max(0, targets.cal.target - totals.cal);
+        const remainProt = Math.max(0, targets.prot.target - totals.prot);
+        const remainFat = Math.max(0, targets.fat.target - totals.fat);
+
+        const foods = getFoodSuggestionPool();
+
+        return foods
+          .filter((food) => food.protein >= 10)
+          .filter((food) => food.calories <= Math.max(120, remainCal))
+          .filter((food) => food.fat <= Math.max(5, remainFat))
+          .sort((a, b) => b.protein / b.calories - a.protein / a.calories)
+          .slice(0, 5)
+          .map(
+            (food) =>
+              `${food.name} — ${formatSmartNumber(food.calories)} kcal, ${formatSmartNumber(food.protein)} g protein`,
+          );
+      }
+
+      function getMacroAnalysis(totals, targets) {
+        const remainCal = Math.max(0, targets.cal.target - totals.cal);
+        const remainProt = Math.max(0, targets.prot.target - totals.prot);
+        const remainFat = Math.max(0, targets.fat.target - totals.fat);
+        const remainSug = Math.max(0, targets.sug.target - totals.sug);
+
+        const overCal = Math.max(0, totals.cal - targets.cal.max);
+        const overFat = Math.max(0, totals.fat - targets.fat.max);
+        const overSug = Math.max(0, totals.sug - targets.sug.max);
+
+        let summary = "";
+        let recommendation = "";
+
+        if (
+          totals.cal === 0 &&
+          totals.prot === 0 &&
+          totals.fat === 0 &&
+          totals.sug === 0
+        ) {
+          return {
+            summary: "You haven’t logged any food yet today.",
+            recommendation:
+              "Focus on a protein-first meal to start your day strong.",
+          };
+        }
+
+        if (overFat > 0 && remainProt > 0) {
+          summary = `Protein is still low, but fat is already above your max by ${formatSmartNumber(overFat)} g.`;
+          recommendation =
+            "Best next move: choose very lean protein and avoid fried food, oily dishes, and rich sauces.";
+          return { summary, recommendation };
+        }
+
+        if (overSug > 0 && remainProt > 0) {
+          summary = `Sugar is already above your max by ${formatSmartNumber(overSug)} g, while protein is still short by ${formatSmartNumber(remainProt)} g.`;
+          recommendation =
+            "Best next move: keep the next meal savory, structured, and protein-focused.";
+          return { summary, recommendation };
+        }
+
+        if (remainProt >= 25 && remainCal >= 250) {
+          summary = `Your protein is still low by ${formatSmartNumber(remainProt)} g and calories are still low by ${formatSmartNumber(remainCal)} kcal.`;
+          recommendation =
+            "Best next move: eat a real protein meal, not just a small snack.";
+          return { summary, recommendation };
+        }
+
+        if (remainProt >= 20 && remainCal < 250) {
+          summary = `You still need ${formatSmartNumber(remainProt)} g protein, but calories are getting tight with only ${formatSmartNumber(remainCal)} kcal left.`;
+          recommendation =
+            "Best next move: pick lean, compact protein with minimal fat.";
+          return { summary, recommendation };
+        }
+
+        if (remainFat <= 5 && remainProt > 0) {
+          summary = `You are close to your fat limit, with only ${formatSmartNumber(remainFat)} g fat left.`;
+          recommendation =
+            "Best next move: stay very lean for the rest of the day.";
+          return { summary, recommendation };
+        }
+
+        if (
+          remainProt <= 10 &&
+          remainCal <= 150 &&
+          remainFat <= 10 &&
+          remainSug <= 10
+        ) {
+          summary =
+            "You are very close to your targets and your day looks well balanced.";
+          recommendation =
+            "Best next move: keep it light, or stop here if you already feel satisfied.";
+          return { summary, recommendation };
+        }
+
+        if (overCal > 0) {
+          summary = `Calories are already above your max by ${formatSmartNumber(overCal)} kcal.`;
+          recommendation =
+            "Best next move: keep the rest of the day very light and protein-aware.";
+          return { summary, recommendation };
+        }
+
+        summary = `You still have ${formatSmartNumber(remainCal)} kcal, ${formatSmartNumber(remainProt)} g protein, ${formatSmartNumber(remainFat)} g fat, and ${formatSmartNumber(remainSug)} g sugar remaining today.`;
+        recommendation =
+          "Best next move: aim for a balanced meal, but keep protein as the priority.";
+        return { summary, recommendation };
+      }
+
+      function renderMacroAnalysis(totals, targets) {
+        const analysis = getMacroAnalysis(totals, targets);
+        const summaryEl = document.getElementById("analysisSummary");
+        const recommendationEl = document.getElementById(
+          "analysisRecommendation",
+        );
+        const bestMealResult = document.getElementById("bestMealResult");
+        const bestMealTitle = document.getElementById("bestMealTitle");
+        const bestMealText = document.getElementById("bestMealText");
+        const bestMealFoods = document.getElementById("bestMealFoods");
+
+        if (summaryEl) summaryEl.textContent = analysis.summary;
+
+        const lowCalHighProtein = getLowCalHighProteinRecommendations(
+          totals,
+          targets,
+        );
+        let finalRecommendation = analysis.recommendation;
+
+        if (lowCalHighProtein.length) {
+          finalRecommendation += ` Top lean options right now: ${lowCalHighProtein.join(" • ")}.`;
+        }
+
+        if (recommendationEl)
+          recommendationEl.textContent = finalRecommendation;
+
+        const bestMealData = getBestSuggestionSet(totals, targets);
+
+        if (bestMealTitle) bestMealTitle.textContent = bestMealData.title;
+        if (bestMealText) bestMealText.textContent = bestMealData.text;
+
+        if (bestMealFoods) {
+          bestMealFoods.innerHTML = "";
+          bestMealData.foods.forEach((food) => {
+            const li = document.createElement("li");
+            li.textContent = food;
+            bestMealFoods.appendChild(li);
+          });
+        }
+
+        const bestMealBtn = document.getElementById("bestMealBtn");
+        if (bestMealBtn && !bestMealBtn.dataset.bound) {
+          bestMealBtn.addEventListener("click", () => {
+            if (bestMealResult) bestMealResult.classList.toggle("hidden");
+          });
+          bestMealBtn.dataset.bound = "true";
+        }
+      }
+
+      function updateTodayChart(totals, targets) {
+        const setBar = (barId, labelId, value, target) => {
+          const percent =
+            target > 0 ? Math.min((value / target) * 100, 100) : 0;
+          const bar = document.getElementById(barId);
+          const label = document.getElementById(labelId);
+
+          if (bar) bar.style.width = `${percent}%`;
+          if (label) {
+            label.textContent = `${formatSmartNumber(value)} / ${formatSmartNumber(target)}`;
+          }
+        };
+
+        setBar("chartCalBar", "chartCalLabel", totals.cal, targets.cal.target);
+        setBar(
+          "chartProtBar",
+          "chartProtLabel",
+          totals.prot,
+          targets.prot.target,
+        );
+        setBar("chartFatBar", "chartFatLabel", totals.fat, targets.fat.target);
+        setBar("chartSugBar", "chartSugLabel", totals.sug, targets.sug.target);
+      }
       function computeTotals() {
         let totals = { cal: 0, prot: 0, fat: 0, sug: 0 };
+
         meals.forEach((m) => {
           const rows = document.querySelectorAll(`#${m.id}_foods .food-row`);
           rows.forEach((row) => {
@@ -981,42 +1599,41 @@
           });
         });
 
-        document.getElementById("tcal").textContent = formatNumber(totals.cal);
-        document.getElementById("tprot").textContent = formatNumber(
+        document.getElementById("tcal").textContent = formatSmartNumber(
+          totals.cal,
+        );
+        document.getElementById("tprot").textContent = formatSmartNumber(
           totals.prot,
         );
-        document.getElementById("tfat").textContent = formatNumber(totals.fat);
-        document.getElementById("tsug").textContent = formatNumber(totals.sug);
-
-        const targetCal =
-          Number(document.getElementById("targetCal")?.value) || 1500;
-        const targetProt =
-          Number(document.getElementById("targetProt")?.value) || 100;
-        const targetFat =
-          Number(document.getElementById("targetFat")?.value) || 50;
-        const targetSug =
-          Number(document.getElementById("targetSug")?.value) || 30;
-
-        const remainCal = Math.max(0, targetCal - totals.cal);
-        const remainProt = Math.max(0, targetProt - totals.prot);
-        const remainFat = Math.max(0, targetFat - totals.fat);
-        const remainSug = Math.max(0, targetSug - totals.sug);
-
-        document.getElementById("remainCal").textContent =
-          formatNumber(remainCal);
-        document.getElementById("remainProt").textContent =
-          formatNumber(remainProt);
-        document.getElementById("remainFat").textContent =
-          formatNumber(remainFat);
-        document.getElementById("remainSug").textContent =
-          formatNumber(remainSug);
-
-        const remainPercentValue =
-          targetCal > 0 ? Math.max(0, (remainCal / targetCal) * 100) : 0;
-        document.getElementById("remainPercent").textContent =
-          `You have about ${formatNumber(remainPercentValue)}% more to eat healthy! 🥑`;
+        document.getElementById("tfat").textContent = formatSmartNumber(
+          totals.fat,
+        );
+        document.getElementById("tsug").textContent = formatSmartNumber(
+          totals.sug,
+        );
 
         const t = getTargets();
+
+        const remainCal = Math.max(0, t.cal.target - totals.cal);
+        const remainProt = Math.max(0, t.prot.target - totals.prot);
+        const remainFat = Math.max(0, t.fat.target - totals.fat);
+        const remainSug = Math.max(0, t.sug.target - totals.sug);
+
+        document.getElementById("remainCal").textContent =
+          formatSmartNumber(remainCal);
+        document.getElementById("remainProt").textContent =
+          formatSmartNumber(remainProt);
+        document.getElementById("remainFat").textContent =
+          formatSmartNumber(remainFat);
+        document.getElementById("remainSug").textContent =
+          formatSmartNumber(remainSug);
+
+        const remainPercentValue =
+          t.cal.target > 0 ? Math.max(0, (remainCal / t.cal.target) * 100) : 0;
+
+        document.getElementById("remainPercent").textContent =
+          `You have about ${formatSmartNumber(remainPercentValue)}% more to eat healthy! 🥑`;
+
         updateStatus(
           "cal",
           totals.cal,
@@ -1045,8 +1662,10 @@
           t.sug.max,
           document.getElementById("sugStatus"),
         );
-      }
 
+        renderMacroAnalysis(totals, t);
+        updateTodayChart(totals, t);
+      }
       function updateStatus(key, value, target, max, el) {
         if (!el) return;
         if (value < target * 0.8) {
