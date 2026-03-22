@@ -1888,10 +1888,41 @@
           "fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4";
         modal.innerHTML = `
           <div class="bg-white dark:bg-card-dark rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-              <h2 class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">Your Progress Report</h2>
-              <button class="text-rose-600 hover:text-rose-800 text-3xl leading-none" onclick="this.closest('.fixed').remove()">×</button>
-            </div>
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+  <h2 class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">
+    Your Progress Report
+  </h2>
+
+  <div class="flex flex-wrap gap-2">
+    <button
+      onclick="exportNutritionCSV()"
+      class="px-4 py-2 rounded-xl bg-nutri-emerald-100 hover:bg-nutri-emerald-200 text-nutri-emerald-700 font-medium"
+    >
+      Export Excel CSV
+    </button>
+
+    <button
+      onclick="exportReportWithGraph()"
+      class="px-4 py-2 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium"
+    >
+      Export Report with Graph
+    </button>
+
+    <button
+      onclick="printReportWithGraph()"
+      class="px-4 py-2 rounded-xl bg-violet-100 hover:bg-violet-200 text-violet-700 font-medium"
+    >
+      Print Report
+    </button>
+
+    <button
+      class="text-rose-600 hover:text-rose-800 text-3xl leading-none px-2"
+      onclick="this.closest('.fixed').remove()"
+    >
+      ×
+    </button>
+  </div>
+</div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-center">
               <div class="p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
                 <div class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">${getCurrentStreak()}</div>
@@ -1914,6 +1945,8 @@
                     <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Date</th>
                     <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">kcal</th>
                     <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Protein (g)</th>
+                    <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Fat (g)</th>
+                    <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Sugar (g)</th>
                     <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Workout</th>
                   </tr>
                 </thead>
@@ -1922,22 +1955,17 @@
                     .slice(-14)
                     .reverse()
                     .map((e) => {
-                      let kcalSum = 0,
-                        protSum = 0;
-                      Object.values(e.meals)
-                        .flat()
-                        .forEach((f) => {
-                          kcalSum += f.cal;
-                          protSum += f.prot;
-                        });
+                      const totals = getEntryTotals(e);
                       return `
-                      <tr class="border-b dark:border-nutri-bluegray-700">
-                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${e.date}</td>
-                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${Math.round(kcalSum)}</td>
-                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${Math.round(protSum)}</td>
-                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${e.workout || "-"}</td>
-                      </tr>
-                    `;
+  <tr class="border-b dark:border-nutri-bluegray-700">
+    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${e.date}</td>
+    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.kcal}</td>
+    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.prot}</td>
+    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.fat}</td>
+    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.sug}</td>
+    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${e.workout || "-"}</td>
+  </tr>
+`;
                     })
                     .join("")}
                 </tbody>
@@ -1969,8 +1997,22 @@
               .forEach((f) => (sum += f.prot));
             return sum;
           });
+          const fatData = sorted.map((e) => {
+            let sum = 0;
+            Object.values(e.meals)
+              .flat()
+              .forEach((f) => (sum += f.fat || 0));
+            return sum;
+          });
 
-          new Chart(canvas, {
+          const sugData = sorted.map((e) => {
+            let sum = 0;
+            Object.values(e.meals)
+              .flat()
+              .forEach((f) => (sum += f.sug || 0));
+            return sum;
+          });
+          window.progressChartInstance = new Chart(canvas, {
             type: "line",
             data: {
               labels,
@@ -1985,12 +2027,30 @@
                   yAxisID: "y",
                 },
                 {
-                  label: "Daily protein (g)",
+                  label: "Protein (g)",
                   data: protData,
                   borderColor: "#8b5cf6",
                   backgroundColor: "rgba(139, 92, 246, 0.15)",
                   tension: 0.3,
                   fill: true,
+                  yAxisID: "y1",
+                },
+                {
+                  label: "Fat (g)",
+                  data: fatData,
+                  borderColor: "#f59e0b",
+                  backgroundColor: "rgba(245, 158, 11, 0.15)",
+                  tension: 0.3,
+                  fill: false,
+                  yAxisID: "y1",
+                },
+                {
+                  label: "Sugar (g)",
+                  data: sugData,
+                  borderColor: "#ef4444",
+                  backgroundColor: "rgba(239, 68, 68, 0.15)",
+                  tension: 0.3,
+                  fill: false,
                   yAxisID: "y1",
                 },
               ],
@@ -2039,6 +2099,233 @@
             },
           });
         }, 0);
+      }
+      function getEntryTotals(entry) {
+        let kcalSum = 0;
+        let protSum = 0;
+        let fatSum = 0;
+        let sugSum = 0;
+
+        Object.values(entry.meals || {})
+          .flat()
+          .forEach((f) => {
+            kcalSum += Number(f.cal || 0);
+            protSum += Number(f.prot || 0);
+            fatSum += Number(f.fat || 0);
+            sugSum += Number(f.sug || 0);
+          });
+
+        return {
+          kcal: Math.round(kcalSum),
+          prot: Math.round(protSum),
+          fat: Math.round(fatSum),
+          sug: Math.round(sugSum),
+        };
+      }
+
+      function exportNutritionCSV() {
+        if (!nutritionData.length) {
+          alert("No nutrition data yet.");
+          return;
+        }
+
+        const sorted = [...nutritionData].sort((a, b) =>
+          a.date.localeCompare(b.date),
+        );
+
+        let csv =
+          "Date,Calories,Protein (g),Fat (g),Sugar (g),Weight,Workout\n";
+
+        sorted.forEach((entry) => {
+          const totals = getEntryTotals(entry);
+          const row = [
+            entry.date || "",
+            totals.kcal,
+            totals.prot,
+            totals.fat,
+            totals.sug,
+            entry.weight ?? "",
+            `"${entry.workout || "-"}"`,
+          ];
+          csv += row.join(",") + "\n";
+        });
+
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "NutriTrack_Report.csv";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      function buildReportHTMLWithGraph() {
+        if (!nutritionData.length) return "";
+
+        const sorted = [...nutritionData].sort((a, b) =>
+          a.date.localeCompare(b.date),
+        );
+        const recent = sorted.slice(-14);
+
+        const canvas = document.getElementById("progressChart");
+        const chartImage = canvas ? canvas.toDataURL("image/png") : "";
+
+        const tableRows = recent
+          .slice()
+          .reverse()
+          .map((entry) => {
+            const totals = getEntryTotals(entry);
+            return `
+        <tr>
+          <td>${entry.date}</td>
+          <td>${totals.kcal}</td>
+          <td>${totals.prot}</td>
+          <td>${totals.fat}</td>
+          <td>${totals.sug}</td>
+          <td>${entry.workout || "-"}</td>
+        </tr>
+      `;
+          })
+          .join("");
+
+        return `
+    <html>
+      <head>
+        <title>NutriTrack Report</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 24px;
+            color: #111827;
+          }
+          h1, h2 {
+            margin-bottom: 8px;
+          }
+          .summary {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+          }
+          .card {
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            padding: 14px 16px;
+            min-width: 180px;
+            background: #f9fafb;
+          }
+          .chart-wrap {
+            margin: 24px 0;
+            text-align: center;
+          }
+          .chart-wrap img {
+            max-width: 100%;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+          }
+          th, td {
+            border: 1px solid #d1d5db;
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+          }
+          th {
+            background: #f3f4f6;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>NutriTrack Progress Report</h1>
+        <p>Generated on ${new Date().toLocaleString()}</p>
+
+        <div class="summary">
+          <div class="card">
+            <strong>Days Streak</strong><br>
+            ${getCurrentStreak()}
+          </div>
+          <div class="card">
+            <strong>Avg kcal (all time)</strong><br>
+            ${getAverageKcalAllTime()}
+          </div>
+          <div class="card">
+            <strong>Avg protein (all time)</strong><br>
+            ${getAverageProteinAllTime()}
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <h2>Nutrition Trend Graph</h2>
+          ${chartImage ? `<img src="${chartImage}" alt="Nutrition Trend Graph">` : "<p>Graph unavailable</p>"}
+        </div>
+
+        <h2>Last 14 Entries</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Calories</th>
+              <th>Protein (g)</th>
+              <th>Fat (g)</th>
+              <th>Sugar (g)</th>
+              <th>Workout</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+    
+  `;
+      }
+      function exportReportWithGraph() {
+        if (!nutritionData.length) {
+          alert("No nutrition data yet.");
+          return;
+        }
+
+        const html = buildReportHTMLWithGraph();
+        const blob = new Blob([html], { type: "application/msword" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "NutriTrack_Report_With_Graph.doc";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      function printReportWithGraph() {
+        if (!nutritionData.length) {
+          alert("No nutrition data yet.");
+          return;
+        }
+
+        const html = buildReportHTMLWithGraph();
+        const printWindow = window.open("", "_blank", "width=1000,height=800");
+
+        if (!printWindow) {
+          alert("Popup blocked. Please allow popups for printing.");
+          return;
+        }
+
+        printWindow.document.open();
+        printWindow.document.write(html);
+        printWindow.document.close();
+
+        printWindow.onload = () => {
+          printWindow.focus();
+          printWindow.print();
+        };
       }
       function exportData() {
         const data = {
