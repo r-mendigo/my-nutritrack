@@ -79,20 +79,6 @@
       .card {
         @apply bg-white dark:bg-card-dark rounded-2xl p-5 shadow-card border border-nutri-bluegray-200 dark:border-nutri-bluegray-700;
       }
-
-      .bg-nutri-bluegray-100-light {
-        @apply bg-nutri-bluegray-100 border-nutri-bluegray-200;
-      }
-      .dark .bg-nutri-bluegray-100-dark {
-        @apply bg-card-dark border-nutri-bluegray-700;
-      }
-
-      .dark #tcal,
-      .dark #tprot,
-      .dark #tfat,
-      .dark #tsug {
-        @apply text-text-dark-primary;
-      }
       .status-low {
         @apply text-amber-600 dark:text-amber-400;
       }
@@ -116,12 +102,54 @@
           filter: brightness(1.4) drop-shadow(0 0 16px #2dd4bf);
         }
       }
-
       .food-result-item {
         @apply flex justify-between items-center p-3 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl hover:bg-nutri-emerald-50 dark:hover:bg-nutri-emerald-900/30 cursor-pointer mb-2 border border-transparent transition-all;
       }
       .food-result-item.personalized {
         @apply border-l-4 border-l-nutri-emerald-500 bg-nutri-emerald-50/50 dark:bg-nutri-emerald-900/20;
+      }
+      /* Fix modal close button positioning */
+      .modal-container {
+        position: relative;
+      }
+      .modal-close-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 10;
+        padding: 0.5rem;
+        line-height: 1;
+      }
+      /* Fix export nav buttons - horizontal on mobile */
+      .export-nav {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: flex-end;
+      }
+      .export-nav button {
+        white-space: nowrap;
+        flex: 0 0 auto;
+      }
+      /* Mobile-specific adjustments */
+      @media (max-width: 640px) {
+        .export-nav {
+          justify-content: flex-start;
+          width: 100%;
+        }
+        .modal-header-stack {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .modal-header-stack .export-nav {
+          width: 100%;
+          margin-top: 0.5rem;
+        }
+        .modal-close-btn {
+          top: 0.75rem;
+          right: 0.75rem;
+        }
       }
     </style>
   </head>
@@ -202,10 +230,9 @@
           <div
             class="text-sm text-nutri-bluegray-600 dark:text-nutri-bluegray-300 bg-nutri-bluegray-100 dark:bg-card-dark p-5 rounded-xl border border-nutri-emerald-200 shadow-sm dark:border-nutri-emerald-900/30"
           >
-            <strong class="block text-base mb-3">
-              Today's Targets (click to edit)
-            </strong>
-
+            <strong class="block text-base mb-3"
+              >Today's Targets (click to edit)</strong
+            >
             <div class="space-y-2">
               <div class="flex items-center gap-2">
                 <label class="w-24 md:w-32 font-medium">Calories:</label>
@@ -226,7 +253,6 @@
                   class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
                 />
               </div>
-
               <div class="flex items-center gap-2">
                 <label class="w-24 md:w-32 font-medium">Proteins:</label>
                 <input
@@ -246,7 +272,6 @@
                   class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
                 />
               </div>
-
               <div class="flex items-center gap-2">
                 <label class="w-24 md:w-32 font-medium">Fats:</label>
                 <input
@@ -266,7 +291,6 @@
                   class="w-16 md:w-20 border rounded px-2 py-1 text-center text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary"
                 />
               </div>
-
               <div class="flex items-center gap-2">
                 <label class="w-24 md:w-32 font-medium">Sugar:</label>
                 <input
@@ -298,7 +322,6 @@
             >
               Best Next Meal
             </button>
-
             <div
               id="bestMealResult"
               class="hidden mt-3 rounded-xl border border-nutri-bluegray-200 dark:border-nutri-bluegray-700 bg-white/70 dark:bg-nutri-bluegray-900/50 p-4 space-y-2"
@@ -327,7 +350,6 @@
             >
               Today's Total Live Chart
             </h3>
-
             <div class="space-y-4">
               <div>
                 <div class="flex justify-between text-sm mb-1">
@@ -344,7 +366,6 @@
                   ></div>
                 </div>
               </div>
-
               <div>
                 <div class="flex justify-between text-sm mb-1">
                   <span>Protein</span>
@@ -360,7 +381,6 @@
                   ></div>
                 </div>
               </div>
-
               <div>
                 <div class="flex justify-between text-sm mb-1">
                   <span>Fat</span>
@@ -376,7 +396,6 @@
                   ></div>
                 </div>
               </div>
-
               <div>
                 <div class="flex justify-between text-sm mb-1">
                   <span>Sugar</span>
@@ -405,7 +424,6 @@
           >
             Remaining Today
           </h3>
-
           <div class="grid grid-cols-2 gap-4 text-center">
             <div>
               <div
@@ -420,7 +438,6 @@
                 Calories
               </div>
             </div>
-
             <div>
               <div
                 class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
@@ -434,7 +451,6 @@
                 Protein (g)
               </div>
             </div>
-
             <div>
               <div
                 class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
@@ -448,7 +464,6 @@
                 Fat (g)
               </div>
             </div>
-
             <div>
               <div
                 class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
@@ -463,12 +478,10 @@
               </div>
             </div>
           </div>
-
           <div
             id="remainPercent"
             class="mt-4 text-center text-xs font-medium text-nutri-emerald-700 dark:text-nutri-emerald-300"
           ></div>
-
           <div
             id="macroAnalysis"
             class="mt-4 rounded-xl bg-white/70 dark:bg-nutri-bluegray-900/50 border border-nutri-bluegray-200 dark:border-nutri-bluegray-700 p-4 text-sm text-nutri-bluegray-700 dark:text-text-dark-secondary space-y-3"
@@ -478,11 +491,9 @@
             >
               Smart Analysis
             </div>
-
             <div id="analysisSummary">
-              Start logging your meals and I’ll guide your next move.
+              Start logging your meals and I'll guide your next move.
             </div>
-
             <div
               id="analysisRecommendation"
               class="text-nutri-emerald-700 dark:text-nutri-emerald-300 font-medium"
@@ -509,7 +520,6 @@
           id="lookupResults"
           class="mt-4 space-y-2 max-h-60 overflow-y-auto"
         ></div>
-
         <div
           class="mt-4 pt-4 border-t border-nutri-bluegray-200 dark:border-nutri-bluegray-700"
         >
@@ -608,6 +618,7 @@
           Your Report 📝
         </button>
       </div>
+
       <section>
         <div class="flex justify-between items-center mb-4">
           <h3 class="font-semibold text-lg dark:text-text-dark-primary">
@@ -646,24 +657,25 @@
       </section>
     </div>
 
+    <!-- Add Food Modal -->
     <div
       id="addFoodModal"
       class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 hidden"
     >
-      <div class="bg-white dark:bg-card-dark rounded-2xl p-6 max-w-md w-full">
-        <div class="flex justify-between items-center mb-4">
-          <h3
-            class="text-xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary"
-          >
-            Add Personalized Food
-          </h3>
-          <button
-            onclick="closeAddFoodModal()"
-            class="text-rose-600 hover:text-rose-800 text-2xl"
-          >
-            &times;
-          </button>
-        </div>
+      <div
+        class="bg-white dark:bg-card-dark rounded-2xl p-6 max-w-md w-full modal-container"
+      >
+        <button
+          onclick="closeAddFoodModal()"
+          class="modal-close-btn text-rose-600 hover:text-rose-800 text-2xl"
+        >
+          &times;
+        </button>
+        <h3
+          class="text-xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary mb-4 pr-8"
+        >
+          Add Personalized Food
+        </h3>
         <div class="space-y-3">
           <input
             id="newFoodName"
@@ -714,6 +726,116 @@
     </div>
 
     <script>
+      // ==================== DATA & CONFIG ====================
+      const meals = [
+        { id: "breakfast", emoji: "🌞", name: "Breakfast" },
+        { id: "lunch", emoji: "🍱", name: "Lunch" },
+        { id: "snack", emoji: "🥜", name: "Snack" },
+        { id: "dinner", emoji: "🌙", name: "Dinner" },
+      ];
+
+      let nutritionData =
+        JSON.parse(localStorage.getItem("nutritionData")) || [];
+      let currentDate = getLocalDateString();
+      let showingAllHistory = false;
+
+      // ==================== UTILITY FUNCTIONS ====================
+      function getLocalDateString(date = new Date()) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function parseLocalDate(dateStr) {
+        const [year, month, day] = dateStr.split("-").map(Number);
+        return new Date(year, month - 1, day);
+      }
+
+      function getLocalTodayString() {
+        return getLocalDateString();
+      }
+
+      function formatNumber(value, decimals = 2) {
+        const num = Number(value) || 0;
+        return Number.isInteger(num) ? String(num) : num.toFixed(decimals);
+      }
+
+      function formatSmartNumber(value) {
+        return Number.isInteger(value)
+          ? String(value)
+          : Number(value).toFixed(1);
+      }
+
+      function getTargets() {
+        return {
+          cal: {
+            target: Number(document.getElementById("targetCal")?.value) || 1500,
+            max: Number(document.getElementById("maxCal")?.value) || 1700,
+          },
+          prot: {
+            target: Number(document.getElementById("targetProt")?.value) || 100,
+            max: Number(document.getElementById("maxProt")?.value) || 130,
+          },
+          fat: {
+            target: Number(document.getElementById("targetFat")?.value) || 50,
+            max: Number(document.getElementById("maxFat")?.value) || 70,
+          },
+          sug: {
+            target: Number(document.getElementById("targetSug")?.value) || 30,
+            max: Number(document.getElementById("maxSug")?.value) || 45,
+          },
+        };
+      }
+
+      // ==================== STREAK FUNCTIONS (FIXED) ====================
+      function getCurrentStreak() {
+        if (nutritionData.length === 0) return 0;
+
+        const uniqueDates = [
+          ...new Set(nutritionData.map((e) => e.date)),
+        ].sort();
+        if (uniqueDates.length === 0) return 0;
+
+        const today = getLocalTodayString();
+        const lastEntryDate = uniqueDates[uniqueDates.length - 1];
+
+        const lastDate = parseLocalDate(lastEntryDate);
+        const todayDate = parseLocalDate(today);
+        const dayDiff = Math.round(
+          (todayDate - lastDate) / (1000 * 60 * 60 * 24),
+        );
+
+        // If they haven't logged in over a week, reset
+        if (dayDiff > 7) return 0;
+
+        // Count consecutive entries with up to 2-day grace period
+        let streak = 1;
+        for (let i = uniqueDates.length - 1; i > 0; i--) {
+          const current = parseLocalDate(uniqueDates[i]);
+          const previous = parseLocalDate(uniqueDates[i - 1]);
+          const diff = Math.round((current - previous) / (1000 * 60 * 60 * 24));
+
+          // Count as consecutive if gap is 3 days or less (weekends, busy days)
+          if (diff <= 3) {
+            streak++;
+          } else {
+            break;
+          }
+        }
+
+        return streak;
+      }
+
+      function loadStreak() {
+        document.getElementById("streak").textContent = getCurrentStreak();
+      }
+
+      function updateStreak() {
+        loadStreak();
+      }
+
+      // ==================== FOOD DATABASE ====================
       function loadPersonalizedFoods() {
         const saved = localStorage.getItem("personalizedPinoyFoods");
         return saved ? JSON.parse(saved) : {};
@@ -728,6 +850,7 @@
         return { ...pinoyFallback, ...personalized };
       }
 
+      // ==================== MODAL FUNCTIONS ====================
       function showAddPersonalizedFoodModal() {
         document.getElementById("addFoodModal").classList.remove("hidden");
       }
@@ -789,6 +912,7 @@
         }
       }
 
+      // ==================== FOOD SEARCH ====================
       function lookupFood() {
         const term = document
           .getElementById("foodInput")
@@ -853,99 +977,8 @@
           `;
         }
       }
-    </script>
 
-    <script>
-      const meals = [
-        { id: "breakfast", emoji: "🌞", name: "Breakfast" },
-        { id: "lunch", emoji: "🍱", name: "Lunch" },
-        { id: "snack", emoji: "🥜", name: "Snack" },
-        { id: "dinner", emoji: "🌙", name: "Dinner" },
-      ];
-
-      let nutritionData =
-        JSON.parse(localStorage.getItem("nutritionData")) || [];
-      let currentDate = getLocalDateString();
-
-      function getLocalDateString(date = new Date()) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        return `${year}-${month}-${day}`;
-      }
-
-      function parseLocalDate(dateStr) {
-        const [year, month, day] = dateStr.split("-").map(Number);
-        return new Date(year, month - 1, day);
-      }
-
-      function diffDays(dateA, dateB) {
-        const msPerDay = 1000 * 60 * 60 * 24;
-        const utcA = Date.UTC(
-          dateA.getFullYear(),
-          dateA.getMonth(),
-          dateA.getDate(),
-        );
-        const utcB = Date.UTC(
-          dateB.getFullYear(),
-          dateB.getMonth(),
-          dateB.getDate(),
-        );
-        return Math.round((utcA - utcB) / msPerDay);
-      }
-
-      function formatNumber(value, decimals = 2) {
-        const num = Number(value) || 0;
-        return Number.isInteger(num) ? String(num) : num.toFixed(decimals);
-      }
-
-      function getTargets() {
-        return {
-          cal: {
-            target: Number(document.getElementById("targetCal")?.value) || 1500,
-            max: Number(document.getElementById("maxCal")?.value) || 1700,
-          },
-          prot: {
-            target: Number(document.getElementById("targetProt")?.value) || 100,
-            max: Number(document.getElementById("maxProt")?.value) || 130,
-          },
-          fat: {
-            target: Number(document.getElementById("targetFat")?.value) || 50,
-            max: Number(document.getElementById("maxFat")?.value) || 70,
-          },
-          sug: {
-            target: Number(document.getElementById("targetSug")?.value) || 30,
-            max: Number(document.getElementById("maxSug")?.value) || 45,
-          },
-        };
-      }
-
-      document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById("date").value = currentDate;
-
-        if (nutritionData.length > 0) {
-          const lastEntry = [...nutritionData]
-            .sort((a, b) => a.date.localeCompare(b.date))
-            .at(-1);
-          if (lastEntry?.weight != null && !isNaN(lastEntry.weight)) {
-            document.getElementById("weight").value = lastEntry.weight;
-          }
-        }
-
-        renderMeals();
-        loadTempMeals();
-        loadLiveFields();
-        loadStreak();
-        renderHistory();
-        addInputListeners();
-        computeTotals();
-        newQuote();
-      });
-
-      document.getElementById("foodInput").addEventListener("focus", () => {
-        document.getElementById("lookupResults").innerHTML = "";
-      });
-
+      // ==================== MEAL MANAGEMENT ====================
       function renderMeals() {
         const container = document.getElementById("mealContainer");
         container.innerHTML = "";
@@ -997,6 +1030,65 @@
         autoSaveMeals();
       }
 
+      function clearMeal(mealId) {
+        document.getElementById(mealId + "_foods").innerHTML =
+          createFoodRowHTML(mealId, 0);
+        computeTotals();
+        autoSaveMeals();
+      }
+
+      function clearToday() {
+        const hasData = [
+          ...document.querySelectorAll('input[type="number"]'),
+        ].some((i) => i.value.trim() !== "");
+        if (!hasData) {
+          alert("Nothing to clear today.");
+          return;
+        }
+        if (!confirm("Clear today's data?")) return;
+        renderMeals();
+        computeTotals();
+        localStorage.removeItem("nutriTempMeals");
+        localStorage.removeItem("nutriLiveFields");
+      }
+
+      function getCurrentMeal() {
+        const h = new Date().getHours();
+        if (h < 11) return "breakfast";
+        if (h < 15) return "lunch";
+        if (h < 18) return "snack";
+        return "dinner";
+      }
+
+      function applyFoodToCurrentMeal(food, foodName) {
+        const mealId = getCurrentMeal();
+        const container = document.getElementById(mealId + "_foods");
+        const lastRow = container.lastElementChild;
+        const isFilled =
+          lastRow &&
+          [...lastRow.querySelectorAll("input")].some(
+            (i) => i.value.trim() !== "",
+          );
+
+        if (isFilled || !lastRow) {
+          addFoodRow(mealId);
+        }
+
+        const row = container.lastElementChild;
+        row.querySelector('[data-field="name"]').value =
+          foodName || "Searched food";
+        row.querySelector('[data-field="cal"]').value = food.cal;
+        row.querySelector('[data-field="prot"]').value = food.prot;
+        row.querySelector('[data-field="fat"]').value = food.fat;
+        row.querySelector('[data-field="sug"]').value = food.sug;
+
+        computeTotals();
+        autoSaveMeals();
+        document.getElementById("foodInput").value = "";
+        document.getElementById("lookupResults").innerHTML = "";
+      }
+
+      // ==================== AUTOSAVE ====================
       function autoSaveMeals() {
         const mealsData = {};
         meals.forEach((m) => {
@@ -1094,21 +1186,140 @@
         }
       }
 
-      document
-        .getElementById("weight")
-        .addEventListener("input", autoSaveLiveFields);
-      document
-        .getElementById("workout")
-        .addEventListener("change", autoSaveLiveFields);
-      document
-        .getElementById("date")
-        .addEventListener("change", autoSaveLiveFields);
-      function formatSmartNumber(value) {
-        return Number.isInteger(value)
-          ? String(value)
-          : Number(value).toFixed(1);
+      function addInputListeners() {
+        document.querySelectorAll('input[type="number"]').forEach((inp) => {
+          inp.removeEventListener("input", computeTotals);
+          inp.addEventListener("input", computeTotals);
+          inp.removeEventListener("input", autoSaveMeals);
+          inp.addEventListener("input", autoSaveMeals);
+        });
       }
 
+      // ==================== CALCULATIONS & ANALYSIS ====================
+      function computeTotals() {
+        let totals = { cal: 0, prot: 0, fat: 0, sug: 0 };
+
+        meals.forEach((m) => {
+          const rows = document.querySelectorAll(`#${m.id}_foods .food-row`);
+          rows.forEach((row) => {
+            totals.cal +=
+              Number(row.querySelector('[data-field="cal"]').value) || 0;
+            totals.prot +=
+              Number(row.querySelector('[data-field="prot"]').value) || 0;
+            totals.fat +=
+              Number(row.querySelector('[data-field="fat"]').value) || 0;
+            totals.sug +=
+              Number(row.querySelector('[data-field="sug"]').value) || 0;
+          });
+        });
+
+        document.getElementById("tcal").textContent = formatSmartNumber(
+          totals.cal,
+        );
+        document.getElementById("tprot").textContent = formatSmartNumber(
+          totals.prot,
+        );
+        document.getElementById("tfat").textContent = formatSmartNumber(
+          totals.fat,
+        );
+        document.getElementById("tsug").textContent = formatSmartNumber(
+          totals.sug,
+        );
+
+        const t = getTargets();
+
+        const remainCal = Math.max(0, t.cal.target - totals.cal);
+        const remainProt = Math.max(0, t.prot.target - totals.prot);
+        const remainFat = Math.max(0, t.fat.target - totals.fat);
+        const remainSug = Math.max(0, t.sug.target - totals.sug);
+
+        document.getElementById("remainCal").textContent =
+          formatSmartNumber(remainCal);
+        document.getElementById("remainProt").textContent =
+          formatSmartNumber(remainProt);
+        document.getElementById("remainFat").textContent =
+          formatSmartNumber(remainFat);
+        document.getElementById("remainSug").textContent =
+          formatSmartNumber(remainSug);
+
+        const remainPercentValue =
+          t.cal.target > 0 ? Math.max(0, (remainCal / t.cal.target) * 100) : 0;
+
+        document.getElementById("remainPercent").textContent =
+          `You have about ${formatSmartNumber(remainPercentValue)}% more to eat healthy! 🥑`;
+
+        updateStatus(
+          "cal",
+          totals.cal,
+          t.cal.target,
+          t.cal.max,
+          document.getElementById("calStatus"),
+        );
+        updateStatus(
+          "prot",
+          totals.prot,
+          t.prot.target,
+          t.prot.max,
+          document.getElementById("protStatus"),
+        );
+        updateStatus(
+          "fat",
+          totals.fat,
+          t.fat.target,
+          t.fat.max,
+          document.getElementById("fatStatus"),
+        );
+        updateStatus(
+          "sug",
+          totals.sug,
+          t.sug.target,
+          t.sug.max,
+          document.getElementById("sugStatus"),
+        );
+
+        renderMacroAnalysis(totals, t);
+        updateTodayChart(totals, t);
+      }
+
+      function updateStatus(key, value, target, max, el) {
+        if (!el) return;
+        if (value < target * 0.8) {
+          el.textContent = "Below target";
+          el.className = "status-low text-sm";
+        } else if (value <= max) {
+          el.textContent = "Good range ✓";
+          el.className = "status-good text-sm";
+        } else {
+          el.textContent = "Above max ⚠";
+          el.className = "status-high text-sm";
+        }
+      }
+
+      function updateTodayChart(totals, targets) {
+        const setBar = (barId, labelId, value, target) => {
+          const percent =
+            target > 0 ? Math.min((value / target) * 100, 100) : 0;
+          const bar = document.getElementById(barId);
+          const label = document.getElementById(labelId);
+
+          if (bar) bar.style.width = `${percent}%`;
+          if (label) {
+            label.textContent = `${formatSmartNumber(value)} / ${formatSmartNumber(target)}`;
+          }
+        };
+
+        setBar("chartCalBar", "chartCalLabel", totals.cal, targets.cal.target);
+        setBar(
+          "chartProtBar",
+          "chartProtLabel",
+          totals.prot,
+          targets.prot.target,
+        );
+        setBar("chartFatBar", "chartFatLabel", totals.fat, targets.fat.target);
+        setBar("chartSugBar", "chartSugLabel", totals.sug, targets.sug.target);
+      }
+
+      // ==================== SMART ANALYSIS ====================
       function getFoodSuggestionPool() {
         return [
           {
@@ -1443,7 +1654,7 @@
           totals.sug === 0
         ) {
           return {
-            summary: "You haven’t logged any food yet today.",
+            summary: "You haven't logged any food yet today.",
             recommendation:
               "Focus on a protein-first meal to start your day strong.",
           };
@@ -1559,158 +1770,7 @@
         }
       }
 
-      function updateTodayChart(totals, targets) {
-        const setBar = (barId, labelId, value, target) => {
-          const percent =
-            target > 0 ? Math.min((value / target) * 100, 100) : 0;
-          const bar = document.getElementById(barId);
-          const label = document.getElementById(labelId);
-
-          if (bar) bar.style.width = `${percent}%`;
-          if (label) {
-            label.textContent = `${formatSmartNumber(value)} / ${formatSmartNumber(target)}`;
-          }
-        };
-
-        setBar("chartCalBar", "chartCalLabel", totals.cal, targets.cal.target);
-        setBar(
-          "chartProtBar",
-          "chartProtLabel",
-          totals.prot,
-          targets.prot.target,
-        );
-        setBar("chartFatBar", "chartFatLabel", totals.fat, targets.fat.target);
-        setBar("chartSugBar", "chartSugLabel", totals.sug, targets.sug.target);
-      }
-      function computeTotals() {
-        let totals = { cal: 0, prot: 0, fat: 0, sug: 0 };
-
-        meals.forEach((m) => {
-          const rows = document.querySelectorAll(`#${m.id}_foods .food-row`);
-          rows.forEach((row) => {
-            totals.cal +=
-              Number(row.querySelector('[data-field="cal"]').value) || 0;
-            totals.prot +=
-              Number(row.querySelector('[data-field="prot"]').value) || 0;
-            totals.fat +=
-              Number(row.querySelector('[data-field="fat"]').value) || 0;
-            totals.sug +=
-              Number(row.querySelector('[data-field="sug"]').value) || 0;
-          });
-        });
-
-        document.getElementById("tcal").textContent = formatSmartNumber(
-          totals.cal,
-        );
-        document.getElementById("tprot").textContent = formatSmartNumber(
-          totals.prot,
-        );
-        document.getElementById("tfat").textContent = formatSmartNumber(
-          totals.fat,
-        );
-        document.getElementById("tsug").textContent = formatSmartNumber(
-          totals.sug,
-        );
-
-        const t = getTargets();
-
-        const remainCal = Math.max(0, t.cal.target - totals.cal);
-        const remainProt = Math.max(0, t.prot.target - totals.prot);
-        const remainFat = Math.max(0, t.fat.target - totals.fat);
-        const remainSug = Math.max(0, t.sug.target - totals.sug);
-
-        document.getElementById("remainCal").textContent =
-          formatSmartNumber(remainCal);
-        document.getElementById("remainProt").textContent =
-          formatSmartNumber(remainProt);
-        document.getElementById("remainFat").textContent =
-          formatSmartNumber(remainFat);
-        document.getElementById("remainSug").textContent =
-          formatSmartNumber(remainSug);
-
-        const remainPercentValue =
-          t.cal.target > 0 ? Math.max(0, (remainCal / t.cal.target) * 100) : 0;
-
-        document.getElementById("remainPercent").textContent =
-          `You have about ${formatSmartNumber(remainPercentValue)}% more to eat healthy! 🥑`;
-
-        updateStatus(
-          "cal",
-          totals.cal,
-          t.cal.target,
-          t.cal.max,
-          document.getElementById("calStatus"),
-        );
-        updateStatus(
-          "prot",
-          totals.prot,
-          t.prot.target,
-          t.prot.max,
-          document.getElementById("protStatus"),
-        );
-        updateStatus(
-          "fat",
-          totals.fat,
-          t.fat.target,
-          t.fat.max,
-          document.getElementById("fatStatus"),
-        );
-        updateStatus(
-          "sug",
-          totals.sug,
-          t.sug.target,
-          t.sug.max,
-          document.getElementById("sugStatus"),
-        );
-
-        renderMacroAnalysis(totals, t);
-        updateTodayChart(totals, t);
-      }
-      function updateStatus(key, value, target, max, el) {
-        if (!el) return;
-        if (value < target * 0.8) {
-          el.textContent = "Below target";
-          el.className = "status-low text-sm";
-        } else if (value <= max) {
-          el.textContent = "Good range ✓";
-          el.className = "status-good text-sm";
-        } else {
-          el.textContent = "Above max ⚠";
-          el.className = "status-high text-sm";
-        }
-      }
-
-      function addInputListeners() {
-        document.querySelectorAll('input[type="number"]').forEach((inp) => {
-          inp.removeEventListener("input", computeTotals);
-          inp.addEventListener("input", computeTotals);
-          inp.removeEventListener("input", autoSaveMeals);
-          inp.addEventListener("input", autoSaveMeals);
-        });
-      }
-
-      function clearMeal(mealId) {
-        document.getElementById(mealId + "_foods").innerHTML =
-          createFoodRowHTML(mealId, 0);
-        computeTotals();
-        autoSaveMeals();
-      }
-
-      function clearToday() {
-        const hasData = [
-          ...document.querySelectorAll('input[type="number"]'),
-        ].some((i) => i.value.trim() !== "");
-        if (!hasData) {
-          alert("Nothing to clear today.");
-          return;
-        }
-        if (!confirm("Clear today's data?")) return;
-        renderMeals();
-        computeTotals();
-        localStorage.removeItem("nutriTempMeals");
-        localStorage.removeItem("nutriLiveFields");
-      }
-
+      // ==================== SAVE & HISTORY ====================
       function saveDay() {
         const date = document.getElementById("date").value;
         if (nutritionData.some((e) => e.date === date)) {
@@ -1756,91 +1816,92 @@
         updateStreak();
       }
 
-      function applyFoodToCurrentMeal(food, foodName) {
-        const mealId = getCurrentMeal();
-        const container = document.getElementById(mealId + "_foods");
-        const lastRow = container.lastElementChild;
-        const isFilled =
-          lastRow &&
-          [...lastRow.querySelectorAll("input")].some(
-            (i) => i.value.trim() !== "",
-          );
+      function toggleHistoryView() {
+        showingAllHistory = !showingAllHistory;
+        const btn = document.getElementById("historyToggle");
+        btn.innerHTML = showingAllHistory ? "📅 Show Recent" : "📅 Show All";
+        renderHistory();
+      }
 
-        if (isFilled || !lastRow) {
-          addFoodRow(mealId);
+      function renderHistory() {
+        const container = document.getElementById("history");
+        container.innerHTML = "";
+
+        let displayData = [...nutritionData].reverse();
+
+        if (!showingAllHistory && displayData.length > 3) {
+          displayData = displayData.slice(0, 3);
         }
 
-        const row = container.lastElementChild;
-        row.querySelector('[data-field="name"]').value =
-          foodName || "Searched food";
-        row.querySelector('[data-field="cal"]').value = food.cal;
-        row.querySelector('[data-field="prot"]').value = food.prot;
-        row.querySelector('[data-field="fat"]').value = food.fat;
-        row.querySelector('[data-field="sug"]').value = food.sug;
+        displayData.forEach((e) => {
+          let cal = 0,
+            prot = 0,
+            fat = 0,
+            sug = 0;
+          Object.values(e.meals)
+            .flat()
+            .forEach((f) => {
+              cal += f.cal;
+              prot += f.prot;
+              fat += f.fat;
+              sug += f.sug;
+            });
 
-        computeTotals();
-        autoSaveMeals();
-        document.getElementById("foodInput").value = "";
-        document.getElementById("lookupResults").innerHTML = "";
-      }
+          const t = getTargets();
+          const calStatus =
+            cal < t.cal.target * 0.8 ? "↓" : cal > t.cal.max ? "↑" : "✓";
+          const protStatus =
+            prot < t.prot.target * 0.8 ? "↓" : prot > t.prot.max ? "↑" : "✓";
+          const fatStatus =
+            fat < t.fat.target * 0.8 ? "↓" : fat > t.fat.max ? "↑" : "✓";
+          const sugStatus =
+            sug < t.sug.target * 0.8 ? "↓" : sug > t.sug.max ? "↑" : "✓";
 
-      function getCurrentMeal() {
-        const h = new Date().getHours();
-        if (h < 11) return "breakfast";
-        if (h < 15) return "lunch";
-        if (h < 18) return "snack";
-        return "dinner";
-      }
+          const workoutText = e.workout ? ` • ${e.workout}` : "";
+          const div = document.createElement("div");
+          div.className =
+            "card flex justify-between items-center py-3 px-4 text-sm";
+          div.innerHTML = `
+            <div>
+              <div class="font-medium text-nutri-bluegray-900 dark:text-text-dark-primary">${e.date}</div>
+              <div class="text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
+                ${Math.round(cal)} kcal ${calStatus} • ${Math.round(prot)}g prot ${protStatus} • ${Math.round(fat)}g fat ${fatStatus} • ${Math.round(sug)}g sug ${sugStatus}${workoutText}
+              </div>
+            </div>
+            <button onclick="deleteDay('${e.date}')" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-lg">🗑</button>
+          `;
+          container.appendChild(div);
+        });
 
-      function parseLocalDate(dateStr) {
-        const [y, m, d] = dateStr.split("-").map(Number);
-        return new Date(y, m - 1, d);
-      }
-
-      function getLocalTodayString() {
-        const now = new Date();
-        const y = now.getFullYear();
-        const m = String(now.getMonth() + 1).padStart(2, "0");
-        const d = String(now.getDate()).padStart(2, "0");
-        return `${y}-${m}-${d}`;
-      }
-
-      function getCurrentStreak() {
-        if (nutritionData.length === 0) return 0;
-
-        const uniqueDates = [
-          ...new Set(nutritionData.map((e) => e.date)),
-        ].sort();
-        let streak = 1;
-
-        for (let i = uniqueDates.length - 1; i > 0; i--) {
-          const current = parseLocalDate(uniqueDates[i]);
-          const previous = parseLocalDate(uniqueDates[i - 1]);
-          const diffDays = Math.round(
-            (current - previous) / (1000 * 60 * 60 * 24),
-          );
-
-          if (diffDays === 1) {
-            streak++;
-          } else {
-            break;
-          }
+        if (!showingAllHistory && nutritionData.length > 10) {
+          const hint = document.createElement("div");
+          hint.className =
+            "text-center text-xs text-nutri-bluegray-400 dark:text-nutri-bluegray-500 mt-2";
+          hint.innerHTML = `Showing last 10 entries • ${nutritionData.length - 10} older entries hidden`;
+          container.appendChild(hint);
         }
-
-        const today = getLocalTodayString();
-        const lastSaved = uniqueDates[uniqueDates.length - 1];
-        const gapFromToday = Math.round(
-          (parseLocalDate(today) - parseLocalDate(lastSaved)) /
-            (1000 * 60 * 60 * 24),
-        );
-
-        if (gapFromToday > 1) return 0;
-
-        return streak;
       }
 
-      function loadStreak() {
-        document.getElementById("streak").textContent = getCurrentStreak();
+      // ==================== REPORT & EXPORT ====================
+      function getEntryTotals(entry) {
+        let kcalSum = 0,
+          protSum = 0,
+          fatSum = 0,
+          sugSum = 0;
+        Object.values(entry.meals || {})
+          .flat()
+          .forEach((f) => {
+            kcalSum += Number(f.cal || 0);
+            protSum += Number(f.prot || 0);
+            fatSum += Number(f.fat || 0);
+            sugSum += Number(f.sug || 0);
+          });
+        return {
+          kcal: Math.round(kcalSum),
+          prot: Math.round(protSum),
+          fat: Math.round(fatSum),
+          sug: Math.round(sugSum),
+        };
       }
 
       function getAverageKcalAllTime() {
@@ -1869,60 +1930,31 @@
         return Math.round(total / nutritionData.length);
       }
 
-      const quotes = [
-        "Consistency beats intensity.",
-        "Small steps daily create big results.",
-        "Discipline builds freedom.",
-        "Progress > perfection.",
-        "You already made it to day 100 — the rest is just momentum.",
-        "I love you, but I don't need you.",
-      ];
-      function newQuote() {
-        const q = quotes[Math.floor(Math.random() * quotes.length)];
-        document.getElementById("quote").textContent = q;
-      }
-
       function showReport() {
         const modal = document.createElement("div");
         modal.className =
           "fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4";
         modal.innerHTML = `
-          <div class="bg-white dark:bg-card-dark rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-  <h2 class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">
-    Your Progress Report
-  </h2>
-
-  <div class="flex flex-wrap gap-2">
-    <button
-      onclick="exportNutritionCSV()"
-      class="px-4 py-2 rounded-xl bg-nutri-emerald-100 hover:bg-nutri-emerald-200 text-nutri-emerald-700 font-medium"
-    >
-      Export Excel CSV
-    </button>
-
-    <button
-      onclick="exportReportWithGraph()"
-      class="px-4 py-2 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium"
-    >
-      Export Report with Graph
-    </button>
-
-    <button
-      onclick="printReportWithGraph()"
-      class="px-4 py-2 rounded-xl bg-violet-100 hover:bg-violet-200 text-violet-700 font-medium"
-    >
-      Print Report
-    </button>
-
-    <button
-      class="text-rose-600 hover:text-rose-800 text-3xl leading-none px-2"
-      onclick="this.closest('.fixed').remove()"
-    >
-      ×
-    </button>
-  </div>
-</div>
+          <div class="bg-white dark:bg-card-dark rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-container relative">
+            <button class="modal-close-btn text-rose-600 hover:text-rose-800 text-3xl leading-none" onclick="this.closest('.fixed').remove()">×</button>
+            
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 pr-8 modal-header-stack">
+              <h2 class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">
+                Your Progress Report
+              </h2>
+              <div class="export-nav">
+                <button onclick="exportNutritionCSV()" class="px-3 py-2 rounded-xl bg-nutri-emerald-100 hover:bg-nutri-emerald-200 text-nutri-emerald-700 font-medium text-sm">
+                  Export CSV
+                </button>
+                <button onclick="exportReportWithGraph()" class="px-3 py-2 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium text-sm">
+                  Export Report
+                </button>
+                <button onclick="printReportWithGraph()" class="px-3 py-2 rounded-xl bg-violet-100 hover:bg-violet-200 text-violet-700 font-medium text-sm">
+                  Print
+                </button>
+              </div>
+            </div>
+            
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-center">
               <div class="p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
                 <div class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">${getCurrentStreak()}</div>
@@ -1937,7 +1969,9 @@
                 <div class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary">Avg protein (all time)</div>
               </div>
             </div>
+            
             <canvas id="progressChart" class="w-full h-80 mb-8"></canvas>
+            
             <div class="overflow-x-auto">
               <table class="w-full text-sm text-left">
                 <thead class="bg-nutri-bluegray-100 dark:bg-nutri-bluegray-800">
@@ -1957,15 +1991,15 @@
                     .map((e) => {
                       const totals = getEntryTotals(e);
                       return `
-  <tr class="border-b dark:border-nutri-bluegray-700">
-    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${e.date}</td>
-    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.kcal}</td>
-    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.prot}</td>
-    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.fat}</td>
-    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.sug}</td>
-    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${e.workout || "-"}</td>
-  </tr>
-`;
+                      <tr class="border-b dark:border-nutri-bluegray-700">
+                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${e.date}</td>
+                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.kcal}</td>
+                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.prot}</td>
+                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.fat}</td>
+                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.sug}</td>
+                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${e.workout || "-"}</td>
+                      </tr>
+                    `;
                     })
                     .join("")}
                 </tbody>
@@ -2004,7 +2038,6 @@
               .forEach((f) => (sum += f.fat || 0));
             return sum;
           });
-
           const sugData = sorted.map((e) => {
             let sum = 0;
             Object.values(e.meals)
@@ -2012,6 +2045,7 @@
               .forEach((f) => (sum += f.sug || 0));
             return sum;
           });
+
           window.progressChartInstance = new Chart(canvas, {
             type: "line",
             data: {
@@ -2100,28 +2134,6 @@
           });
         }, 0);
       }
-      function getEntryTotals(entry) {
-        let kcalSum = 0;
-        let protSum = 0;
-        let fatSum = 0;
-        let sugSum = 0;
-
-        Object.values(entry.meals || {})
-          .flat()
-          .forEach((f) => {
-            kcalSum += Number(f.cal || 0);
-            protSum += Number(f.prot || 0);
-            fatSum += Number(f.fat || 0);
-            sugSum += Number(f.sug || 0);
-          });
-
-        return {
-          kcal: Math.round(kcalSum),
-          prot: Math.round(protSum),
-          fat: Math.round(fatSum),
-          sug: Math.round(sugSum),
-        };
-      }
 
       function exportNutritionCSV() {
         if (!nutritionData.length) {
@@ -2132,7 +2144,6 @@
         const sorted = [...nutritionData].sort((a, b) =>
           a.date.localeCompare(b.date),
         );
-
         let csv =
           "Date,Calories,Protein (g),Fat (g),Sugar (g),Weight,Workout\n";
 
@@ -2152,7 +2163,6 @@
 
         const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
-
         const a = document.createElement("a");
         a.href = url;
         a.download = "NutriTrack_Report.csv";
@@ -2169,7 +2179,6 @@
           a.date.localeCompare(b.date),
         );
         const recent = sorted.slice(-14);
-
         const canvas = document.getElementById("progressChart");
         const chartImage = canvas ? canvas.toDataURL("image/png") : "";
 
@@ -2179,122 +2188,64 @@
           .map((entry) => {
             const totals = getEntryTotals(entry);
             return `
-        <tr>
-          <td>${entry.date}</td>
-          <td>${totals.kcal}</td>
-          <td>${totals.prot}</td>
-          <td>${totals.fat}</td>
-          <td>${totals.sug}</td>
-          <td>${entry.workout || "-"}</td>
-        </tr>
-      `;
+            <tr>
+              <td>${entry.date}</td>
+              <td>${totals.kcal}</td>
+              <td>${totals.prot}</td>
+              <td>${totals.fat}</td>
+              <td>${totals.sug}</td>
+              <td>${entry.workout || "-"}</td>
+            </tr>
+          `;
           })
           .join("");
 
         return `
-    <html>
-      <head>
-        <title>NutriTrack Report</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            padding: 24px;
-            color: #111827;
-          }
-          h1, h2 {
-            margin-bottom: 8px;
-          }
-          .summary {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin: 20px 0;
-          }
-          .card {
-            border: 1px solid #d1d5db;
-            border-radius: 12px;
-            padding: 14px 16px;
-            min-width: 180px;
-            background: #f9fafb;
-          }
-          .chart-wrap {
-            margin: 24px 0;
-            text-align: center;
-          }
-          .chart-wrap img {
-            max-width: 100%;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-          }
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-          }
-          th, td {
-            border: 1px solid #d1d5db;
-            padding: 10px;
-            text-align: left;
-            font-size: 14px;
-          }
-          th {
-            background: #f3f4f6;
-          }
-        </style>
-      </head>
-      <body>
-        <h1>NutriTrack Progress Report</h1>
-        <p>Generated on ${new Date().toLocaleString()}</p>
-
-        <div class="summary">
-          <div class="card">
-            <strong>Days Streak</strong><br>
-            ${getCurrentStreak()}
-          </div>
-          <div class="card">
-            <strong>Avg kcal (all time)</strong><br>
-            ${getAverageKcalAllTime()}
-          </div>
-          <div class="card">
-            <strong>Avg protein (all time)</strong><br>
-            ${getAverageProteinAllTime()}
-          </div>
-        </div>
-
-        <div class="chart-wrap">
-          <h2>Nutrition Trend Graph</h2>
-          ${chartImage ? `<img src="${chartImage}" alt="Nutrition Trend Graph">` : "<p>Graph unavailable</p>"}
-        </div>
-
-        <h2>Last 14 Entries</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Calories</th>
-              <th>Protein (g)</th>
-              <th>Fat (g)</th>
-              <th>Sugar (g)</th>
-              <th>Workout</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${tableRows}
-          </tbody>
-        </table>
-    
-  `;
+          <html>
+            <head>
+              <title>NutriTrack Report</title>
+              <style>
+                body { font-family: Arial, sans-serif; padding: 24px; color: #111827; }
+                h1, h2 { margin-bottom: 8px; }
+                .summary { display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 0; }
+                .card { border: 1px solid #d1d5db; border-radius: 12px; padding: 14px 16px; min-width: 180px; background: #f9fafb; }
+                .chart-wrap { margin: 24px 0; text-align: center; }
+                .chart-wrap img { max-width: 100%; border: 1px solid #e5e7eb; border-radius: 12px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #d1d5db; padding: 10px; text-align: left; font-size: 14px; }
+                th { background: #f3f4f6; }
+              </style>
+            </head>
+            <body>
+              <h1>NutriTrack Progress Report</h1>
+              <p>Generated on ${new Date().toLocaleString()}</p>
+              <div class="summary">
+                <div class="card"><strong>Days Streak</strong><br>${getCurrentStreak()}</div>
+                <div class="card"><strong>Avg kcal (all time)</strong><br>${getAverageKcalAllTime()}</div>
+                <div class="card"><strong>Avg protein (all time)</strong><br>${getAverageProteinAllTime()}</div>
+              </div>
+              <div class="chart-wrap">
+                <h2>Nutrition Trend Graph</h2>
+                ${chartImage ? `<img src="${chartImage}" alt="Nutrition Trend Graph">` : "<p>Graph unavailable</p>"}
+              </div>
+              <h2>Last 14 Entries</h2>
+              <table>
+                <thead>
+                  <tr><th>Date</th><th>Calories</th><th>Protein (g)</th><th>Fat (g)</th><th>Sugar (g)</th><th>Workout</th></tr>
+                </thead>
+                <tbody>${tableRows}</tbody>
+              </table>
+        `;
       }
+
       function exportReportWithGraph() {
         if (!nutritionData.length) {
           alert("No nutrition data yet.");
           return;
         }
-
         const html = buildReportHTMLWithGraph();
         const blob = new Blob([html], { type: "application/msword" });
         const url = URL.createObjectURL(blob);
-
         const a = document.createElement("a");
         a.href = url;
         a.download = "NutriTrack_Report_With_Graph.doc";
@@ -2309,24 +2260,21 @@
           alert("No nutrition data yet.");
           return;
         }
-
         const html = buildReportHTMLWithGraph();
         const printWindow = window.open("", "_blank", "width=1000,height=800");
-
         if (!printWindow) {
           alert("Popup blocked. Please allow popups for printing.");
           return;
         }
-
         printWindow.document.open();
         printWindow.document.write(html);
         printWindow.document.close();
-
         printWindow.onload = () => {
           printWindow.focus();
           printWindow.print();
         };
       }
+
       function exportData() {
         const data = {
           nutritionData: nutritionData,
@@ -2334,11 +2282,9 @@
           exportDate: new Date().toISOString(),
           appName: "NutriTrack",
         };
-
         const dataStr = JSON.stringify(data, null, 2);
         const blob = new Blob([dataStr], { type: "application/json" });
         const url = URL.createObjectURL(blob);
-
         const link = document.createElement("a");
         link.href = url;
         link.download = `nutritrack-backup-${new Date().toISOString().split("T")[0]}.json`;
@@ -2346,24 +2292,20 @@
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-
         alert("📤 Data exported! Check your Downloads folder.");
       }
 
       function importData(input) {
         const file = input.files[0];
         if (!file) return;
-
         if (!confirm("⚠️ This will REPLACE your current data. Continue?")) {
           input.value = "";
           return;
         }
-
         const reader = new FileReader();
         reader.onload = function (e) {
           try {
             const data = JSON.parse(e.target.result);
-
             if (data.nutritionData) {
               nutritionData = data.nutritionData;
               localStorage.setItem(
@@ -2371,15 +2313,12 @@
                 JSON.stringify(nutritionData),
               );
             }
-
             if (data.personalizedFoods) {
               savePersonalizedFoods(data.personalizedFoods);
             }
-
             renderHistory();
             updateStreak();
             loadTempMeals();
-
             alert("📥 Data imported successfully! Welcome back! 🎉");
           } catch (err) {
             alert(
@@ -2391,73 +2330,58 @@
         };
         reader.readAsText(file);
       }
-      let showingAllHistory = false;
 
-      function toggleHistoryView() {
-        showingAllHistory = !showingAllHistory;
-        const btn = document.getElementById("historyToggle");
-        btn.innerHTML = showingAllHistory ? "📅 Show Recent" : "📅 Show All";
+      // ==================== QUOTES ====================
+      const quotes = [
+        "Consistency beats intensity.",
+        "Small steps daily create big results.",
+        "Discipline builds freedom.",
+        "Progress > perfection.",
+        "You already made it to day 100 — the rest is just momentum.",
+        "I love you, but I don't need you.",
+      ];
+
+      function newQuote() {
+        const q = quotes[Math.floor(Math.random() * quotes.length)];
+        document.getElementById("quote").textContent = q;
+      }
+
+      // ==================== INITIALIZATION ====================
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("date").value = currentDate;
+
+        if (nutritionData.length > 0) {
+          const lastEntry = [...nutritionData]
+            .sort((a, b) => a.date.localeCompare(b.date))
+            .at(-1);
+          if (lastEntry?.weight != null && !isNaN(lastEntry.weight)) {
+            document.getElementById("weight").value = lastEntry.weight;
+          }
+        }
+
+        renderMeals();
+        loadTempMeals();
+        loadLiveFields();
+        loadStreak();
         renderHistory();
-      }
+        addInputListeners();
+        computeTotals();
+        newQuote();
 
-      function renderHistory() {
-        const container = document.getElementById("history");
-        container.innerHTML = "";
-
-        let displayData = [...nutritionData].reverse();
-
-        if (!showingAllHistory && displayData.length > 3) {
-          displayData = displayData.slice(0, 3);
-        }
-
-        displayData.forEach((e) => {
-          let cal = 0,
-            prot = 0,
-            fat = 0,
-            sug = 0;
-          Object.values(e.meals)
-            .flat()
-            .forEach((f) => {
-              cal += f.cal;
-              prot += f.prot;
-              fat += f.fat;
-              sug += f.sug;
-            });
-
-          const t = getTargets();
-          const calStatus =
-            cal < t.cal.target * 0.8 ? "↓" : cal > t.cal.max ? "↑" : "✓";
-          const protStatus =
-            prot < t.prot.target * 0.8 ? "↓" : prot > t.prot.max ? "↑" : "✓";
-          const fatStatus =
-            fat < t.fat.target * 0.8 ? "↓" : fat > t.fat.max ? "↑" : "✓";
-          const sugStatus =
-            sug < t.sug.target * 0.8 ? "↓" : sug > t.sug.max ? "↑" : "✓";
-
-          const workoutText = e.workout ? ` • ${e.workout}` : "";
-          const div = document.createElement("div");
-          div.className =
-            "card flex justify-between items-center py-3 px-4 text-sm";
-          div.innerHTML = `
-      <div>
-        <div class="font-medium text-nutri-bluegray-900 dark:text-text-dark-primary">${e.date}</div>
-        <div class="text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
-          ${Math.round(cal)} kcal ${calStatus} • ${Math.round(prot)}g prot ${protStatus} • ${Math.round(fat)}g fat ${fatStatus} • ${Math.round(sug)}g sug ${sugStatus}${workoutText}
-        </div>
-      </div>
-      <button onclick="deleteDay('${e.date}')" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-lg">🗑</button>
-    `;
-          container.appendChild(div);
+        // Event listeners for live fields
+        document
+          .getElementById("weight")
+          .addEventListener("input", autoSaveLiveFields);
+        document
+          .getElementById("workout")
+          .addEventListener("change", autoSaveLiveFields);
+        document
+          .getElementById("date")
+          .addEventListener("change", autoSaveLiveFields);
+        document.getElementById("foodInput").addEventListener("focus", () => {
+          document.getElementById("lookupResults").innerHTML = "";
         });
-
-        if (!showingAllHistory && nutritionData.length > 10) {
-          const hint = document.createElement("div");
-          hint.className =
-            "text-center text-xs text-nutri-bluegray-400 dark:text-nutri-bluegray-500 mt-2";
-          hint.innerHTML = `Showing last 10 entries • ${nutritionData.length - 10} older entries hidden`;
-          container.appendChild(hint);
-        }
-      }
+      });
     </script>
     <script src="foods.js"></script>
   </body>
