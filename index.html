@@ -52,6 +52,7 @@
                 900: "#0f172a",
               },
             },
+
             boxShadow: {
               card: "0 4px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 6px -2px rgba(0, 0, 0, 0.05)",
             },
@@ -151,6 +152,21 @@
           right: 0.75rem;
         }
       }
+
+      #smartReminderCard {
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.08);
+        animation: smartReminderFadeUp 0.35s ease;
+      }
+      @keyframes smartReminderFadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
     </style>
   </head>
 
@@ -166,7 +182,7 @@
             NutriTrack
           </h1>
           <div class="mt-1 flex items-center gap-2 text-lg">
-            <span>Day Streak:</span>
+            <span>Log Streak:</span>
             <span
               id="streak"
               class="font-bold text-nutri-emerald-700 dark:text-nutri-emerald-300"
@@ -338,6 +354,36 @@
                 id="bestMealFoods"
                 class="list-disc pl-5 space-y-1 text-sm text-nutri-bluegray-700 dark:text-text-dark-secondary"
               ></ul>
+            </div>
+          </div>
+
+          <!-- Freud Smart Reminder -->
+          <div
+            id="smartReminderCard"
+            class="hidden rounded-2xl border border-nutri-emerald-200 bg-white/70 dark:bg-nutri-bluegray-900/50 p-4"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex-1">
+                <div
+                  class="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-nutri-emerald-100 dark:bg-nutri-emerald-900/40 text-nutri-emerald-700 dark:text-nutri-emerald-300 mb-3"
+                >
+                  Freud Reminder
+                </div>
+                <div
+                  id="smartReminderText"
+                  class="text-sm leading-6 text-nutri-bluegray-700 dark:text-text-dark-secondary"
+                >
+                  You’re doing well today. Keep going one meal at a time.
+                </div>
+              </div>
+              <button
+                id="smartReminderClose"
+                type="button"
+                class="text-xl leading-none text-nutri-bluegray-500 hover:text-rose-500"
+                aria-label="Close smart reminder"
+              >
+                &times;
+              </button>
             </div>
           </div>
 
@@ -788,15 +834,126 @@
         };
       }
 
+      // ==================== SMART REMINDER ====================
+      let lastSmartReminderMessage = "";
+      let smartReminderDismissed = false;
+
+      const freudVoices = [
+        "You're doing well — stay in control.",
+        "Careful now… you're drifting off track.",
+        "Stay sharp. You know what to do.",
+        "You're still in control — adjust, don’t quit.",
+        "Discipline now, reward later.",
+      ];
+
+      function getFreudLine() {
+        return freudVoices[Math.floor(Math.random() * freudVoices.length)];
+      }
+
+      function showSmartReminder(message) {
+        const card = document.getElementById("smartReminderCard");
+        const text = document.getElementById("smartReminderText");
+
+        if (!card || !text) return;
+        if (smartReminderDismissed && message === lastSmartReminderMessage)
+          return;
+
+        text.textContent = `${getFreudLine()} ${message}`;
+        card.classList.remove("hidden");
+        lastSmartReminderMessage = message;
+      }
+
+      function hideSmartReminder() {
+        const card = document.getElementById("smartReminderCard");
+        if (card) card.classList.add("hidden");
+      }
+
+      function getSmartReminderMessage(totals, targets) {
+        const cal = Number(totals.cal || 0);
+        const prot = Number(totals.prot || 0);
+        const fat = Number(totals.fat || 0);
+        const sug = Number(totals.sug || 0);
+
+        const targetCal = Number(targets.cal?.target || 0);
+        const maxCal = Number(targets.cal?.max || 0);
+        const targetProt = Number(targets.prot?.target || 0);
+        const targetFat = Number(targets.fat?.target || 0);
+        const maxFat = Number(targets.fat?.max || 0);
+        const targetSug = Number(targets.sug?.target || 0);
+        const maxSug = Number(targets.sug?.max || 0);
+
+        const hour = new Date().getHours();
+
+        const sugarPctOfMax = maxSug > 0 ? (sug / maxSug) * 100 : 0;
+        const fatPctOfMax = maxFat > 0 ? (fat / maxFat) * 100 : 0;
+        const proteinPctOfTarget =
+          targetProt > 0 ? (prot / targetProt) * 100 : 0;
+        const calPctOfTarget = targetCal > 0 ? (cal / targetCal) * 100 : 0;
+
+        if (sug > maxSug && maxSug > 0) {
+          return "Hey babe, your sugar is already over your max for today. This is not failure — just a cue to keep the next meal lighter, steadier, and less sweet.";
+        }
+
+        if (fat > maxFat && maxFat > 0) {
+          return "Reminder from Freud: your fats already went over the max today. Your next move can simply be lean protein, lighter choices, and no panic.";
+        }
+
+        if (sugarPctOfMax >= 85) {
+          return "Hey love, your sugar is getting high now. Sometimes that happens more when sleep is low or emotions are heavy. Pause before the next sweet choice.";
+        }
+
+        if (fatPctOfMax >= 85) {
+          return "Your fats are getting close to the max. No need to stress — just keep the next meal leaner and cleaner.";
+        }
+
+        if (hour >= 15 && proteinPctOfTarget < 45) {
+          return "Gentle reminder: your protein is still quite low for this point in the day. A protein-first meal now may help prevent random cravings later.";
+        }
+
+        if (hour >= 18 && calPctOfTarget < 45) {
+          return "You may be eating too little for this point in the day. Under-eating can rebound into night cravings, so a balanced meal may help.";
+        }
+
+        if (hour >= 20 && cal >= targetCal && proteinPctOfTarget < 70) {
+          return "You are near your calorie target, but protein is still not strong enough. If you still eat, go for something light and protein-led.";
+        }
+
+        if (sug >= targetSug && prot < targetProt * 0.4) {
+          return "Your body may be leaning toward quick energy right now. Protein before more sugar would be a smarter next move.";
+        }
+
+        if (
+          cal <= (maxCal || targetCal) &&
+          prot >= targetProt * 0.7 &&
+          fat <= targetFat * 1.1 &&
+          sug <= targetSug * 1.1
+        ) {
+          return "You’re doing really well today. This is the kind of quiet consistency that changes the body over time. Keep going one choice at a time.";
+        }
+
+        return "I am still progressing, even if it’s not visible today. The next choice still matters.";
+      }
+
+      function updateSmartReminder(totals, targets) {
+        const message = getSmartReminderMessage(totals, targets);
+        smartReminderDismissed = false;
+        showSmartReminder(message);
+      }
+
       // ==================== STREAK FUNCTIONS (FIXED) ====================
       function getCurrentStreak() {
-        if (nutritionData.length === 0) return 0;
+        if (!Array.isArray(nutritionData) || nutritionData.length === 0)
+          return 0;
 
         const uniqueDates = [
-          ...new Set(nutritionData.map((e) => e.date)),
-        ].sort();
-        if (uniqueDates.length === 0) return 0;
+          ...new Set(
+            nutritionData
+              .map((e) => String(e?.date ?? "").trim())
+              .filter((date) => date !== ""),
+          ),
+        ];
 
+        return uniqueDates.length;
         const today = getLocalTodayString();
         const lastEntryDate = uniqueDates[uniqueDates.length - 1];
 
@@ -847,7 +1004,11 @@
 
       function getAllFoods() {
         const personalized = loadPersonalizedFoods();
-        return { ...pinoyFallback, ...personalized };
+        const baseFoods =
+          typeof pinoyFallback !== "undefined" && pinoyFallback
+            ? pinoyFallback
+            : {};
+        return { ...baseFoods, ...personalized };
       }
 
       // ==================== MODAL FUNCTIONS ====================
@@ -890,7 +1051,7 @@
 
         const personalized = loadPersonalizedFoods();
 
-        if (pinoyFallback[name]) {
+        if (typeof pinoyFallback !== "undefined" && pinoyFallback[name]) {
           if (
             !confirm(
               `"${name}" already exists in default foods. Overwrite with your version?`,
@@ -924,6 +1085,16 @@
 
         if (!term) {
           results.innerHTML = "";
+          return;
+        }
+
+        if (!Object.keys(allFoods).length) {
+          results.innerHTML = `
+            <div class="p-4 text-center text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
+              <p class="mb-2">Food database is not loaded.</p>
+              <p class="text-sm">Make sure <strong>foods.js</strong> is in the same folder as this HTML file.</p>
+            </div>
+          `;
           return;
         }
 
@@ -1279,6 +1450,7 @@
 
         renderMacroAnalysis(totals, t);
         updateTodayChart(totals, t);
+        updateSmartReminder(totals, t);
       }
 
       function updateStatus(key, value, target, max, el) {
@@ -1958,7 +2130,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-center">
               <div class="p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
                 <div class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">${getCurrentStreak()}</div>
-                <div class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary">Days Streak</div>
+                <div class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary">Log Streak</div>
               </div>
               <div class="p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
                 <div class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">${getAverageKcalAllTime()}</div>
@@ -2103,7 +2275,10 @@
                   type: "linear",
                   display: true,
                   position: "right",
-                  title: { display: true, text: "protein (g) fat (g) sugar (g)" },
+                  title: {
+                    display: true,
+                    text: "protein (g) fat (g) sugar (g)",
+                  },
                   grid: { drawOnChartArea: false },
                   suggestedMin: 0,
                   suggestedMax: 150,
@@ -2214,7 +2389,22 @@
                 table { width: 100%; border-collapse: collapse; margin-top: 20px; }
                 th, td { border: 1px solid #d1d5db; padding: 10px; text-align: left; font-size: 14px; }
                 th { background: #f3f4f6; }
-              </style>
+          
+      #smartReminderCard {
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.08);
+        animation: smartReminderFadeUp 0.35s ease;
+      }
+      @keyframes smartReminderFadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
             </head>
             <body>
               <h1>NutriTrack Progress Report</h1>
@@ -2381,6 +2571,28 @@
         document.getElementById("foodInput").addEventListener("focus", () => {
           document.getElementById("lookupResults").innerHTML = "";
         });
+        document
+          .getElementById("foodInput")
+          .addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              lookupFood();
+            }
+          });
+
+        const closeBtn = document.getElementById("smartReminderClose");
+        if (closeBtn) {
+          closeBtn.addEventListener("click", () => {
+            smartReminderDismissed = true;
+            hideSmartReminder();
+          });
+        }
+
+        if (typeof pinoyFallback === "undefined") {
+          console.warn(
+            "foods.js is missing or not loaded. Default search database will not work until foods.js is in the same folder.",
+          );
+        }
       });
     </script>
     <script src="foods.js"></script>
