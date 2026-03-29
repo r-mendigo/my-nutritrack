@@ -535,6 +535,24 @@
             class="mt-4 rounded-xl bg-white/70 dark:bg-nutri-bluegray-900/50 border border-nutri-bluegray-200 dark:border-nutri-bluegray-700 p-4 text-sm text-nutri-bluegray-700 dark:text-text-dark-secondary space-y-3"
           >
             <div
+              id="smartReminder"
+              class="hidden fixed bottom-5 right-5 w-72 bg-nutri-emerald-600 text-white p-4 rounded-2xl shadow-xl z-50"
+            >
+              <div class="flex justify-between items-start gap-3">
+                <div
+                  id="smartReminderText"
+                  class="text-sm leading-relaxed flex-1"
+                ></div>
+
+                <button
+                  id="smartReminderClose"
+                  class="text-white text-lg font-bold px-1 hover:opacity-70"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <div
               class="font-semibold text-nutri-bluegray-900 dark:text-text-dark-primary"
             >
               Smart Analysis
@@ -892,20 +910,43 @@
           targetProt > 0 ? (prot / targetProt) * 100 : 0;
         const calPctOfTarget = targetCal > 0 ? (cal / targetCal) * 100 : 0;
 
+        if (cal === 0 && prot === 0 && fat === 0 && sug === 0) {
+          return "";
+        }
+
+        const alerts = [];
+
         if (sug > maxSug && maxSug > 0) {
-          return "Hey babe, your sugar is already over your max for today. This is not failure — just a cue to keep the next meal lighter, steadier, and less sweet.";
+          alerts.push(
+            `your sugar is already over your max by ${formatSmartNumber(sug - maxSug)} g`,
+          );
+        } else if (sugarPctOfMax >= 85) {
+          alerts.push("your sugar is getting high");
         }
 
         if (fat > maxFat && maxFat > 0) {
-          return "Reminder from Freud: your fats already went over the max today. Your next move can simply be lean protein, lighter choices, and no panic.";
+          alerts.push(
+            `your fat is already over your max by ${formatSmartNumber(fat - maxFat)} g`,
+          );
+        } else if (fatPctOfMax >= 85) {
+          alerts.push("your fat is getting close to the max");
         }
 
-        if (sugarPctOfMax >= 85) {
-          return "Hey love, your sugar is getting high now. Sometimes that happens more when sleep is low or emotions are heavy. Pause before the next sweet choice.";
-        }
+        if (alerts.length > 0) {
+          let joinedAlerts = "";
 
-        if (fatPctOfMax >= 85) {
-          return "Your fats are getting close to the max. No need to stress — just keep the next meal leaner and cleaner.";
+          if (alerts.length === 1) {
+            joinedAlerts = alerts[0];
+          } else if (alerts.length === 2) {
+            joinedAlerts = `${alerts[0]}, and ${alerts[1]}`;
+          } else {
+            joinedAlerts =
+              alerts.slice(0, -1).join(", ") +
+              ", and " +
+              alerts[alerts.length - 1];
+          }
+
+          return `Discipline now, reward later. Hey babe, ${joinedAlerts}. This is not failure — just a cue to keep the next meal lighter, leaner, and more controlled.`;
         }
 
         if (hour >= 15 && proteinPctOfTarget < 45) {
@@ -1028,53 +1069,132 @@
       }
 
       function savePersonalizedFood() {
-        const name = document
-          .getElementById("newFoodName")
-          .value.trim()
-          .toLowerCase();
-        const cal =
-          parseFloat(document.getElementById("newFoodCal").value) || 0;
-        const prot =
-          parseFloat(document.getElementById("newFoodProt").value) || 0;
-        const fat =
-          parseFloat(document.getElementById("newFoodFat").value) || 0;
-        const sug =
-          parseFloat(document.getElementById("newFoodSug").value) || 0;
+        const name = document.getElementById("newFoodName").value.trim();
+        const cal = Number(document.getElementById("newFoodCal").value) || 0;
+        const prot = Number(document.getElementById("newFoodProt").value) || 0;
+        const fat = Number(document.getElementById("newFoodFat").value) || 0;
+        const sug = Number(document.getElementById("newFoodSug").value) || 0;
 
         if (!name) {
-          alert("Please enter a food name");
+          alert("Please enter a food name first.");
           return;
         }
 
-        if (cal <= 0) {
-          alert("Please enter valid calories");
-          return;
+        const personalizedFoods = loadPersonalizedFoods();
+
+        personalizedFoods[name.toLowerCase()] = {
+          name,
+          cal,
+          prot,
+          fat,
+          sug,
+          personalized: true,
+        };
+
+        savePersonalizedFoods(personalizedFoods);
+
+        closeAddFoodModal();
+
+        // Clear modal fields after saving
+        document.getElementById("newFoodName").value = "";
+        document.getElementById("newFoodCal").value = "";
+        document.getElementById("newFoodProt").value = "";
+        document.getElementById("newFoodFat").value = "";
+        document.getElementById("newFoodSug").value = "";
+
+        // Auto-fill search field with the newly added food name
+        const foodInput = document.getElementById("foodInput");
+        if (foodInput) {
+          foodInput.value = name;
         }
 
-        const personalized = loadPersonalizedFoods();
+        // Run search immediately so user can click result if they want to log it
+        lookupFood();
 
-        if (typeof pinoyFallback !== "undefined" && pinoyFallback[name]) {
+        // Optional friendly message
+        alert(
+          "Saved to My Foods. Tap the search result below if you want to log it now. ✅",
+        );
+      }
+
+      function parseSmartPasteFood(text) {
+        const raw = String(text || "").trim();
+        if (!raw) return null;
+
+        const normalized = raw.replace(/\r/g, "").trim();
+
+        // Split into clean lines first
+        const lines = normalized
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean);
+
+        let name = "";
+        let cal = "";
+        let prot = "";
+        let fat = "";
+        let sug = "";
+
+        // First non-macro-looking line becomes the name
+        for (const line of lines) {
           if (
-            !confirm(
-              `"${name}" already exists in default foods. Overwrite with your version?`,
+            !/^(macros\s*only:?|kcal\b|calories?\b|cal\b|protein\b|prot\b|fat\b|sugar\b|sug\b)/i.test(
+              line,
             )
           ) {
-            return;
+            name = line;
+            break;
           }
         }
 
-        personalized[name] = { cal, prot, fat, sug };
-        savePersonalizedFoods(personalized);
+        // Join text for flexible matching
+        const joined = lines.join(" ");
 
-        alert(`"${name}" saved to your personalized foods!`);
-        closeAddFoodModal();
+        // Support BOTH:
+        // "165 kcal" and "Kcal: 165"
+        const calMatch =
+          joined.match(/(?:kcal|calories?|cal)\s*[:\-]?\s*(\d+(?:\.\d+)?)/i) ||
+          joined.match(/(\d+(?:\.\d+)?)\s*(?:kcal|calories?|cal)\b/i);
 
-        const searchTerm = document.getElementById("foodInput").value.trim();
-        if (searchTerm) {
-          lookupFood();
+        const protMatch =
+          joined.match(/(?:protein|prot)\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*g?/i) ||
+          joined.match(/(\d+(?:\.\d+)?)\s*g?\s*(?:protein|prot)\b/i);
+
+        const fatMatch =
+          joined.match(/fat\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*g?/i) ||
+          joined.match(/(\d+(?:\.\d+)?)\s*g?\s*fat\b/i);
+
+        const sugMatch =
+          joined.match(/(?:sugar|sug)\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*g?/i) ||
+          joined.match(/(\d+(?:\.\d+)?)\s*g?\s*(?:sugar|sug)\b/i);
+
+        const hasMacros = calMatch || protMatch || fatMatch || sugMatch;
+        if (!hasMacros) return null;
+
+        // Fallback name cleanup if first-line detection fails
+        if (!name) {
+          name = joined
+            .replace(/macros\s*only:?/gi, "")
+            .replace(/(?:kcal|calories?|cal)\s*[:\-]?\s*\d+(?:\.\d+)?/gi, "")
+            .replace(/\d+(?:\.\d+)?\s*(?:kcal|calories?|cal)\b/gi, "")
+            .replace(/(?:protein|prot)\s*[:\-]?\s*\d+(?:\.\d+)?\s*g?/gi, "")
+            .replace(/\d+(?:\.\d+)?\s*g?\s*(?:protein|prot)\b/gi, "")
+            .replace(/fat\s*[:\-]?\s*\d+(?:\.\d+)?\s*g?/gi, "")
+            .replace(/\d+(?:\.\d+)?\s*g?\s*fat\b/gi, "")
+            .replace(/(?:sugar|sug)\s*[:\-]?\s*\d+(?:\.\d+)?\s*g?/gi, "")
+            .replace(/\d+(?:\.\d+)?\s*g?\s*(?:sugar|sug)\b/gi, "")
+            .replace(/\s{2,}/g, " ")
+            .trim();
         }
-      }
 
+        return {
+          name: name || raw,
+          cal: calMatch ? Number(calMatch[1]) : "",
+          prot: protMatch ? Number(protMatch[1]) : "",
+          fat: fatMatch ? Number(fatMatch[1]) : "",
+          sug: sugMatch ? Number(sugMatch[1]) : "",
+        };
+      }
       // ==================== FOOD SEARCH ====================
       function lookupFood() {
         const term = document
@@ -1370,6 +1490,8 @@
 
       // ==================== CALCULATIONS & ANALYSIS ====================
       function computeTotals() {
+        smartReminderDismissed = false;
+
         let totals = { cal: 0, prot: 0, fat: 0, sug: 0 };
 
         meals.forEach((m) => {
@@ -1827,6 +1949,7 @@
           totals.fat === 0 &&
           totals.sug === 0
         ) {
+          hideSmartReminder();
           return {
             summary: "You haven't logged any food yet today.",
             recommendation:
@@ -1838,6 +1961,7 @@
           summary = `Protein is still low, but fat is already above your max by ${formatSmartNumber(overFat)} g.`;
           recommendation =
             "Best next move: choose very lean protein and avoid fried food, oily dishes, and rich sauces.";
+
           return { summary, recommendation };
         }
 
@@ -1845,6 +1969,7 @@
           summary = `Sugar is already above your max by ${formatSmartNumber(overSug)} g, while protein is still short by ${formatSmartNumber(remainProt)} g.`;
           recommendation =
             "Best next move: keep the next meal savory, structured, and protein-focused.";
+
           return { summary, recommendation };
         }
 
@@ -1852,6 +1977,7 @@
           summary = `Your protein is still low by ${formatSmartNumber(remainProt)} g and calories are still low by ${formatSmartNumber(remainCal)} kcal.`;
           recommendation =
             "Best next move: eat a real protein meal, not just a small snack.";
+
           return { summary, recommendation };
         }
 
@@ -1859,6 +1985,7 @@
           summary = `You still need ${formatSmartNumber(remainProt)} g protein, but calories are getting tight with only ${formatSmartNumber(remainCal)} kcal left.`;
           recommendation =
             "Best next move: pick lean, compact protein with minimal fat.";
+
           return { summary, recommendation };
         }
 
@@ -1866,6 +1993,7 @@
           summary = `You are close to your fat limit, with only ${formatSmartNumber(remainFat)} g fat left.`;
           recommendation =
             "Best next move: stay very lean for the rest of the day.";
+
           return { summary, recommendation };
         }
 
@@ -1879,6 +2007,7 @@
             "You are very close to your targets and your day looks well balanced.";
           recommendation =
             "Best next move: keep it light, or stop here if you already feel satisfied.";
+
           return { summary, recommendation };
         }
 
@@ -1886,13 +2015,103 @@
           summary = `Calories are already above your max by ${formatSmartNumber(overCal)} kcal.`;
           recommendation =
             "Best next move: keep the rest of the day very light and protein-aware.";
+
           return { summary, recommendation };
         }
 
         summary = `You still have ${formatSmartNumber(remainCal)} kcal, ${formatSmartNumber(remainProt)} g protein, ${formatSmartNumber(remainFat)} g fat, and ${formatSmartNumber(remainSug)} g sugar remaining today.`;
         recommendation =
           "Best next move: aim for a balanced meal, but keep protein as the priority.";
+
         return { summary, recommendation };
+      }
+
+      /* function triggerSmartReminder(totals, targets) {
+        if (smartReminderDismissed) return;
+
+        const messages = [];
+
+        if (totals.sug >= targets.sug.max * 0.8) {
+          messages.push("Hey babe… sugar is climbing 😏 maybe slow it down.");
+        }
+
+        if (totals.fat >= targets.fat.max * 0.8) {
+          messages.push(
+            "Fats are getting close to limit 👀 choose leaner next.",
+          );
+        }
+
+        if (totals.cal >= targets.cal.max * 0.9) {
+          messages.push("Calories almost max 🔥 stay in control babe.");
+        }
+
+        if (totals.prot < targets.prot.target * 0.5 && totals.cal > 0) {
+          messages.push("Protein is low… let’s build muscle smart 💪");
+        }
+
+        if (messages.length === 0) {
+          hideSmartReminder();
+          return;
+        }
+
+        const message = messages[Math.floor(Math.random() * messages.length)];
+        showSmartReminder(message);
+      }
+
+      function showSmartReminder(text) {
+        const box = document.getElementById("smartReminder");
+        const content = document.getElementById("smartReminderText");
+
+        if (!box || !content) return;
+
+        content.textContent = text;
+        box.classList.remove("hidden");
+      }
+
+      function hideSmartReminder() {
+        const box = document.getElementById("smartReminder");
+        if (box) box.classList.add("hidden");
+      } */
+
+      function triggerSmartReminder(totals, targets) {
+        const box = document.getElementById("smartReminder");
+        const text = document.getElementById("smartReminderText");
+
+        if (!box || !text) return;
+
+        const messages = [];
+
+        if (totals.sug >= targets.sug.max * 0.8) {
+          messages.push("Hey babe… sugar is climbing 😏 maybe slow it down.");
+        }
+
+        if (totals.fat >= targets.fat.max * 0.8) {
+          messages.push(
+            "Fats are getting close to limit 👀 choose leaner next.",
+          );
+        }
+
+        if (totals.cal >= targets.cal.max * 0.9) {
+          messages.push("Calories almost max 🔥 stay in control babe.");
+        }
+
+        if (totals.prot < targets.prot.target * 0.5 && totals.cal > 0) {
+          messages.push("Protein is still low… let’s build muscle smart 💪");
+        }
+
+        // nothing to show
+        if (messages.length === 0) {
+          box.classList.add("hidden");
+          return;
+        }
+
+        // prevent spam after manual close
+        if (smartReminderDismissed) return;
+
+        const msg = messages[Math.floor(Math.random() * messages.length)];
+
+        text.textContent = msg;
+        box.classList.remove("hidden");
       }
 
       function renderMacroAnalysis(totals, targets) {
@@ -2583,10 +2802,37 @@
           });
 
         const closeBtn = document.getElementById("smartReminderClose");
+
         if (closeBtn) {
-          closeBtn.addEventListener("click", () => {
+          closeBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
             smartReminderDismissed = true;
-            hideSmartReminder();
+
+            const box = document.getElementById("smartReminder");
+            if (box) box.classList.add("hidden");
+          });
+        }
+
+        const newFoodNameInput = document.getElementById("newFoodName");
+
+        if (newFoodNameInput) {
+          newFoodNameInput.addEventListener("paste", (e) => {
+            const pastedText = (
+              e.clipboardData || window.clipboardData
+            ).getData("text");
+            const parsed = parseSmartPasteFood(pastedText);
+
+            if (!parsed) return;
+
+            e.preventDefault();
+
+            document.getElementById("newFoodName").value = parsed.name;
+            document.getElementById("newFoodCal").value = parsed.cal;
+            document.getElementById("newFoodProt").value = parsed.prot;
+            document.getElementById("newFoodFat").value = parsed.fat;
+            document.getElementById("newFoodSug").value = parsed.sug;
           });
         }
 
