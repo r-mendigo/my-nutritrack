@@ -1121,10 +1121,8 @@
         const raw = String(text || "").trim();
         if (!raw) return null;
 
-        const normalized = raw.replace(/\r/g, "").trim();
-
-        // Split into clean lines first
-        const lines = normalized
+        const cleaned = raw.replace(/\r/g, "").trim();
+        const lines = cleaned
           .split("\n")
           .map((line) => line.trim())
           .filter(Boolean);
@@ -1135,10 +1133,10 @@
         let fat = "";
         let sug = "";
 
-        // First non-macro-looking line becomes the name
+        // 1. First meaningful line that is NOT a macro label becomes the food name
         for (const line of lines) {
           if (
-            !/^(macros\s*only:?|kcal\b|calories?\b|cal\b|protein\b|prot\b|fat\b|sugar\b|sug\b)/i.test(
+            !/^(macros\s*only:?|kcal\s*:|calories?\s*:|cal\s*:|protein\s*:|prot\s*:|fat\s*:|sugar\s*:|sug\s*:)/i.test(
               line,
             )
           ) {
@@ -1147,52 +1145,80 @@
           }
         }
 
-        // Join text for flexible matching
+        // 2. Read macros line by line (label-first format)
+        for (const line of lines) {
+          let match;
+
+          match =
+            line.match(/^kcal\s*:\s*(\d+(?:\.\d+)?)/i) ||
+            line.match(/^calories?\s*:\s*(\d+(?:\.\d+)?)/i) ||
+            line.match(/^cal\s*:\s*(\d+(?:\.\d+)?)/i);
+          if (match) {
+            cal = Number(match[1]);
+            continue;
+          }
+
+          match = line.match(/^(protein|prot)\s*:\s*(\d+(?:\.\d+)?)\s*g?/i);
+          if (match) {
+            prot = Number(match[2]);
+            continue;
+          }
+
+          match = line.match(/^fat\s*:\s*(\d+(?:\.\d+)?)\s*g?/i);
+          if (match) {
+            fat = Number(match[1]);
+            continue;
+          }
+
+          match = line.match(/^(sugar|sug)\s*:\s*(\d+(?:\.\d+)?)\s*g?/i);
+          if (match) {
+            sug = Number(match[2]);
+            continue;
+          }
+        }
+
+        // 3. Fallback: support one-line macro style too
         const joined = lines.join(" ");
 
-        // Support BOTH:
-        // "165 kcal" and "Kcal: 165"
-        const calMatch =
-          joined.match(/(?:kcal|calories?|cal)\s*[:\-]?\s*(\d+(?:\.\d+)?)/i) ||
-          joined.match(/(\d+(?:\.\d+)?)\s*(?:kcal|calories?|cal)\b/i);
-
-        const protMatch =
-          joined.match(/(?:protein|prot)\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*g?/i) ||
-          joined.match(/(\d+(?:\.\d+)?)\s*g?\s*(?:protein|prot)\b/i);
-
-        const fatMatch =
-          joined.match(/fat\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*g?/i) ||
-          joined.match(/(\d+(?:\.\d+)?)\s*g?\s*fat\b/i);
-
-        const sugMatch =
-          joined.match(/(?:sugar|sug)\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*g?/i) ||
-          joined.match(/(\d+(?:\.\d+)?)\s*g?\s*(?:sugar|sug)\b/i);
-
-        const hasMacros = calMatch || protMatch || fatMatch || sugMatch;
-        if (!hasMacros) return null;
-
-        // Fallback name cleanup if first-line detection fails
-        if (!name) {
-          name = joined
-            .replace(/macros\s*only:?/gi, "")
-            .replace(/(?:kcal|calories?|cal)\s*[:\-]?\s*\d+(?:\.\d+)?/gi, "")
-            .replace(/\d+(?:\.\d+)?\s*(?:kcal|calories?|cal)\b/gi, "")
-            .replace(/(?:protein|prot)\s*[:\-]?\s*\d+(?:\.\d+)?\s*g?/gi, "")
-            .replace(/\d+(?:\.\d+)?\s*g?\s*(?:protein|prot)\b/gi, "")
-            .replace(/fat\s*[:\-]?\s*\d+(?:\.\d+)?\s*g?/gi, "")
-            .replace(/\d+(?:\.\d+)?\s*g?\s*fat\b/gi, "")
-            .replace(/(?:sugar|sug)\s*[:\-]?\s*\d+(?:\.\d+)?\s*g?/gi, "")
-            .replace(/\d+(?:\.\d+)?\s*g?\s*(?:sugar|sug)\b/gi, "")
-            .replace(/\s{2,}/g, " ")
-            .trim();
+        if (cal === "") {
+          const match =
+            joined.match(
+              /(?:kcal|calories?|cal)\s*[:\-]?\s*(\d+(?:\.\d+)?)/i,
+            ) || joined.match(/(\d+(?:\.\d+)?)\s*(?:kcal|calories?|cal)\b/i);
+          if (match) cal = Number(match[1]);
         }
+
+        if (prot === "") {
+          const match =
+            joined.match(/(?:protein|prot)\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*g?/i) ||
+            joined.match(/(\d+(?:\.\d+)?)\s*g?\s*(?:protein|prot)\b/i);
+          if (match) prot = Number(match[1] || match[2]);
+        }
+
+        if (fat === "") {
+          const match =
+            joined.match(/fat\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*g?/i) ||
+            joined.match(/(\d+(?:\.\d+)?)\s*g?\s*fat\b/i);
+          if (match) fat = Number(match[1]);
+        }
+
+        if (sug === "") {
+          const match =
+            joined.match(/(?:sugar|sug)\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*g?/i) ||
+            joined.match(/(\d+(?:\.\d+)?)\s*g?\s*(?:sugar|sug)\b/i);
+          if (match) sug = Number(match[1] || match[2]);
+        }
+
+        const hasAnyMacro =
+          cal !== "" || prot !== "" || fat !== "" || sug !== "";
+        if (!hasAnyMacro) return null;
 
         return {
           name: name || raw,
-          cal: calMatch ? Number(calMatch[1]) : "",
-          prot: protMatch ? Number(protMatch[1]) : "",
-          fat: fatMatch ? Number(fatMatch[1]) : "",
-          sug: sugMatch ? Number(sugMatch[1]) : "",
+          cal,
+          prot,
+          fat,
+          sug,
         };
       }
       // ==================== FOOD SEARCH ====================
