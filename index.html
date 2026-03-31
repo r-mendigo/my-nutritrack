@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light only">
+<meta name="theme-color" content="#f5f7fa">
     <title>NutriTrack – Day 100+ 🔥</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -67,12 +68,51 @@
     <script>
       if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
         document.documentElement.classList.add("dark");
-      } else {
+      } else {:root {
+  color-scheme: light only;
+}
+
+html {
+  background: #f5f7fa !important;
+}
+
+body {
+  background: #f5f7fa !important;
+  color: #111827 !important;
+}
+
+/* Force text/input rendering */
+html, body, input, select, textarea, button {
+  color-scheme: light only;
+  -webkit-text-fill-color: initial !important;
+}
+
+/* Keep your dark navy cards truly dark */
+.card,
+.section,
+.box,
+.meal-card,
+.history-card,
+.target-card,
+.reminder-card,
+input,
+select,
+textarea {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}
+
+/* Labels / normal text that should stay dark on the light page bg */
+h1, h2, h3, h4, h5, h6, p, span, label, small, div {
+  color: inherit;
+}
         document.documentElement.classList.remove("dark");
       }
     </script>
 
     <style>
+      
       body {
         font-family:
           system-ui,
