@@ -277,6 +277,34 @@
           -webkit-text-fill-color: currentColor !important;
         }
       }
+      /* Fix faded text inside light cards (iPhone dark mode issue) */
+      .best-meal-card,
+      .reminder-card,
+      .quote-card,
+      .freud-reminder {
+        color: #0f172a !important;
+      }
+
+      /* Secondary text (description) */
+      .best-meal-card p,
+      .reminder-card p,
+      .freud-reminder p {
+        color: #334155 !important;
+      }
+
+      /* Bullet points */
+      .best-meal-card li {
+        color: #1e293b !important;
+      }
+      .meal-card,
+      .meal-section {
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      }
+      .meal-card input {
+  border-radius: 12px;
+}
     </style>
   </head>
 
