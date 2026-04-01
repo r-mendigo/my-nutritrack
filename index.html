@@ -96,7 +96,7 @@
       }
 
       .card {
-        @apply bg-white dark:bg-card-dark rounded-2xl p-5 shadow-card border border-nutri-bluegray-200 dark:border-nutri-bluegray-700;
+        @apply bg-white dark:bg-card-dark rounded-2xl p-5 shadow-card border border-nutri-bluegray-200 dark:border-nutri-bluegray-700 overflow-hidden;
       }
 
       .status-low {
@@ -366,7 +366,9 @@
         </div>
       </header>
 
-      <div class="card mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div
+        class="card mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4 rounded-2xl overflow-hidden"
+      >
         <input
           id="date"
           type="date"
@@ -761,7 +763,7 @@
 
       <div id="mealContainer" class="grid gap-6 mb-8"></div>
 
-      <div class="card mb-8">
+      <div class="card mb-8 rounded-2xl overflow-hidden">
         <h3 class="font-semibold text-lg mb-4 dark:text-text-dark-primary">
           Today's Totals
         </h3>
