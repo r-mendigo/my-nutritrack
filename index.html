@@ -227,29 +227,38 @@
         }
 
         @media (prefers-color-scheme: dark) {
-          /* Target the faded cards directly */
-          .rounded-2xl,
-          .border,
-          .shadow,
-          .p-4,
-          .p-5 {
+          /* ONLY light cards (the gray ones) */
+          .bg-gray-100,
+          .bg-gray-200,
+          .bg-slate-100,
+          .bg-slate-200 {
             color: #0f172a !important;
             -webkit-text-fill-color: #0f172a !important;
           }
 
-          /* Fix paragraphs + list text */
-          .rounded-2xl p,
-          .rounded-2xl li {
+          .bg-gray-100 p,
+          .bg-gray-200 p,
+          .bg-slate-100 p,
+          .bg-slate-200 p,
+          .bg-gray-100 li,
+          .bg-gray-200 li,
+          .bg-slate-100 li,
+          .bg-slate-200 li {
             color: #334155 !important;
             -webkit-text-fill-color: #334155 !important;
           }
         }
+
         @media (prefers-color-scheme: dark) {
           .rounded-2xl * {
             opacity: 1 !important;
             color: #0f172a !important;
             -webkit-text-fill-color: #0f172a !important;
           }
+        }
+        .meal-card {
+          border-radius: 18px;
+          overflow: hidden;
         }
 
         /* Main dark cards / panels */
