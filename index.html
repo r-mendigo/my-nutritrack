@@ -226,6 +226,25 @@
           }
         }
 
+        @media (prefers-color-scheme: dark) {
+          /* Target the faded cards directly */
+          .rounded-2xl,
+          .border,
+          .shadow,
+          .p-4,
+          .p-5 {
+            color: #0f172a !important;
+            -webkit-text-fill-color: #0f172a !important;
+          }
+
+          /* Fix paragraphs + list text */
+          .rounded-2xl p,
+          .rounded-2xl li {
+            color: #334155 !important;
+            -webkit-text-fill-color: #334155 !important;
+          }
+        }
+
         /* Main dark cards / panels */
         .card,
         .section,
