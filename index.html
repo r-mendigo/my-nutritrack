@@ -261,6 +261,38 @@
           overflow: hidden;
         }
 
+        @media (prefers-color-scheme: dark) {
+          /* Best Next Meal specific fix */
+          .bg-gray-200.rounded-2xl,
+          .bg-gray-100.rounded-2xl {
+            color: #0f172a !important;
+          }
+
+          .bg-gray-200.rounded-2xl p,
+          .bg-gray-200.rounded-2xl li,
+          .bg-gray-100.rounded-2xl p,
+          .bg-gray-100.rounded-2xl li {
+            color: #1e293b !important;
+          }
+        }
+
+        @media (prefers-color-scheme: dark) {
+          /* Report modal */
+          .fixed .bg-navy,
+          .fixed .bg-slate-800,
+          .fixed .bg-gray-900 {
+            color: #e2e8f0 !important;
+          }
+
+          .fixed p,
+          .fixed span,
+          .fixed h1,
+          .fixed h2,
+          .fixed h3 {
+            color: #e2e8f0 !important;
+          }
+        }
+
         /* Main dark cards / panels */
         .card,
         .section,
