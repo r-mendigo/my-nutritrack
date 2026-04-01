@@ -79,13 +79,6 @@
 
     <style>
       :root {
-        color-scheme: light only;
-      }
-
-      input,
-      select,
-      textarea,
-      button {
         color-scheme: light;
       }
 
@@ -93,6 +86,7 @@
       body {
         background-color: #f5f7fa;
       }
+
       body {
         font-family:
           system-ui,
@@ -101,27 +95,28 @@
         @apply bg-nutri-bluegray-50 text-nutri-bluegray-900 dark:bg-app-bg-dark dark:text-text-dark-primary transition-colors duration-300 min-h-screen;
       }
 
-      :root {
-        color-scheme: light;
-      }
-
       .card {
         @apply bg-white dark:bg-card-dark rounded-2xl p-5 shadow-card border border-nutri-bluegray-200 dark:border-nutri-bluegray-700;
       }
+
       .status-low {
         @apply text-amber-600 dark:text-amber-400;
       }
+
       .status-good {
         @apply text-emerald-600 dark:text-emerald-400 font-semibold;
       }
+
       .status-high {
         @apply text-rose-600 dark:text-rose-400;
       }
+
       .fire-emoji {
         display: inline-block;
         font-size: 1.4em;
         animation: pulse-glow 2s infinite ease-in-out;
       }
+
       @keyframes pulse-glow {
         0%,
         100% {
@@ -131,16 +126,32 @@
           filter: brightness(1.4) drop-shadow(0 0 16px #2dd4bf);
         }
       }
+
       .food-result-item {
         @apply flex justify-between items-center p-3 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl hover:bg-nutri-emerald-50 dark:hover:bg-nutri-emerald-900/30 cursor-pointer mb-2 border border-transparent transition-all;
       }
+
       .food-result-item.personalized {
         @apply border-l-4 border-l-nutri-emerald-500 bg-nutri-emerald-50/50 dark:bg-nutri-emerald-900/20;
       }
-      /* Fix modal close button positioning */
+
+      .meal-card {
+        border-radius: 1.125rem;
+        overflow: hidden;
+      }
+
+      .meal-card input {
+        border-radius: 0.9rem;
+      }
+
+      .light-panel {
+        border-radius: 1rem;
+      }
+
       .modal-container {
         position: relative;
       }
+
       .modal-close-btn {
         position: absolute;
         top: 1rem;
@@ -149,7 +160,7 @@
         padding: 0.5rem;
         line-height: 1;
       }
-      /* Fix export nav buttons - horizontal on mobile */
+
       .export-nav {
         display: flex;
         flex-direction: row;
@@ -157,24 +168,28 @@
         gap: 0.5rem;
         justify-content: flex-end;
       }
+
       .export-nav button {
         white-space: nowrap;
         flex: 0 0 auto;
       }
-      /* Mobile-specific adjustments */
+
       @media (max-width: 640px) {
         .export-nav {
           justify-content: flex-start;
           width: 100%;
         }
+
         .modal-header-stack {
           flex-direction: column;
           align-items: flex-start;
         }
+
         .modal-header-stack .export-nav {
           width: 100%;
           margin-top: 0.5rem;
         }
+
         .modal-close-btn {
           top: 0.75rem;
           right: 0.75rem;
@@ -185,6 +200,7 @@
         box-shadow: 0 10px 30px rgba(16, 185, 129, 0.08);
         animation: smartReminderFadeUp 0.35s ease;
       }
+
       @keyframes smartReminderFadeUp {
         from {
           opacity: 0;
@@ -195,206 +211,124 @@
           transform: translateY(0);
         }
       }
+
       @media (prefers-color-scheme: dark) {
         html,
         body {
           background: #f5f7fa !important;
           color: #0f172a !important;
         }
-        @media (prefers-color-scheme: dark) {
-          .bg-nutri-emerald-100 {
-            background-color: #d1fae5 !important;
-          }
 
-          .text-nutri-emerald-700 {
-            color: #065f46 !important;
-            -webkit-text-fill-color: #065f46 !important;
-          }
-        }
-
-        @media (prefers-color-scheme: dark) {
-          .dark\:text-nutri-emerald-300 {
-            color: #065f46 !important;
-            -webkit-text-fill-color: #065f46 !important;
-          }
-
-          .dark\:text-gray-300,
-          .dark\:text-gray-400,
-          .dark\:text-gray-500 {
-            color: #334155 !important;
-            -webkit-text-fill-color: #334155 !important;
-          }
-        }
-
-        @media (prefers-color-scheme: dark) {
-          /* ONLY light cards (the gray ones) */
-          .bg-gray-100,
-          .bg-gray-200,
-          .bg-slate-100,
-          .bg-slate-200 {
-            color: #0f172a !important;
-            -webkit-text-fill-color: #0f172a !important;
-          }
-
-          .bg-gray-100 p,
-          .bg-gray-200 p,
-          .bg-slate-100 p,
-          .bg-slate-200 p,
-          .bg-gray-100 li,
-          .bg-gray-200 li,
-          .bg-slate-100 li,
-          .bg-slate-200 li {
-            color: #334155 !important;
-            -webkit-text-fill-color: #334155 !important;
-          }
-        }
-
-        @media (prefers-color-scheme: dark) {
-          .rounded-2xl * {
-            opacity: 1 !important;
-            color: #0f172a !important;
-            -webkit-text-fill-color: #0f172a !important;
-          }
-        }
-        .meal-card {
-          border-radius: 18px;
-          overflow: hidden;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          /* Best Next Meal specific fix */
-          .bg-gray-200.rounded-2xl,
-          .bg-gray-100.rounded-2xl {
-            color: #0f172a !important;
-          }
-
-          .bg-gray-200.rounded-2xl p,
-          .bg-gray-200.rounded-2xl li,
-          .bg-gray-100.rounded-2xl p,
-          .bg-gray-100.rounded-2xl li {
-            color: #1e293b !important;
-          }
-        }
-
-        @media (prefers-color-scheme: dark) {
-          /* Report modal */
-          .fixed .bg-navy,
-          .fixed .bg-slate-800,
-          .fixed .bg-gray-900 {
-            color: #e2e8f0 !important;
-          }
-
-          .fixed p,
-          .fixed span,
-          .fixed h1,
-          .fixed h2,
-          .fixed h3 {
-            color: #e2e8f0 !important;
-          }
-        }
-
-        /* Main dark cards / panels */
         .card,
-        .section,
-        .box,
         .meal-card,
-        .history-card,
-        .target-card,
-        .reminder-card,
-        .totals-card,
-        .smart-analysis,
-        .remaining-card,
-        .live-chart,
-        .meal-section,
-        .search-bar,
-        .top-row > *,
-        .workout-select,
-        .date-input,
-        .weight-input {
-          background: #1e293b !important;
+        .meal-card input,
+        .meal-card select,
+        .meal-card textarea,
+        #foodInput,
+        #date,
+        #weight,
+        #workout,
+        #targetCal,
+        #maxCal,
+        #targetProt,
+        #maxProt,
+        #targetFat,
+        #maxFat,
+        #targetSug,
+        #maxSug,
+        #lookupResults .food-result-item,
+        #macroAnalysis,
+        .report-modal,
+        .report-modal .report-stat-card,
+        .report-modal table thead,
+        .report-modal table tbody tr,
+        .report-modal canvas {
+          background-color: #1e293b !important;
           color: #f8fafc !important;
           border-color: rgba(255, 255, 255, 0.12) !important;
+          -webkit-text-fill-color: currentColor !important;
         }
 
-        /* Inputs */
-        input,
-        select,
-        textarea {
-          background: #1e293b !important;
-          color: #f8fafc !important;
-          -webkit-text-fill-color: #f8fafc !important;
-          border-color: rgba(255, 255, 255, 0.12) !important;
+        .card *,
+        .meal-card *,
+        #macroAnalysis *,
+        .report-modal *,
+        #lookupResults .food-result-item * {
+          -webkit-text-fill-color: currentColor;
         }
 
-        input::placeholder,
-        textarea::placeholder {
-          color: #94a3b8 !important;
-          -webkit-text-fill-color: #94a3b8 !important;
-        }
-
-        /* Light cards that should stay light */
-        .summary-card,
-        .quote-card,
-        .report-card,
-        .white-card,
-        .panel-light {
-          background: #ffffff !important;
+        .light-panel,
+        #bestMealResult,
+        #smartReminderCard,
+        .report-modal .report-export-btn {
+          background: rgba(255, 255, 255, 0.78) !important;
           color: #0f172a !important;
-          border-color: #86efac !important;
+          border-color: rgba(15, 23, 42, 0.18) !important;
+          -webkit-text-fill-color: #0f172a !important;
         }
 
-        /* Text that was fading */
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        p,
-        span,
-        label,
-        small,
-        strong,
-        .muted,
-        .subtext,
-        .title,
-        .value {
+        #bestMealTitle,
+        #smartReminderCard .text-xs,
+        #smartReminderText,
+        #bestMealResult strong,
+        #bestMealResult h3,
+        #bestMealResult h4 {
+          color: #0f172a !important;
+          -webkit-text-fill-color: #0f172a !important;
+        }
+
+        #bestMealText,
+        #bestMealFoods,
+        #bestMealFoods li,
+        #smartReminderText {
+          color: #334155 !important;
+          -webkit-text-fill-color: #334155 !important;
+        }
+
+        #smartReminderCard .bg-nutri-emerald-100 {
+          background-color: #d1fae5 !important;
+        }
+
+        #smartReminderCard .text-nutri-emerald-700,
+        #smartReminderCard .dark\:text-nutri-emerald-300 {
+          color: #065f46 !important;
+          -webkit-text-fill-color: #065f46 !important;
+        }
+
+        .report-modal {
+          background: #1e293b !important;
+          color: #e2e8f0 !important;
+        }
+
+        .report-modal h2,
+        .report-modal h3,
+        .report-modal th,
+        .report-modal td,
+        .report-modal p,
+        .report-modal span,
+        .report-modal div {
+          color: #e2e8f0 !important;
           -webkit-text-fill-color: currentColor !important;
         }
 
-        /* Buttons */
-        button,
-        .btn {
-          -webkit-text-fill-color: currentColor !important;
+        .report-modal .report-stat-card {
+          background: #334155 !important;
         }
-      }
-      /* Fix faded text inside light cards (iPhone dark mode issue) */
-      .best-meal-card,
-      .reminder-card,
-      .quote-card,
-      .freud-reminder {
-        color: #0f172a !important;
-      }
 
-      /* Secondary text (description) */
-      .best-meal-card p,
-      .reminder-card p,
-      .freud-reminder p {
-        color: #334155 !important;
-      }
+        .report-modal .report-export-btn-green {
+          background: #d1fae5 !important;
+          color: #065f46 !important;
+        }
 
-      /* Bullet points */
-      .best-meal-card li {
-        color: #1e293b !important;
-      }
-      .meal-card,
-      .meal-section {
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-      }
-      .meal-card input {
-        border-radius: 12px;
+        .report-modal .report-export-btn-blue {
+          background: #dbeafe !important;
+          color: #1d4ed8 !important;
+        }
+
+        .report-modal .report-export-btn-violet {
+          background: #ede9fe !important;
+          color: #6d28d9 !important;
+        }
       }
     </style>
   </head>
@@ -569,7 +503,7 @@
             </button>
             <div
               id="bestMealResult"
-              class="hidden mt-3 rounded-xl border border-nutri-bluegray-200 dark:border-nutri-bluegray-700 bg-white/70 dark:bg-nutri-bluegray-900/50 p-4 space-y-2"
+              class="light-panel hidden mt-3 rounded-xl border border-nutri-bluegray-200 dark:border-nutri-bluegray-700 bg-white/70 dark:bg-nutri-bluegray-900/50 p-4 space-y-2"
             >
               <div
                 id="bestMealTitle"
@@ -589,7 +523,7 @@
           <!-- Freud Smart Reminder -->
           <div
             id="smartReminderCard"
-            class="hidden rounded-2xl border border-nutri-emerald-200 bg-white/70 dark:bg-nutri-bluegray-900/50 p-4"
+            class="light-panel hidden rounded-2xl border border-nutri-emerald-200 bg-white/70 dark:bg-nutri-bluegray-900/50 p-4"
           >
             <div class="flex items-start justify-between gap-3">
               <div class="flex-1">
@@ -1530,7 +1464,7 @@
         container.innerHTML = "";
         meals.forEach((m) => {
           const section = document.createElement("div");
-          section.className = "card";
+          section.className = "card meal-card";
           section.innerHTML = `
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold dark:text-text-dark-primary">${m.emoji} ${m.name}</h3>
@@ -2581,7 +2515,7 @@
         modal.className =
           "fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4";
         modal.innerHTML = `
-          <div class="bg-white dark:bg-card-dark rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-container relative">
+          <div class="report-modal bg-white dark:bg-card-dark rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-container relative">
             <button class="modal-close-btn text-rose-600 hover:text-rose-800 text-3xl leading-none" onclick="this.closest('.fixed').remove()">×</button>
             
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 pr-8 modal-header-stack">
@@ -2589,28 +2523,28 @@
                 Your Progress Report
               </h2>
               <div class="export-nav">
-                <button onclick="exportNutritionCSV()" class="px-3 py-2 rounded-xl bg-nutri-emerald-100 hover:bg-nutri-emerald-200 text-nutri-emerald-700 font-medium text-sm">
+                <button onclick="exportNutritionCSV()" class="report-export-btn report-export-btn-green px-3 py-2 rounded-xl bg-nutri-emerald-100 hover:bg-nutri-emerald-200 text-nutri-emerald-700 font-medium text-sm">
                   Export CSV
                 </button>
-                <button onclick="exportReportWithGraph()" class="px-3 py-2 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium text-sm">
+                <button onclick="exportReportWithGraph()" class="report-export-btn report-export-btn-blue px-3 py-2 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium text-sm">
                   Export Report
                 </button>
-                <button onclick="printReportWithGraph()" class="px-3 py-2 rounded-xl bg-violet-100 hover:bg-violet-200 text-violet-700 font-medium text-sm">
+                <button onclick="printReportWithGraph()" class="report-export-btn report-export-btn-violet px-3 py-2 rounded-xl bg-violet-100 hover:bg-violet-200 text-violet-700 font-medium text-sm">
                   Print
                 </button>
               </div>
             </div>
             
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-center">
-              <div class="p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
+              <div class="report-stat-card p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
                 <div class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">${getCurrentStreak()}</div>
                 <div class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary">Log Streak</div>
               </div>
-              <div class="p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
+              <div class="report-stat-card p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
                 <div class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">${getAverageKcalAllTime()}</div>
                 <div class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary">Avg kcal (all time)</div>
               </div>
-              <div class="p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
+              <div class="report-stat-card p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
                 <div class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">${getAverageProteinAllTime()}</div>
                 <div class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary">Avg protein (all time)</div>
               </div>
