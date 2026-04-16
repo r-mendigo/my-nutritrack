@@ -956,6 +956,9 @@
 
     <script>
       // ==================== DATA & CONFIG ====================
+
+      const TARGETS_STORAGE_KEY = "nutriTrackTargets";
+
       const meals = [
         { id: "breakfast", emoji: "🌞", name: "Breakfast" },
         { id: "lunch", emoji: "🍱", name: "Lunch" },
@@ -983,6 +986,96 @@
 
       function getLocalTodayString() {
         return getLocalDateString();
+      }
+
+      function getDefaultTargets() {
+        return {
+          targetCal: 1500,
+          maxCal: 1700,
+          targetProt: 100,
+          maxProt: 130,
+          targetFat: 50,
+          maxFat: 70,
+          targetSug: 30,
+          maxSug: 45,
+        };
+      }
+
+      function getTargetElements() {
+        return {
+          targetCal: document.getElementById("targetCal"),
+          maxCal: document.getElementById("maxCal"),
+          targetProt: document.getElementById("targetProt"),
+          maxProt: document.getElementById("maxProt"),
+          targetFat: document.getElementById("targetFat"),
+          maxFat: document.getElementById("maxFat"),
+          targetSug: document.getElementById("targetSug"),
+          maxSug: document.getElementById("maxSug"),
+        };
+      }
+
+      function saveTargetsToStorage() {
+        const els = getTargetElements();
+        const targets = {
+          targetCal: Number(els.targetCal?.value) || 1500,
+          maxCal: Number(els.maxCal?.value) || 1700,
+          targetProt: Number(els.targetProt?.value) || 100,
+          maxProt: Number(els.maxProt?.value) || 130,
+          targetFat: Number(els.targetFat?.value) || 50,
+          maxFat: Number(els.maxFat?.value) || 70,
+          targetSug: Number(els.targetSug?.value) || 30,
+          maxSug: Number(els.maxSug?.value) || 45,
+        };
+
+        localStorage.setItem(TARGETS_STORAGE_KEY, JSON.stringify(targets));
+      }
+
+      function loadTargetsFromStorage() {
+        const els = getTargetElements();
+        const defaults = getDefaultTargets();
+
+        let saved = {};
+        try {
+          saved = JSON.parse(localStorage.getItem(TARGETS_STORAGE_KEY)) || {};
+        } catch (error) {
+          saved = {};
+        }
+
+        const targets = { ...defaults, ...saved };
+
+        Object.keys(targets).forEach((key) => {
+          if (els[key]) {
+            els[key].value = targets[key];
+          }
+        });
+      }
+
+      function bindTargetInputsAutoSave() {
+        const els = getTargetElements();
+
+        Object.values(els).forEach((input) => {
+          if (!input) return;
+
+          input.addEventListener("input", () => {
+            saveTargetsToStorage();
+
+            if (typeof updateDashboard === "function") updateDashboard();
+            if (typeof renderDashboard === "function") renderDashboard();
+            if (typeof refreshDashboard === "function") refreshDashboard();
+            if (typeof calculateTotals === "function") calculateTotals();
+            if (typeof updateSummary === "function") updateSummary();
+          });
+
+          input.addEventListener("change", () => {
+            saveTargetsToStorage();
+
+            if (typeof updateDashboard === "function") updateDashboard();
+            if (typeof renderDashboard === "function") renderDashboard();
+            if (typeof refreshDashboard === "function") refreshDashboard();
+            if (typeof calculateTotals === "function") calculateTotals();
+            if (typeof updateSummary === "function") updateSummary();
+          });
+        });
       }
 
       function formatNumber(value, decimals = 2) {
@@ -1401,11 +1494,11 @@
 
         if (!Object.keys(allFoods).length) {
           results.innerHTML = `
-            <div class="p-4 text-center text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
-              <p class="mb-2">Food database is not loaded.</p>
-              <p class="text-sm">Make sure <strong>foods.js</strong> is in the same folder as this HTML file.</p>
-            </div>
-          `;
+                        <div class="p-4 text-center text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
+                          <p class="mb-2">Food database is not loaded.</p>
+                          <p class="text-sm">Make sure <strong>foods.js</strong> is in the same folder as this HTML file.</p>
+                        </div>
+                      `;
           return;
         }
 
@@ -1425,16 +1518,16 @@
               : '<span class="text-xs text-nutri-bluegray-400">Pinoy Favorite</span>';
 
             div.innerHTML = `
-              <div class="flex-1">
-                <div class="font-medium text-nutri-bluegray-900 dark:text-text-dark-primary flex items-center">
-                  ${name}
-                  ${sourceBadge}
-                </div>
-              </div>
-              <div class="text-sm text-right text-nutri-bluegray-700 dark:text-text-dark-secondary">
-                ${vals.cal} kcal • ${vals.prot}p • ${vals.fat}f • ${vals.sug}s
-              </div>
-            `;
+                          <div class="flex-1">
+                            <div class="font-medium text-nutri-bluegray-900 dark:text-text-dark-primary flex items-center">
+                              ${name}
+                              ${sourceBadge}
+                            </div>
+                          </div>
+                          <div class="text-sm text-right text-nutri-bluegray-700 dark:text-text-dark-secondary">
+                            ${vals.cal} kcal • ${vals.prot}p • ${vals.fat}f • ${vals.sug}s
+                          </div>
+                        `;
 
             div.onclick = () => {
               applyFoodToCurrentMeal(vals, name);
@@ -1449,14 +1542,14 @@
 
         if (!found) {
           results.innerHTML = `
-            <div class="p-4 text-center text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
-              <p class="mb-2">No foods found matching "${term}"</p>
-              <button onclick="showAddPersonalizedFoodModal(); document.getElementById('newFoodName').value = '${term}'" 
-                class="text-nutri-emerald-600 hover:underline text-sm">
-                Add "${term}" as your personalized food
-              </button>
-            </div>
-          `;
+                        <div class="p-4 text-center text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
+                          <p class="mb-2">No foods found matching "${term}"</p>
+                          <button onclick="showAddPersonalizedFoodModal(); document.getElementById('newFoodName').value = '${term}'"
+                            class="text-nutri-emerald-600 hover:underline text-sm">
+                            Add "${term}" as your personalized food
+                          </button>
+                        </div>
+                      `;
         }
       }
 
@@ -1468,32 +1561,32 @@
           const section = document.createElement("div");
           section.className = "card meal-card";
           section.innerHTML = `
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-semibold dark:text-text-dark-primary">${m.emoji} ${m.name}</h3>
-              <div class="flex gap-3">
-                <button onclick="addFoodRow('${m.id}')" class="text-nutri-emerald-600 hover:text-nutri-emerald-800 dark:text-nutri-emerald-400 dark:hover:text-nutri-emerald-300 text-sm font-medium">+ Add food</button>
-                <button onclick="clearMeal('${m.id}')" class="text-rose-600 hover:text-rose-800 dark:text-rose-400 dark:hover:text-rose-300 text-sm">Clear</button>
-              </div>
-            </div>
-            <div id="${m.id}_foods" class="space-y-3">
-              ${createFoodRowHTML(m.id, 0)}
-            </div>
-          `;
+                        <div class="flex justify-between items-center mb-4">
+                          <h3 class="text-lg font-semibold dark:text-text-dark-primary">${m.emoji} ${m.name}</h3>
+                          <div class="flex gap-3">
+                            <button onclick="addFoodRow('${m.id}')" class="text-nutri-emerald-600 hover:text-nutri-emerald-800 dark:text-nutri-emerald-400 dark:hover:text-nutri-emerald-300 text-sm font-medium">+ Add food</button>
+                            <button onclick="clearMeal('${m.id}')" class="text-rose-600 hover:text-rose-800 dark:text-rose-400 dark:hover:text-rose-300 text-sm">Clear</button>
+                          </div>
+                        </div>
+                        <div id="${m.id}_foods" class="space-y-3">
+                          ${createFoodRowHTML(m.id, 0)}
+                        </div>
+                      `;
           container.appendChild(section);
         });
       }
 
       function createFoodRowHTML(mealId, index) {
         return `
-          <div class="grid grid-cols-2 sm:grid-cols-6 gap-3 items-center food-row" data-index="${index}">
-            <input placeholder="food name" type="text" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 col-span-2 sm:col-span-1 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="name">
-            <input placeholder="kcal" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="cal">
-            <input placeholder="prot" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="prot">
-            <input placeholder="fat" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="fat">
-            <input placeholder="sugar" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="sug">
-            <button onclick="removeFoodRow(this)" class="col-span-2 sm:col-span-1 text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-sm font-semibold py-2">Remove</button>
-          </div>
-        `;
+                      <div class="grid grid-cols-2 sm:grid-cols-6 gap-3 items-center food-row" data-index="${index}">
+                        <input placeholder="food name" type="text" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 col-span-2 sm:col-span-1 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="name">
+                        <input placeholder="kcal" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="cal">
+                        <input placeholder="prot" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="prot">
+                        <input placeholder="fat" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="fat">
+                        <input placeholder="sugar" type="number" step="0.01" class="border rounded-xl p-2.5 text-center focus:ring-nutri-emerald-500 text-sm dark:bg-nutri-bluegray-800 dark:border-nutri-bluegray-600 dark:text-text-dark-primary dark:placeholder-nutri-bluegray-500" data-field="sug">
+                        <button onclick="removeFoodRow(this)" class="col-span-2 sm:col-span-1 text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-sm font-semibold py-2">Remove</button>
+                      </div>
+                    `;
       }
 
       function addFoodRow(mealId) {
@@ -2216,51 +2309,51 @@
       }
 
       /* function triggerSmartReminder(totals, targets) {
-        if (smartReminderDismissed) return;
+                    if (smartReminderDismissed) return;
 
-        const messages = [];
+                    const messages = [];
 
-        if (totals.sug >= targets.sug.max * 0.8) {
-          messages.push("Hey babe… sugar is climbing 😏 maybe slow it down.");
-        }
+                    if (totals.sug >= targets.sug.max * 0.8) {
+                      messages.push("Hey babe… sugar is climbing 😏 maybe slow it down.");
+                    }
 
-        if (totals.fat >= targets.fat.max * 0.8) {
-          messages.push(
-            "Fats are getting close to limit 👀 choose leaner next.",
-          );
-        }
+                    if (totals.fat >= targets.fat.max * 0.8) {
+                      messages.push(
+                        "Fats are getting close to limit 👀 choose leaner next.",
+                      );
+                    }
 
-        if (totals.cal >= targets.cal.max * 0.9) {
-          messages.push("Calories almost max 🔥 stay in control babe.");
-        }
+                    if (totals.cal >= targets.cal.max * 0.9) {
+                      messages.push("Calories almost max 🔥 stay in control babe.");
+                    }
 
-        if (totals.prot < targets.prot.target * 0.5 && totals.cal > 0) {
-          messages.push("Protein is low… let’s build muscle smart 💪");
-        }
+                    if (totals.prot < targets.prot.target * 0.5 && totals.cal > 0) {
+                      messages.push("Protein is low… let’s build muscle smart 💪");
+                    }
 
-        if (messages.length === 0) {
-          hideSmartReminder();
-          return;
-        }
+                    if (messages.length === 0) {
+                      hideSmartReminder();
+                      return;
+                    }
 
-        const message = messages[Math.floor(Math.random() * messages.length)];
-        showSmartReminder(message);
-      }
+                    const message = messages[Math.floor(Math.random() * messages.length)];
+                    showSmartReminder(message);
+                  }
 
-      function showSmartReminder(text) {
-        const box = document.getElementById("smartReminder");
-        const content = document.getElementById("smartReminderText");
+                  function showSmartReminder(text) {
+                    const box = document.getElementById("smartReminder");
+                    const content = document.getElementById("smartReminderText");
 
-        if (!box || !content) return;
+                    if (!box || !content) return;
 
-        content.textContent = text;
-        box.classList.remove("hidden");
-      }
+                    content.textContent = text;
+                    box.classList.remove("hidden");
+                  }
 
-      function hideSmartReminder() {
-        const box = document.getElementById("smartReminder");
-        if (box) box.classList.add("hidden");
-      } */
+                  function hideSmartReminder() {
+                    const box = document.getElementById("smartReminder");
+                    if (box) box.classList.add("hidden");
+                  } */
 
       function triggerSmartReminder(totals, targets) {
         const box = document.getElementById("smartReminder");
@@ -2444,14 +2537,14 @@
           div.className =
             "card flex justify-between items-center py-3 px-4 text-sm";
           div.innerHTML = `
-            <div>
-              <div class="font-medium text-nutri-bluegray-900 dark:text-text-dark-primary">${e.date}</div>
-              <div class="text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
-                ${Math.round(cal)} kcal ${calStatus} • ${Math.round(prot)}g prot ${protStatus} • ${Math.round(fat)}g fat ${fatStatus} • ${Math.round(sug)}g sug ${sugStatus}${workoutText}
-              </div>
-            </div>
-            <button onclick="deleteDay('${e.date}')" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-lg">🗑</button>
-          `;
+                        <div>
+                          <div class="font-medium text-nutri-bluegray-900 dark:text-text-dark-primary">${e.date}</div>
+                          <div class="text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
+                            ${Math.round(cal)} kcal ${calStatus} • ${Math.round(prot)}g prot ${protStatus} • ${Math.round(fat)}g fat ${fatStatus} • ${Math.round(sug)}g sug ${sugStatus}${workoutText}
+                          </div>
+                        </div>
+                        <button onclick="deleteDay('${e.date}')" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-lg">🗑</button>
+                      `;
           container.appendChild(div);
         });
 
@@ -2517,78 +2610,78 @@
         modal.className =
           "fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4";
         modal.innerHTML = `
-          <div class="report-modal bg-white dark:bg-card-dark rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-container relative">
-            <button class="modal-close-btn text-rose-600 hover:text-rose-800 text-3xl leading-none" onclick="this.closest('.fixed').remove()">×</button>
-            
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 pr-8 modal-header-stack">
-              <h2 class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">
-                Your Progress Report
-              </h2>
-              <div class="export-nav">
-                <button onclick="exportNutritionCSV()" class="report-export-btn report-export-btn-green px-3 py-2 rounded-xl bg-nutri-emerald-100 hover:bg-nutri-emerald-200 text-nutri-emerald-700 font-medium text-sm">
-                  Export CSV
-                </button>
-                <button onclick="exportReportWithGraph()" class="report-export-btn report-export-btn-blue px-3 py-2 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium text-sm">
-                  Export Report
-                </button>
-                <button onclick="printReportWithGraph()" class="report-export-btn report-export-btn-violet px-3 py-2 rounded-xl bg-violet-100 hover:bg-violet-200 text-violet-700 font-medium text-sm">
-                  Print
-                </button>
-              </div>
-            </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-center">
-              <div class="report-stat-card p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
-                <div class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">${getCurrentStreak()}</div>
-                <div class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary">Log Streak</div>
-              </div>
-              <div class="report-stat-card p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
-                <div class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">${getAverageKcalAllTime()}</div>
-                <div class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary">Avg kcal (all time)</div>
-              </div>
-              <div class="report-stat-card p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
-                <div class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">${getAverageProteinAllTime()}</div>
-                <div class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary">Avg protein (all time)</div>
-              </div>
-            </div>
-            
-            <canvas id="progressChart" class="w-full h-80 mb-8"></canvas>
-            
-            <div class="overflow-x-auto">
-              <table class="w-full text-sm text-left">
-                <thead class="bg-nutri-bluegray-100 dark:bg-nutri-bluegray-800">
-                  <tr>
-                    <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Date</th>
-                    <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">kcal</th>
-                    <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Protein (g)</th>
-                    <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Fat (g)</th>
-                    <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Sugar (g)</th>
-                    <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Workout</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${nutritionData
-                    .slice(-14)
-                    .reverse()
-                    .map((e) => {
-                      const totals = getEntryTotals(e);
-                      return `
-                      <tr class="border-b dark:border-nutri-bluegray-700">
-                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${e.date}</td>
-                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.kcal}</td>
-                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.prot}</td>
-                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.fat}</td>
-                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.sug}</td>
-                        <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${e.workout || "-"}</td>
-                      </tr>
+                      <div class="report-modal bg-white dark:bg-card-dark rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-container relative">
+                        <button class="modal-close-btn text-rose-600 hover:text-rose-800 text-3xl leading-none" onclick="this.closest('.fixed').remove()">×</button>
+
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 pr-8 modal-header-stack">
+                          <h2 class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">
+                            Your Progress Report
+                          </h2>
+                          <div class="export-nav">
+                            <button onclick="exportNutritionCSV()" class="report-export-btn report-export-btn-green px-3 py-2 rounded-xl bg-nutri-emerald-100 hover:bg-nutri-emerald-200 text-nutri-emerald-700 font-medium text-sm">
+                              Export CSV
+                            </button>
+                            <button onclick="exportReportWithGraph()" class="report-export-btn report-export-btn-blue px-3 py-2 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 font-medium text-sm">
+                              Export Report
+                            </button>
+                            <button onclick="printReportWithGraph()" class="report-export-btn report-export-btn-violet px-3 py-2 rounded-xl bg-violet-100 hover:bg-violet-200 text-violet-700 font-medium text-sm">
+                              Print
+                            </button>
+                          </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-center">
+                          <div class="report-stat-card p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
+                            <div class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">${getCurrentStreak()}</div>
+                            <div class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary">Log Streak</div>
+                          </div>
+                          <div class="report-stat-card p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
+                            <div class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">${getAverageKcalAllTime()}</div>
+                            <div class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary">Avg kcal (all time)</div>
+                          </div>
+                          <div class="report-stat-card p-4 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl">
+                            <div class="text-2xl font-bold text-nutri-bluegray-900 dark:text-text-dark-primary">${getAverageProteinAllTime()}</div>
+                            <div class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary">Avg protein (all time)</div>
+                          </div>
+                        </div>
+
+                        <canvas id="progressChart" class="w-full h-80 mb-8"></canvas>
+
+                        <div class="overflow-x-auto">
+                          <table class="w-full text-sm text-left">
+                            <thead class="bg-nutri-bluegray-100 dark:bg-nutri-bluegray-800">
+                              <tr>
+                                <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Date</th>
+                                <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">kcal</th>
+                                <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Protein (g)</th>
+                                <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Fat (g)</th>
+                                <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Sugar (g)</th>
+                                <th class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">Workout</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              ${nutritionData
+                                .slice(-14)
+                                .reverse()
+                                .map((e) => {
+                                  const totals = getEntryTotals(e);
+                                  return `
+                                  <tr class="border-b dark:border-nutri-bluegray-700">
+                                    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${e.date}</td>
+                                    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.kcal}</td>
+                                    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.prot}</td>
+                                    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.fat}</td>
+                                    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${totals.sug}</td>
+                                    <td class="p-3 text-nutri-bluegray-900 dark:text-text-dark-primary">${e.workout || "-"}</td>
+                                  </tr>
+                                `;
+                                })
+                                .join("")}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
                     `;
-                    })
-                    .join("")}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        `;
         document.body.appendChild(modal);
 
         setTimeout(() => {
@@ -2773,69 +2866,69 @@
           .map((entry) => {
             const totals = getEntryTotals(entry);
             return `
-            <tr>
-              <td>${entry.date}</td>
-              <td>${totals.kcal}</td>
-              <td>${totals.prot}</td>
-              <td>${totals.fat}</td>
-              <td>${totals.sug}</td>
-              <td>${entry.workout || "-"}</td>
-            </tr>
-          `;
+                        <tr>
+                          <td>${entry.date}</td>
+                          <td>${totals.kcal}</td>
+                          <td>${totals.prot}</td>
+                          <td>${totals.fat}</td>
+                          <td>${totals.sug}</td>
+                          <td>${entry.workout || "-"}</td>
+                        </tr>
+                      `;
           })
           .join("");
 
         return `
-          <html>
-            <head>
-              <title>NutriTrack Report</title>
-              <style>
-                body { font-family: Arial, sans-serif; padding: 24px; color: #111827; }
-                h1, h2 { margin-bottom: 8px; }
-                .summary { display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 0; }
-                .card { border: 1px solid #d1d5db; border-radius: 12px; padding: 14px 16px; min-width: 180px; background: #f9fafb; }
-                .chart-wrap { margin: 24px 0; text-align: center; }
-                .chart-wrap img { max-width: 100%; border: 1px solid #e5e7eb; border-radius: 12px; }
-                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                th, td { border: 1px solid #d1d5db; padding: 10px; text-align: left; font-size: 14px; }
-                th { background: #f3f4f6; }
-          
-      #smartReminderCard {
-        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.08);
-        animation: smartReminderFadeUp 0.35s ease;
-      }
-      @keyframes smartReminderFadeUp {
-        from {
-          opacity: 0;
-          transform: translateY(8px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    </style>
-            </head>
-            <body>
-              <h1>NutriTrack Progress Report</h1>
-              <p>Generated on ${new Date().toLocaleString()}</p>
-              <div class="summary">
-                <div class="card"><strong>Days Streak</strong><br>${getCurrentStreak()}</div>
-                <div class="card"><strong>Avg kcal (all time)</strong><br>${getAverageKcalAllTime()}</div>
-                <div class="card"><strong>Avg protein (all time)</strong><br>${getAverageProteinAllTime()}</div>
-              </div>
-              <div class="chart-wrap">
-                <h2>Nutrition Trend Graph</h2>
-                ${chartImage ? `<img src="${chartImage}" alt="Nutrition Trend Graph">` : "<p>Graph unavailable</p>"}
-              </div>
-              <h2>Last 14 Entries</h2>
-              <table>
-                <thead>
-                  <tr><th>Date</th><th>Calories</th><th>Protein (g)</th><th>Fat (g)</th><th>Sugar (g)</th><th>Workout</th></tr>
-                </thead>
-                <tbody>${tableRows}</tbody>
-              </table>
-        `;
+                      <html>
+                        <head>
+                          <title>NutriTrack Report</title>
+                          <style>
+                            body { font-family: Arial, sans-serif; padding: 24px; color: #111827; }
+                            h1, h2 { margin-bottom: 8px; }
+                            .summary { display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 0; }
+                            .card { border: 1px solid #d1d5db; border-radius: 12px; padding: 14px 16px; min-width: 180px; background: #f9fafb; }
+                            .chart-wrap { margin: 24px 0; text-align: center; }
+                            .chart-wrap img { max-width: 100%; border: 1px solid #e5e7eb; border-radius: 12px; }
+                            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                            th, td { border: 1px solid #d1d5db; padding: 10px; text-align: left; font-size: 14px; }
+                            th { background: #f3f4f6; }
+
+                  #smartReminderCard {
+                    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.08);
+                    animation: smartReminderFadeUp 0.35s ease;
+                  }
+                  @keyframes smartReminderFadeUp {
+                    from {
+                      opacity: 0;
+                      transform: translateY(8px);
+                    }
+                    to {
+                      opacity: 1;
+                      transform: translateY(0);
+                    }
+                  }
+                </style>
+                        </head>
+                        <body>
+                          <h1>NutriTrack Progress Report</h1>
+                          <p>Generated on ${new Date().toLocaleString()}</p>
+                          <div class="summary">
+                            <div class="card"><strong>Days Streak</strong><br>${getCurrentStreak()}</div>
+                            <div class="card"><strong>Avg kcal (all time)</strong><br>${getAverageKcalAllTime()}</div>
+                            <div class="card"><strong>Avg protein (all time)</strong><br>${getAverageProteinAllTime()}</div>
+                          </div>
+                          <div class="chart-wrap">
+                            <h2>Nutrition Trend Graph</h2>
+                            ${chartImage ? `<img src="${chartImage}" alt="Nutrition Trend Graph">` : "<p>Graph unavailable</p>"}
+                          </div>
+                          <h2>Last 14 Entries</h2>
+                          <table>
+                            <thead>
+                              <tr><th>Date</th><th>Calories</th><th>Protein (g)</th><th>Fat (g)</th><th>Sugar (g)</th><th>Workout</th></tr>
+                            </thead>
+                            <tbody>${tableRows}</tbody>
+                          </table>
+                    `;
       }
 
       function exportReportWithGraph() {
@@ -2954,11 +3047,17 @@
           const lastEntry = [...nutritionData]
             .sort((a, b) => a.date.localeCompare(b.date))
             .at(-1);
+
           if (lastEntry?.weight != null && !isNaN(lastEntry.weight)) {
             document.getElementById("weight").value = lastEntry.weight;
           }
         }
 
+        // ✅ Load saved targets FIRST
+        loadTargetsFromStorage();
+        bindTargetInputsAutoSave();
+
+        // App init
         renderMeals();
         loadTempMeals();
         loadLiveFields();
@@ -2972,15 +3071,19 @@
         document
           .getElementById("weight")
           .addEventListener("input", autoSaveLiveFields);
+
         document
           .getElementById("workout")
           .addEventListener("change", autoSaveLiveFields);
+
         document
           .getElementById("date")
           .addEventListener("change", autoSaveLiveFields);
+
         document.getElementById("foodInput").addEventListener("focus", () => {
           document.getElementById("lookupResults").innerHTML = "";
         });
+
         document
           .getElementById("foodInput")
           .addEventListener("keydown", (e) => {
@@ -3011,8 +3114,8 @@
             const pastedText = (
               e.clipboardData || window.clipboardData
             ).getData("text");
-            const parsed = parseSmartPasteFood(pastedText);
 
+            const parsed = parseSmartPasteFood(pastedText);
             if (!parsed) return;
 
             e.preventDefault();
