@@ -330,6 +330,253 @@
           color: #6d28d9 !important;
         }
       }
+
+      .coach-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.35);
+        z-index: 80;
+      }
+
+      .coach-panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: min(420px, 100%);
+        height: 100dvh;
+        background: #f8fafc;
+        color: #0f172a;
+        z-index: 90;
+        transform: translateX(105%);
+        transition: transform 0.25s ease;
+        box-shadow: -18px 0 45px rgba(15, 23, 42, 0.22);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .coach-panel.open {
+        transform: translateX(0);
+      }
+
+      .coach-panel-header {
+        padding: 20px;
+        border-bottom: 1px solid #d1fae5;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .coach-panel-header h2 {
+        font-size: 1.35rem;
+        font-weight: 800;
+        margin: 0;
+        color: #047857;
+      }
+
+      .coach-panel-header p {
+        margin: 4px 0 0;
+        font-size: 0.9rem;
+        color: #64748b;
+      }
+
+      .coach-close-btn {
+        font-size: 1.8rem;
+        line-height: 1;
+        color: #64748b;
+      }
+
+      .coach-panel-body {
+        padding: 18px;
+        overflow-y: auto;
+      }
+
+      .coach-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .coach-grid label {
+        display: grid;
+        gap: 6px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #334155;
+      }
+
+      .coach-grid input,
+      .coach-grid select {
+        border: 1px solid #cbd5e1;
+        border-radius: 14px;
+        padding: 11px 12px;
+        background: white;
+        color: #0f172a;
+        outline: none;
+      }
+
+      .coach-main-btn,
+      .coach-apply-btn {
+        width: 100%;
+        margin-top: 16px;
+        border-radius: 16px;
+        padding: 13px 14px;
+        font-weight: 800;
+      }
+
+      .coach-main-btn {
+        background: #059669;
+        color: white;
+      }
+
+      .coach-apply-btn {
+        background: #d4af37;
+        color: #1f1806;
+      }
+
+      .coach-result {
+        margin-top: 16px;
+        padding: 14px;
+        border-radius: 18px;
+        background: white;
+        border: 1px solid #d1fae5;
+        color: #334155;
+        line-height: 1.55;
+        font-size: 0.92rem;
+      }
+
+      .coach-result strong {
+        color: #047857;
+      }
+
+      @media (max-width: 640px) {
+        .coach-panel {
+          width: 100%;
+        }
+      }
+      .coach-commitment {
+        margin-top: 16px;
+        padding: 14px;
+        border-radius: 18px;
+        background: #f8fafc;
+        border: 1px dashed #10b981;
+      }
+
+      .coach-commitment label {
+        display: grid;
+        gap: 6px;
+        font-size: 0.85rem;
+        font-weight: 800;
+        color: #334155;
+      }
+
+      .coach-commitment input {
+        border: 1px solid #cbd5e1;
+        border-radius: 14px;
+        padding: 11px 12px;
+        background: white;
+        color: #0f172a;
+      }
+
+      .coach-log-title {
+        margin-top: 12px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        color: #047857;
+      }
+
+      .coach-log {
+        margin-top: 6px;
+        display: grid;
+        gap: 6px;
+        font-size: 0.78rem;
+        color: #64748b;
+      }
+
+      .coach-log-item {
+        padding: 7px 9px;
+        border-radius: 12px;
+        background: white;
+        border: 1px solid #e2e8f0;
+      }
+      .coach-lived-note {
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 16px;
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #065f46;
+      }
+
+      .coach-lived-note strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.82rem;
+      }
+
+      .coach-lived-note p {
+        margin: 0;
+        font-size: 0.8rem;
+        line-height: 1.55;
+      }
+      .coach-guide-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        z-index: 100;
+      }
+
+      .coach-guide-modal {
+        position: fixed;
+        inset: 4% 6%;
+        background: white;
+        border-radius: 22px;
+        z-index: 101;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .coach-guide-header {
+        padding: 16px 18px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .coach-guide-header h2 {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #047857;
+      }
+
+      .coach-guide-header button {
+        font-size: 1.8rem;
+        line-height: 1;
+        color: #64748b;
+      }
+
+      .coach-guide-body {
+        padding: 18px;
+        overflow-y: auto;
+        font-size: 0.92rem;
+        line-height: 1.65;
+        color: #334155;
+      }
+
+      .coach-guide-body h3 {
+        margin-top: 16px;
+        color: #047857;
+      }
+
+      @media (max-width: 640px) {
+        .coach-guide-modal {
+          inset: 0;
+          border-radius: 0;
+        }
+      }
     </style>
   </head>
 
@@ -405,6 +652,40 @@
       <div
         class="grid grid-cols-1 xl:grid-cols-[1.2fr_0.9fr] gap-4 mb-6 items-start"
       >
+        <!-- NutriTrack Coach -->
+        <div
+          class="mb-4 rounded-2xl border border-nutri-emerald-200 bg-white/80 dark:bg-nutri-bluegray-900/50 p-4 shadow-sm"
+        >
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <h3
+                class="font-semibold text-nutri-bluegray-900 dark:text-text-dark-primary"
+              >
+                NutriTrack Coach
+              </h3>
+              <p
+                class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary"
+              >
+                Estimate + adjust based on progress.
+              </p>
+            </div>
+
+            <button
+              id="openCoachBtn"
+              type="button"
+              class="rounded-xl bg-nutri-emerald-600 hover:bg-nutri-emerald-700 text-white font-semibold px-4 py-2 transition"
+            >
+              Open Coach
+            </button>
+            <button
+              id="openCoachGuideBtn"
+              type="button"
+              class="rounded-xl border border-nutri-emerald-300 text-nutri-emerald-700 font-semibold px-4 py-2 transition"
+            >
+              Coach Guide
+            </button>
+          </div>
+        </div>
         <!-- LEFT COLUMN -->
         <div class="space-y-4">
           <!-- Today's Targets -->
@@ -885,6 +1166,101 @@
         <div id="history" class="space-y-3"></div>
       </section>
     </div>
+
+    <!-- NutriTrack Coach Side Peek -->
+    <div id="coachOverlay" class="coach-overlay hidden"></div>
+
+    <aside id="coachPanel" class="coach-panel">
+      <div class="coach-panel-header">
+        <div>
+          <h2>NutriTrack Coach</h2>
+          <p>Estimate + adjust based on progress</p>
+        </div>
+        <button id="closeCoachBtn" type="button" class="coach-close-btn">
+          &times;
+        </button>
+      </div>
+
+      <div class="coach-panel-body">
+        <div class="coach-grid">
+          <label>
+            Current Weight (kg)
+            <input
+              id="coachCurrentWeight"
+              type="number"
+              step="0.1"
+              value="77"
+            />
+          </label>
+
+          <label>
+            Goal Weight (kg)
+            <input id="coachGoalWeight" type="number" step="0.1" value="75" />
+          </label>
+
+          <label>
+            Age
+            <input id="coachAge" type="number" value="47" />
+          </label>
+
+          <label>
+            Timeline (weeks)
+            <input id="coachWeeks" type="number" value="4" />
+          </label>
+
+          <label>
+            Training
+            <select id="coachTraining">
+              <option value="light">Light / 1–2x weekly</option>
+              <option value="moderate" selected>Moderate / 3–5x weekly</option>
+              <option value="active">Very active / 5x+ weekly</option>
+            </select>
+          </label>
+
+          <label>
+            Sleep
+            <select id="coachSleep">
+              <option value="low">Less than 6 hours</option>
+              <option value="ok" selected>6–8 hours</option>
+              <option value="strong">8+ hours</option>
+            </select>
+          </label>
+        </div>
+
+        <button id="buildCoachPlanBtn" type="button" class="coach-main-btn">
+          Build My Targets
+        </button>
+
+        <div id="coachResult" class="coach-result hidden"></div>
+
+        <div id="coachCommitmentBox" class="coach-commitment hidden">
+          <label>
+            Commitment Start Date
+            <input id="coachStartDate" type="date" />
+          </label>
+
+          <div class="coach-log-title">Commitment Change Log</div>
+          <div id="coachCommitmentLog" class="coach-log"></div>
+
+          <div class="coach-lived-note">
+            <strong>Why this matters</strong>
+            <p>
+              I have experienced the spiral, the comeback, the bumps on the
+              road, and the guilty food pleasures. But I kept showing up for my
+              goal — not for any format, but for my goal.
+            </p>
+          </div>
+        </div>
+
+        <button
+          id="applyCoachTargetsBtn"
+          type="button"
+          class="coach-apply-btn hidden"
+        >
+          Apply These Targets
+        </button>
+      </div>
+    </aside>
 
     <!-- Add Food Modal -->
     <div
@@ -3147,6 +3523,280 @@
             );
         });
       }
+      // ==================== NUTRITRACK COACH ====================
+
+      let coachPlan = null;
+      const COACH_COMMITMENT_KEY = "nutriTrackCoachCommitments";
+
+      function openCoachPanel() {
+        document.getElementById("coachOverlay")?.classList.remove("hidden");
+        document.getElementById("coachPanel")?.classList.add("open");
+      }
+
+      function closeCoachPanel() {
+        document.getElementById("coachOverlay")?.classList.add("hidden");
+        document.getElementById("coachPanel")?.classList.remove("open");
+      }
+
+      function getCoachCommitments() {
+        try {
+          return JSON.parse(localStorage.getItem(COACH_COMMITMENT_KEY)) || [];
+        } catch {
+          return [];
+        }
+      }
+
+      function saveCoachCommitments(logs) {
+        localStorage.setItem(COACH_COMMITMENT_KEY, JSON.stringify(logs));
+      }
+
+      function renderCoachCommitmentLog() {
+        const logBox = document.getElementById("coachCommitmentLog");
+        if (!logBox) return;
+
+        const logs = getCoachCommitments().slice(-6).reverse();
+
+        if (!logs.length) {
+          logBox.innerHTML = `<div class="coach-log-item">No commitment changes yet.</div>`;
+          return;
+        }
+
+        logBox.innerHTML = logs
+          .map(
+            (item) => `
+        <div class="coach-log-item">
+          <strong>${item.startDate}</strong> — ${item.summary}
+        </div>
+      `,
+          )
+          .join("");
+      }
+
+      function setDefaultCoachStartDate() {
+        const input = document.getElementById("coachStartDate");
+        if (!input) return;
+
+        if (!input.value) {
+          input.value = getLocalDateString();
+        }
+      }
+
+      function getCoachMultiplier(training) {
+        if (training === "light") return { min: 18, max: 20 };
+        if (training === "active") return { min: 22, max: 24 };
+        return { min: 20, max: 22 }; // moderate
+      }
+
+      function buildCoachPlan() {
+        const weight =
+          Number(document.getElementById("coachCurrentWeight")?.value) || 77;
+
+        const goal =
+          Number(document.getElementById("coachGoalWeight")?.value) || 75;
+
+        const age = Number(document.getElementById("coachAge")?.value) || 40;
+
+        const weeks = Number(document.getElementById("coachWeeks")?.value) || 4;
+
+        const training =
+          document.getElementById("coachTraining")?.value || "moderate";
+
+        const sleep = document.getElementById("coachSleep")?.value || "ok";
+
+        const multi = getCoachMultiplier(training);
+
+        let calMin = Math.round(weight * multi.min);
+        let calMax = Math.round(weight * multi.max);
+
+        if (sleep === "low") {
+          calMax -= 50;
+        }
+
+        if (age >= 45) {
+          calMin -= 40;
+          calMax -= 40;
+        }
+
+        const protMin = Math.round(weight * 1.6);
+        const protMax = Math.round(weight * 2.0);
+
+        const fatMin = Math.round(weight * 0.6);
+        const fatMax = Math.round(weight * 0.8);
+
+        const sugTarget = 30;
+        const sugMax = 45;
+
+        const diff = Math.max(0, weight - goal);
+        const estWeeks = diff === 0 ? 0 : Math.max(weeks, Math.ceil(diff * 2));
+
+        coachPlan = {
+          calMin,
+          calMax,
+          protMin,
+          protMax,
+          fatMin,
+          fatMax,
+          sugTarget,
+          sugMax,
+        };
+
+        const result = document.getElementById("coachResult");
+        const applyBtn = document.getElementById("applyCoachTargetsBtn");
+
+        result.innerHTML = `
+    <strong>Suggested Daily Targets</strong><br><br>
+
+    Calories: <strong>${calMin}–${calMax}</strong> kcal<br>
+    Protein: <strong>${protMin}–${protMax}</strong> g<br>
+    Fat: <strong>${fatMin}–${fatMax}</strong> g<br>
+    Sugar: <strong>${sugTarget}–${sugMax}</strong> g<br><br>
+
+    Goal Gap: <strong>${diff.toFixed(1)} kg</strong><br>
+    Estimated Timeline: <strong>${estWeeks} week(s)</strong><br><br>
+
+    Keep protein high, stay consistent, train regularly, and protect sleep.  
+    Adjust gently if progress stalls for 2+ weeks.
+  `;
+
+        result.classList.remove("hidden");
+        applyBtn.classList.remove("hidden");
+
+        document
+          .getElementById("coachCommitmentBox")
+          ?.classList.remove("hidden");
+        setDefaultCoachStartDate();
+        renderCoachCommitmentLog();
+      }
+
+      function applyCoachTargets() {
+        if (!coachPlan) return;
+
+        document.getElementById("targetCal").value = coachPlan.calMin;
+        document.getElementById("maxCal").value = coachPlan.calMax;
+
+        document.getElementById("targetProt").value = coachPlan.protMin;
+        document.getElementById("maxProt").value = coachPlan.protMax;
+
+        document.getElementById("targetFat").value = coachPlan.fatMin;
+        document.getElementById("maxFat").value = coachPlan.fatMax;
+
+        document.getElementById("targetSug").value = coachPlan.sugTarget;
+        document.getElementById("maxSug").value = coachPlan.sugMax;
+
+        if (typeof saveTargetsToStorage === "function") saveTargetsToStorage();
+        if (typeof computeTotals === "function") computeTotals();
+
+        const startDate =
+          document.getElementById("coachStartDate")?.value ||
+          getLocalDateString();
+
+        const logs = getCoachCommitments();
+        logs.push({
+          startDate,
+          createdAt: new Date().toISOString(),
+          summary: `${coachPlan.calMin}-${coachPlan.calMax} kcal, ${coachPlan.protMin}-${coachPlan.protMax}g protein, goal locked.`,
+        });
+        saveCoachCommitments(logs);
+        renderCoachCommitmentLog();
+
+        closeCoachPanel();
+      }
+
+      // bindings
+      document
+        .getElementById("openCoachBtn")
+        ?.addEventListener("click", openCoachPanel);
+
+      document
+        .getElementById("closeCoachBtn")
+        ?.addEventListener("click", closeCoachPanel);
+
+      document
+        .getElementById("coachOverlay")
+        ?.addEventListener("click", closeCoachPanel);
+
+      document
+        .getElementById("buildCoachPlanBtn")
+        ?.addEventListener("click", buildCoachPlan);
+
+      document
+        .getElementById("applyCoachTargetsBtn")
+        ?.addEventListener("click", applyCoachTargets);
+      document
+        .getElementById("coachStartDate")
+        ?.addEventListener("change", () => {
+          renderCoachCommitmentLog();
+        });
+
+      function openCoachGuide() {
+        document
+          .getElementById("coachGuideOverlay")
+          ?.classList.remove("hidden");
+        document.getElementById("coachGuideModal")?.classList.remove("hidden");
+
+        document.getElementById("coachGuideBody").innerHTML = `
+    <h3>Calories for Fat Loss</h3>
+    <p>Light activity: 18–20 × kg</p>
+    <p>Moderate activity: 20–22 × kg</p>
+    <p>Very active: 22–24 × kg</p>
+
+    <h3>Protein</h3>
+    <p>Fat loss + lifting: 1.6–2.2 g/kg</p>
+    <p>Light activity: 1.4–1.8 g/kg</p>
+
+    <h3>Fat</h3>
+    <p>Healthy range: 0.6–0.9 g/kg</p>
+
+    <h3>Sugar</h3>
+    <p>Target: 25–35 g</p>
+    <p>Upper ceiling: 40–45 g</p>
+
+    <h3>Age Factor</h3>
+    <p>May slightly affect metabolism, recovery, and muscle retention.</p>
+
+    <h3>How To Use</h3>
+    <p>Estimate → Track → Review → Adjust.</p>
+  `;
+      }
+
+      function closeCoachGuide() {
+        const overlay = document.getElementById("coachGuideOverlay");
+        const modal = document.getElementById("coachGuideModal");
+
+        if (overlay) overlay.classList.add("hidden");
+        if (modal) modal.classList.add("hidden");
+      }
+
+      window.closeCoachGuide = closeCoachGuide;
+
+      document
+        .getElementById("openCoachGuideBtn")
+        ?.addEventListener("click", openCoachGuide);
+
+      document
+        .getElementById("closeCoachGuideBtn")
+        ?.addEventListener("click", closeCoachGuide);
+
+      document
+        .getElementById("coachGuideOverlay")
+        ?.addEventListener("click", closeCoachGuide);
     </script>
+    <!-- Coach Guide Modal -->
+    <div id="coachGuideOverlay" class="coach-guide-overlay hidden"></div>
+
+    <div id="coachGuideModal" class="coach-guide-modal hidden">
+      <div class="coach-guide-header">
+        <h2>NutriTrack Coach Formula Guide</h2>
+        <button
+          id="closeCoachGuideBtn"
+          type="button"
+          onclick="closeCoachGuide()"
+        >
+          &times;
+        </button>
+      </div>
+
+      <div class="coach-guide-body" id="coachGuideBody"></div>
+    </div>
   </body>
 </html>
