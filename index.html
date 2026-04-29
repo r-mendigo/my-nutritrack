@@ -14,6 +14,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <link rel="icon" type="image/png" href="r-icon5.jpg" />
     <link rel="apple-touch-icon" href="r-icon5.jpg" />
@@ -581,6 +582,46 @@
   </head>
 
   <body class="min-h-screen" id="app-body">
+    <div
+      id="authGate"
+      class="fixed inset-0 z-[9999] bg-nutri-bluegray-50 flex items-center justify-center p-5"
+    >
+      <div
+        class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-nutri-emerald-200 p-6"
+      >
+        <h2 class="text-2xl font-bold text-nutri-emerald-700 mb-2">
+          NutriTrack Login
+        </h2>
+
+        <p class="text-sm text-nutri-bluegray-500 mb-5">
+          Sign in to access your saved records across devices.
+        </p>
+
+        <input
+          id="authEmail"
+          type="email"
+          placeholder="Email / username"
+          class="w-full border rounded-xl p-3 mb-3"
+        />
+
+        <input
+          id="authPassword"
+          type="password"
+          placeholder="Password"
+          class="w-full border rounded-xl p-3 mb-4"
+        />
+
+        <button
+          type="button"
+          onclick="signInNutriTrack()"
+          class="w-full bg-nutri-emerald-600 hover:bg-nutri-emerald-700 text-white font-semibold p-3 rounded-xl"
+        >
+          Sign In
+        </button>
+
+        <p id="authStatus" class="text-sm text-nutri-bluegray-500 mt-4"></p>
+      </div>
+    </div>
     <div class="max-w-5xl mx-auto p-4 sm:p-5 pb-12">
       <header
         class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
@@ -591,6 +632,7 @@
           >
             NutriTrack
           </h1>
+
           <div class="mt-1 flex items-center gap-2 text-lg">
             <span>Log Streak:</span>
             <span
@@ -600,10 +642,12 @@
             >
             <span id="fire" class="fire-emoji">🔥</span>
           </div>
+
           <p
             id="quote"
             class="text-sm italic text-nutri-bluegray-500 dark:text-nutri-bluegray-400 mt-1"
           ></p>
+
           <button
             onclick="newQuote()"
             class="text-xs text-nutri-emerald-600 dark:text-nutri-emerald-400 hover:underline dark:hover:text-nutri-emerald-300"
@@ -611,6 +655,15 @@
             new quote
           </button>
         </div>
+
+        <button
+          type="button"
+          onclick="signOutNutriTrack()"
+          title="Sign Out"
+          class="w-10 h-10 rounded-full border border-rose-300 text-rose-500 hover:bg-rose-50 hover:scale-105 transition-all duration-200 flex items-center justify-center text-lg shadow-sm"
+        >
+          ⏻
+        </button>
       </header>
 
       <div
@@ -1333,6 +1386,12 @@
     <script>
       // ==================== DATA & CONFIG ====================
 
+      const SUPABASE_URL = "https://yskshgrjoaksngfdmbnz.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_fjUQf3Pd3ksu3GFbjNBiMQ_v8vK-6dr";
+
+      const nutriSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      let currentNutriUser = null;
+
       const TARGETS_STORAGE_KEY = "nutriTrackTargets";
 
       const meals = [
@@ -1346,6 +1405,147 @@
         JSON.parse(localStorage.getItem("nutritionData")) || [];
       let currentDate = getLocalDateString();
       let showingAllHistory = false;
+
+      async function initNutriTrackAuth() {
+        const { data } = await nutriSupabase.auth.getSession();
+        currentNutriUser = data?.session?.user || null;
+
+        const authGate = document.getElementById("authGate");
+        const status = document.getElementById("authStatus");
+
+        if (currentNutriUser) {
+          if (authGate) authGate.classList.add("hidden");
+          if (status) status.textContent = "Signed in.";
+          await loadNutritionDataFromCloud();
+        } else {
+          if (authGate) authGate.classList.remove("hidden");
+          if (status) status.textContent = "Please sign in.";
+        }
+      }
+
+      async function signInNutriTrack() {
+        const email = document.getElementById("authEmail")?.value.trim();
+        const password = document.getElementById("authPassword")?.value;
+        const status = document.getElementById("authStatus");
+
+        if (!email || !password) {
+          if (status) status.textContent = "Enter email and password.";
+          return;
+        }
+
+        if (status) status.textContent = "Signing in...";
+
+        const { data, error } = await nutriSupabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          if (status) status.textContent = error.message;
+          return;
+        }
+
+        currentNutriUser = data.user;
+
+        if (status) status.textContent = "Signed in.";
+        document.getElementById("authGate")?.classList.add("hidden");
+        await loadNutritionDataFromCloud();
+      }
+
+      async function signOutNutriTrack() {
+        await nutriSupabase.auth.signOut();
+        currentNutriUser = null;
+        document.getElementById("authGate")?.classList.remove("hidden");
+
+        const status = document.getElementById("authStatus");
+        if (status) status.textContent = "Signed out.";
+      }
+
+      function getEntryTotals(entry) {
+        const totals = { cal: 0, prot: 0, fat: 0, sug: 0 };
+
+        Object.values(entry?.meals || {}).forEach((mealRows) => {
+          (mealRows || []).forEach((food) => {
+            totals.cal += Number(food.cal) || 0;
+            totals.prot += Number(food.prot) || 0;
+            totals.fat += Number(food.fat) || 0;
+            totals.sug += Number(food.sug) || 0;
+          });
+        });
+
+        return totals;
+      }
+
+      async function saveEntryToCloud(entry) {
+        if (!currentNutriUser || !entry?.date) return;
+
+        console.log("Saving to cloud...", entry);
+
+        const { data, error } = await nutriSupabase
+          .from("nutritrack_entries")
+          .upsert(
+            {
+              user_id: currentNutriUser.id,
+              entry_date: entry.date,
+              weight: entry.weight,
+              workout: entry.workout || "",
+              meals: entry.meals || {},
+              totals: getEntryTotals(entry),
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "user_id,entry_date" },
+          )
+          .select();
+
+        console.log("Supabase response:", data, error);
+
+        if (error) {
+          alert("Cloud save failed. Check console.");
+          console.error(error);
+        }
+      }
+
+      async function loadNutritionDataFromCloud() {
+        if (!currentNutriUser) return;
+
+        const { data, error } = await nutriSupabase
+          .from("nutritrack_entries")
+          .select("*")
+          .eq("user_id", currentNutriUser.id)
+          .order("entry_date", { ascending: true });
+
+        if (error) {
+          console.error("Cloud load failed:", error);
+          return;
+        }
+
+        nutritionData = (data || []).map((row) => ({
+          date: row.entry_date,
+          weight: row.weight,
+          workout: row.workout || "",
+          meals: row.meals || {},
+        }));
+
+        localStorage.setItem("nutritionData", JSON.stringify(nutritionData));
+
+        renderHistory();
+        updateStreak();
+        computeTotals();
+      }
+
+      async function deleteEntryFromCloud(date) {
+        if (!currentNutriUser || !date) return;
+
+        const { error } = await nutriSupabase
+          .from("nutritrack_entries")
+          .delete()
+          .eq("user_id", currentNutriUser.id)
+          .eq("entry_date", date);
+
+        if (error) {
+          console.error("Cloud delete failed:", error);
+        }
+      }
 
       // ==================== UTILITY FUNCTIONS ====================
       function getLocalDateString(date = new Date()) {
@@ -2822,8 +3022,9 @@
       }
 
       // ==================== SAVE & HISTORY ====================
-      function saveDay() {
+      async function saveDay() {
         const date = document.getElementById("date").value;
+
         if (nutritionData.some((e) => e.date === date)) {
           if (!confirm(`Overwrite data for ${date}?`)) return;
           nutritionData = nutritionData.filter((e) => e.date !== date);
@@ -2839,6 +3040,7 @@
         meals.forEach((m) => {
           const rows = document.querySelectorAll(`#${m.id}_foods .food-row`);
           entry.meals[m.id] = [];
+
           rows.forEach((row) => {
             entry.meals[m.id].push({
               name: row.querySelector('[data-field="name"]')?.value || "",
@@ -2852,17 +3054,30 @@
 
         nutritionData.push(entry);
         localStorage.setItem("nutritionData", JSON.stringify(nutritionData));
+
+        if (currentNutriUser && typeof saveEntryToCloud === "function") {
+          await saveEntryToCloud(entry);
+        }
+
         updateStreak();
         renderHistory();
+
         alert(`Day ${date} saved! Keep going! 💪`);
+
         localStorage.removeItem("nutriTempMeals");
         localStorage.removeItem("nutriLiveFields");
       }
 
-      function deleteDay(date) {
+      async function deleteDay(date) {
         if (!confirm(`Delete ${date}?`)) return;
+
         nutritionData = nutritionData.filter((d) => d.date !== date);
         localStorage.setItem("nutritionData", JSON.stringify(nutritionData));
+
+        if (currentNutriUser && typeof deleteEntryFromCloud === "function") {
+          await deleteEntryFromCloud(date);
+        }
+
         renderHistory();
         updateStreak();
       }
@@ -3509,6 +3724,7 @@
             "foods.js is missing or not loaded. Default search database will not work until foods.js is in the same folder.",
           );
         }
+        initNutriTrackAuth();
       });
     </script>
     <script src="foods.js"></script>
