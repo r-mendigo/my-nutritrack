@@ -1202,6 +1202,12 @@
               📅 Show All
             </button>
             <button
+              onclick="syncAllLocalHistoryToCloud()"
+              class="bg-nutri-emerald-100 hover:bg-nutri-emerald-200 text-nutri-emerald-700 dark:bg-nutri-emerald-900/50 dark:hover:bg-nutri-emerald-900 dark:text-nutri-emerald-300 px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5"
+            >
+              ☁️ Sync Cloud
+            </button>
+            <button
               onclick="exportData()"
               class="bg-nutri-emerald-100 hover:bg-nutri-emerald-200 text-nutri-emerald-700 dark:bg-nutri-emerald-900/50 dark:hover:bg-nutri-emerald-900 dark:text-nutri-emerald-300 px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5"
             >
@@ -3614,6 +3620,45 @@
         };
       }
 
+      async function syncAllLocalHistoryToCloud() {
+        if (!currentNutriUser) {
+          alert("Please sign in first before syncing history to cloud.");
+          return false;
+        }
+
+        if (!Array.isArray(nutritionData) || !nutritionData.length) {
+          alert("No local history to sync.");
+          return false;
+        }
+
+        const confirmed = confirm(
+          `Upload ${nutritionData.length} local history entries to Supabase cloud?`,
+        );
+
+        if (!confirmed) return false;
+
+        let successCount = 0;
+        let failCount = 0;
+
+        for (const entry of nutritionData) {
+          const ok = await saveEntryToCloud(entry);
+
+          if (ok === false) {
+            failCount++;
+          } else {
+            successCount++;
+          }
+        }
+
+        alert(
+          `Cloud sync finished.\n\nSaved: ${successCount}\nFailed: ${failCount}`,
+        );
+
+        await loadNutritionDataFromCloud();
+
+        return failCount === 0;
+      }
+
       function exportData() {
         const data = {
           nutritionData: nutritionData,
@@ -3658,7 +3703,13 @@
             renderHistory();
             updateStreak();
             loadTempMeals();
-            alert("📥 Data imported successfully! Welcome back! 🎉");
+            const shouldSync = confirm(
+              "📥 Data imported successfully!\n\nDo you want to upload this imported history to cloud now?",
+            );
+
+            if (shouldSync) {
+              syncAllLocalHistoryToCloud();
+            }
           } catch (err) {
             alert(
               "❌ Error reading file. Make sure it's a valid NutriTrack backup.",
