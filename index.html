@@ -619,6 +619,14 @@
           Sign In
         </button>
 
+        <button
+          type="button"
+          onclick="signUpNutriTrack()"
+          class="w-full mt-3 bg-nutri-bluegray-100 hover:bg-nutri-bluegray-200 text-nutri-bluegray-700 font-semibold p-3 rounded-xl"
+        >
+          Create Account
+        </button>
+
         <p id="authStatus" class="text-sm text-nutri-bluegray-500 mt-4"></p>
       </div>
     </div>
@@ -1459,6 +1467,41 @@
 
         const status = document.getElementById("authStatus");
         if (status) status.textContent = "Signed out.";
+      }
+
+      async function signUpNutriTrack() {
+        const email = document.getElementById("authEmail")?.value.trim();
+        const password = document.getElementById("authPassword")?.value;
+        const status = document.getElementById("authStatus");
+
+        if (!email || !password) {
+          if (status) status.textContent = "Enter email and password.";
+          return;
+        }
+
+        if (status) status.textContent = "Creating account...";
+
+        const { data, error } = await nutriSupabase.auth.signUp({
+          email,
+          password,
+        });
+
+        if (error) {
+          if (status) status.textContent = error.message;
+          return;
+        }
+
+        if (data?.session) {
+          currentNutriUser = data.user;
+          if (status) status.textContent = "Account created.";
+          document.getElementById("authGate")?.classList.add("hidden");
+          await loadNutritionDataFromCloud();
+        } else {
+          if (status) {
+            status.textContent =
+              "Account created. Please check email if confirmation is required, then sign in.";
+          }
+        }
       }
 
       function getEntryTotals(entry) {
