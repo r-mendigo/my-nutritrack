@@ -1395,7 +1395,11 @@
       const SUPABASE_URL = "https://yskshgrjoaksngfdmbnz.supabase.co";
       const SUPABASE_KEY = "sb_publishable_fjUQf3Pd3ksu3GFbjNBiMQ_v8vK-6dr";
 
-      const nutriSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const nutriSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+        auth: {
+          storageKey: "nutritrack-auth-session-v1",
+        },
+      });
       let currentNutriUser = null;
 
       const TARGETS_STORAGE_KEY = "nutriTrackTargets";
@@ -1459,7 +1463,7 @@
       }
 
       async function signOutNutriTrack() {
-        await nutriSupabase.auth.signOut();
+        await nutriSupabase.auth.signOut({ scope: "local" });
         currentNutriUser = null;
         document.getElementById("authGate")?.classList.remove("hidden");
 
@@ -1541,9 +1545,11 @@
         console.log("Supabase response:", data, error);
 
         if (error) {
-          alert("Cloud save failed. Check console.");
-          console.error(error);
+          console.error("Cloud save failed:", error);
+          return false;
         }
+
+        return true;
       }
 
       async function loadNutritionDataFromCloud() {
@@ -3096,14 +3102,22 @@
         nutritionData.push(entry);
         localStorage.setItem("nutritionData", JSON.stringify(nutritionData));
 
+        let cloudSaved = false;
+
         if (currentNutriUser && typeof saveEntryToCloud === "function") {
-          await saveEntryToCloud(entry);
+          cloudSaved = await saveEntryToCloud(entry);
         }
 
         updateStreak();
         renderHistory();
 
-        alert(`Day ${date} saved! Keep going! 💪`);
+        if (cloudSaved) {
+          alert(`Day ${date} saved to cloud! Keep going! 💪`);
+        } else {
+          alert(
+            `Day ${date} saved locally, but cloud save failed. Check console.`,
+          );
+        }
 
         localStorage.removeItem("nutriTempMeals");
         localStorage.removeItem("nutriLiveFields");
