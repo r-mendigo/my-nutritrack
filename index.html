@@ -1433,6 +1433,7 @@
           if (authGate) authGate.classList.add("hidden");
           if (status) status.textContent = "Signed in.";
           await loadNutritionDataFromCloud();
+          await loadNutriTrackSettingsFromCloud();
         } else {
           if (authGate) authGate.classList.remove("hidden");
           if (status) status.textContent = "Please sign in.";
@@ -1466,6 +1467,7 @@
         if (status) status.textContent = "Signed in.";
         document.getElementById("authGate")?.classList.add("hidden");
         await loadNutritionDataFromCloud();
+        await loadNutriTrackSettingsFromCloud();
       }
 
       async function signOutNutriTrack() {
@@ -1504,6 +1506,7 @@
           if (status) status.textContent = "Account created.";
           document.getElementById("authGate")?.classList.add("hidden");
           await loadNutritionDataFromCloud();
+          await loadNutriTrackSettingsFromCloud();
         } else {
           if (status) {
             status.textContent =
@@ -1600,6 +1603,90 @@
         }
       }
 
+      function getTargetsPayloadFromInputs() {
+        const els = getTargetElements();
+
+        return {
+          targetCal: Number(els.targetCal?.value) || 1500,
+          maxCal: Number(els.maxCal?.value) || 1700,
+          targetProt: Number(els.targetProt?.value) || 100,
+          maxProt: Number(els.maxProt?.value) || 130,
+          targetFat: Number(els.targetFat?.value) || 50,
+          maxFat: Number(els.maxFat?.value) || 70,
+          targetSug: Number(els.targetSug?.value) || 30,
+          maxSug: Number(els.maxSug?.value) || 45,
+        };
+      }
+
+      async function saveNutriTrackSettingsToCloud() {
+        if (!currentNutriUser) return;
+
+        const targets = getTargetsPayloadFromInputs();
+        const coachCommitments =
+          typeof getCoachCommitments === "function"
+            ? getCoachCommitments()
+            : [];
+
+        const { error } = await nutriSupabase
+          .from("nutritrack_user_settings")
+          .upsert(
+            {
+              user_id: currentNutriUser.id,
+              targets,
+              coach_commitments: coachCommitments,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "user_id" },
+          );
+
+        if (error) {
+          console.error("Cloud settings save failed:", error);
+          return false;
+        }
+
+        return true;
+      }
+
+      async function loadNutriTrackSettingsFromCloud() {
+        if (!currentNutriUser) return;
+
+        const { data, error } = await nutriSupabase
+          .from("nutritrack_user_settings")
+          .select("targets, coach_commitments")
+          .eq("user_id", currentNutriUser.id)
+          .maybeSingle();
+
+        if (error) {
+          console.error("Cloud settings load failed:", error);
+          return;
+        }
+
+        if (!data) {
+          await saveNutriTrackSettingsToCloud();
+          return;
+        }
+
+        if (data.targets && Object.keys(data.targets).length) {
+          localStorage.setItem(
+            TARGETS_STORAGE_KEY,
+            JSON.stringify(data.targets),
+          );
+          loadTargetsFromStorage();
+        }
+
+        if (Array.isArray(data.coach_commitments)) {
+          localStorage.setItem(
+            COACH_COMMITMENT_KEY,
+            JSON.stringify(data.coach_commitments),
+          );
+          if (typeof renderCoachCommitmentLog === "function") {
+            renderCoachCommitmentLog();
+          }
+        }
+
+        if (typeof computeTotals === "function") computeTotals();
+      }
+
       // ==================== UTILITY FUNCTIONS ====================
       function getLocalDateString(date = new Date()) {
         const year = date.getFullYear();
@@ -1644,19 +1731,9 @@
       }
 
       function saveTargetsToStorage() {
-        const els = getTargetElements();
-        const targets = {
-          targetCal: Number(els.targetCal?.value) || 1500,
-          maxCal: Number(els.maxCal?.value) || 1700,
-          targetProt: Number(els.targetProt?.value) || 100,
-          maxProt: Number(els.maxProt?.value) || 130,
-          targetFat: Number(els.targetFat?.value) || 50,
-          maxFat: Number(els.maxFat?.value) || 70,
-          targetSug: Number(els.targetSug?.value) || 30,
-          maxSug: Number(els.maxSug?.value) || 45,
-        };
-
+        const targets = getTargetsPayloadFromInputs();
         localStorage.setItem(TARGETS_STORAGE_KEY, JSON.stringify(targets));
+        saveNutriTrackSettingsToCloud();
       }
 
       function loadTargetsFromStorage() {
@@ -3870,6 +3947,7 @@
 
       function saveCoachCommitments(logs) {
         localStorage.setItem(COACH_COMMITMENT_KEY, JSON.stringify(logs));
+        saveNutriTrackSettingsToCloud();
       }
 
       function renderCoachCommitmentLog() {
