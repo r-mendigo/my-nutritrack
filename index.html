@@ -578,6 +578,28 @@
           border-radius: 0;
         }
       }
+      @media (min-width: 1280px) {
+        .dashboard-grid {
+          grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr) !important;
+          align-items: start;
+        }
+
+        .dashboard-grid > .nt-coach-card {
+          grid-column: 1;
+          grid-row: 1;
+        }
+
+        .dashboard-grid > .dashboard-remaining-card {
+          grid-column: 1;
+          grid-row: 2;
+          margin-top: 0;
+        }
+
+        .dashboard-grid > .dashboard-main-column {
+          grid-column: 2;
+          grid-row: 1 / span 2;
+        }
+      }
     </style>
   </head>
 
@@ -709,11 +731,11 @@
 
       <!-- Top Dashboard -->
       <div
-        class="grid grid-cols-1 xl:grid-cols-[1.2fr_0.9fr] gap-4 mb-6 items-start"
+        class="dashboard-grid grid grid-cols-1 xl:grid-cols-[1.2fr_0.9fr] gap-4 mb-6 items-start"
       >
         <!-- NutriTrack Coach -->
         <div
-          class="mb-4 rounded-2xl border border-nutri-emerald-200 bg-white/80 dark:bg-nutri-bluegray-900/50 p-4 shadow-sm"
+          class="nt-coach-card mb-4 rounded-2xl border border-nutri-emerald-200 bg-white/80 dark:bg-nutri-bluegray-900/50 p-4 shadow-sm"
         >
           <div class="flex items-center justify-between gap-3">
             <div>
@@ -746,7 +768,8 @@
           </div>
         </div>
         <!-- LEFT COLUMN -->
-        <div class="space-y-4">
+        <!-- LEFT COLUMN -->
+        <div class="dashboard-main-column space-y-4">
           <!-- Today's Targets -->
           <div
             class="text-sm text-nutri-bluegray-600 dark:text-nutri-bluegray-300 bg-nutri-bluegray-100 dark:bg-card-dark p-5 rounded-xl border border-nutri-emerald-200 shadow-sm dark:border-nutri-emerald-900/30"
