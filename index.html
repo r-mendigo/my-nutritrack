@@ -14,7 +14,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <link rel="icon" type="image/png" href="r-icon5.jpg" />
     <link rel="apple-touch-icon" href="r-icon5.jpg" />
@@ -578,89 +577,39 @@
           border-radius: 0;
         }
       }
+
+      /* NutriTrack dashboard alignment polish */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        align-items: start;
+      }
+
+      .dashboard-left-column,
+      .dashboard-main-column {
+        min-width: 0;
+      }
+
       @media (min-width: 1280px) {
         .dashboard-grid {
           grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr) !important;
-          align-items: start;
-        }
-
-        .dashboard-grid > .nt-coach-card {
-          grid-column: 1;
-          grid-row: 1;
-        }
-
-        .dashboard-grid > .dashboard-remaining-card {
-          grid-column: 1;
-          grid-row: 2;
-          margin-top: 0;
-        }
-
-        .dashboard-grid > .dashboard-main-column {
-          grid-column: 2;
-          grid-row: 1 / span 2;
         }
       }
     </style>
   </head>
 
   <body class="min-h-screen" id="app-body">
-    <div
-      id="authGate"
-      class="fixed inset-0 z-[9999] bg-nutri-bluegray-50 flex items-center justify-center p-5"
-    >
-      <div
-        class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-nutri-emerald-200 p-6"
-      >
-        <h2 class="text-2xl font-bold text-nutri-emerald-700 mb-2">
-          NutriTrack Login
-        </h2>
-
-        <p class="text-sm text-nutri-bluegray-500 mb-5">
-          Sign in to access your saved records across devices.
-        </p>
-
-        <input
-          id="authEmail"
-          type="email"
-          placeholder="Email / username"
-          class="w-full border rounded-xl p-3 mb-3"
-        />
-
-        <input
-          id="authPassword"
-          type="password"
-          placeholder="Password"
-          class="w-full border rounded-xl p-3 mb-4"
-        />
-
-        <button
-          type="button"
-          onclick="signInNutriTrack()"
-          class="w-full bg-nutri-emerald-600 hover:bg-nutri-emerald-700 text-white font-semibold p-3 rounded-xl"
-        >
-          Sign In
-        </button>
-
-        <button
-          type="button"
-          onclick="signUpNutriTrack()"
-          class="w-full mt-3 bg-nutri-bluegray-100 hover:bg-nutri-bluegray-200 text-nutri-bluegray-700 font-semibold p-3 rounded-xl"
-        >
-          Create Account
-        </button>
-
-        <p id="authStatus" class="text-sm text-nutri-bluegray-500 mt-4"></p>
-      </div>
-    </div>
     <div class="max-w-5xl mx-auto p-4 sm:p-5 pb-12">
-      <header class="flex items-start justify-between gap-4 mb-8">
-        <div class="min-w-0">
+      <header
+        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
+      >
+        <div>
           <h1
-            class="text-4xl font-bold bg-gradient-to-r from-nutri-emerald-600 to-teal-500 bg-clip-text text-transparent leading-tight"
+            class="text-4xl font-bold bg-gradient-to-r from-nutri-emerald-600 to-teal-500 bg-clip-text text-transparent"
           >
             NutriTrack
           </h1>
-
           <div class="mt-1 flex items-center gap-2 text-lg">
             <span>Log Streak:</span>
             <span
@@ -670,12 +619,10 @@
             >
             <span id="fire" class="fire-emoji">🔥</span>
           </div>
-
           <p
             id="quote"
             class="text-sm italic text-nutri-bluegray-500 dark:text-nutri-bluegray-400 mt-1"
           ></p>
-
           <button
             onclick="newQuote()"
             class="text-xs text-nutri-emerald-600 dark:text-nutri-emerald-400 hover:underline dark:hover:text-nutri-emerald-300"
@@ -683,15 +630,6 @@
             new quote
           </button>
         </div>
-
-        <button
-          type="button"
-          onclick="signOutNutriTrack()"
-          title="Sign Out"
-          class="mt-2 w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-rose-300 bg-white/80 text-rose-500 hover:bg-rose-50 hover:scale-105 transition-all duration-200 flex items-center justify-center text-sm sm:text-lg shadow-sm shrink-0"
-        >
-          ⏻
-        </button>
       </header>
 
       <div
@@ -730,45 +668,149 @@
       </div>
 
       <!-- Top Dashboard -->
-      <div
-        class="dashboard-grid grid grid-cols-1 xl:grid-cols-[1.2fr_0.9fr] gap-4 mb-6 items-start"
-      >
-        <!-- NutriTrack Coach -->
-        <div
-          class="nt-coach-card mb-4 rounded-2xl border border-nutri-emerald-200 bg-white/80 dark:bg-nutri-bluegray-900/50 p-4 shadow-sm"
-        >
-          <div class="flex items-center justify-between gap-3">
-            <div>
-              <h3
+      <div class="dashboard-grid mb-6">
+        <div class="dashboard-left-column space-y-4">
+          <!-- NutriTrack Coach -->
+          <div
+            class="nt-coach-card rounded-2xl border border-nutri-emerald-200 bg-white/80 dark:bg-nutri-bluegray-900/50 p-4 shadow-sm"
+          >
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <h3
+                  class="font-semibold text-nutri-bluegray-900 dark:text-text-dark-primary"
+                >
+                  NutriTrack Coach
+                </h3>
+                <p
+                  class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary"
+                >
+                  Estimate + adjust based on progress.
+                </p>
+              </div>
+
+              <button
+                id="openCoachBtn"
+                type="button"
+                class="rounded-xl bg-nutri-emerald-600 hover:bg-nutri-emerald-700 text-white font-semibold px-4 py-2 transition"
+              >
+                Open Coach
+              </button>
+              <button
+                id="openCoachGuideBtn"
+                type="button"
+                class="rounded-xl border border-nutri-emerald-300 text-nutri-emerald-700 font-semibold px-4 py-2 transition"
+              >
+                Coach Guide
+              </button>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN -->
+          <div
+            class="dashboard-remaining-card w-full p-5 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl shadow-sm border border-nutri-emerald-200 dark:border-nutri-emerald-900/30"
+          >
+            <h3
+              class="text-sm font-semibold text-nutri-emerald-700 dark:text-nutri-emerald-300 mb-4 text-center"
+            >
+              Remaining Today
+            </h3>
+            <div class="grid grid-cols-2 gap-4 text-center">
+              <div>
+                <div
+                  class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
+                  id="remainCal"
+                >
+                  900
+                </div>
+                <div
+                  class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
+                >
+                  Calories
+                </div>
+              </div>
+              <div>
+                <div
+                  class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
+                  id="remainProt"
+                >
+                  40
+                </div>
+                <div
+                  class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
+                >
+                  Protein (g)
+                </div>
+              </div>
+              <div>
+                <div
+                  class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
+                  id="remainFat"
+                >
+                  20
+                </div>
+                <div
+                  class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
+                >
+                  Fat (g)
+                </div>
+              </div>
+              <div>
+                <div
+                  class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
+                  id="remainSug"
+                >
+                  12
+                </div>
+                <div
+                  class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
+                >
+                  Sugar (g)
+                </div>
+              </div>
+            </div>
+            <div
+              id="remainPercent"
+              class="mt-4 text-center text-xs font-medium text-nutri-emerald-700 dark:text-nutri-emerald-300"
+            ></div>
+            <div
+              id="macroAnalysis"
+              class="mt-4 rounded-xl bg-white/70 dark:bg-nutri-bluegray-900/50 border border-nutri-bluegray-200 dark:border-nutri-bluegray-700 p-4 text-sm text-nutri-bluegray-700 dark:text-text-dark-secondary space-y-3"
+            >
+              <div
+                id="smartReminder"
+                class="hidden fixed bottom-5 right-5 w-72 bg-nutri-emerald-600 text-white p-4 rounded-2xl shadow-xl z-50"
+              >
+                <div class="flex justify-between items-start gap-3">
+                  <div
+                    id="smartReminderText"
+                    class="text-sm leading-relaxed flex-1"
+                  ></div>
+
+                  <button
+                    id="smartReminderClose"
+                    class="text-white text-lg font-bold px-1 hover:opacity-70"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+              <div
                 class="font-semibold text-nutri-bluegray-900 dark:text-text-dark-primary"
               >
-                NutriTrack Coach
-              </h3>
-              <p
-                class="text-sm text-nutri-bluegray-600 dark:text-text-dark-secondary"
-              >
-                Estimate + adjust based on progress.
-              </p>
+                Smart Analysis
+              </div>
+              <div id="analysisSummary">
+                Start logging your meals and I'll guide your next move.
+              </div>
+              <div
+                id="analysisRecommendation"
+                class="text-nutri-emerald-700 dark:text-nutri-emerald-300 font-medium"
+              ></div>
             </div>
-
-            <button
-              id="openCoachBtn"
-              type="button"
-              class="rounded-xl bg-nutri-emerald-600 hover:bg-nutri-emerald-700 text-white font-semibold px-4 py-2 transition"
-            >
-              Open Coach
-            </button>
-            <button
-              id="openCoachGuideBtn"
-              type="button"
-              class="rounded-xl border border-nutri-emerald-300 text-nutri-emerald-700 font-semibold px-4 py-2 transition"
-            >
-              Coach Guide
-            </button>
           </div>
         </div>
-        <!-- LEFT COLUMN -->
-        <!-- LEFT COLUMN -->
+
+        <!-- RIGHT DASHBOARD COLUMN -->
         <div class="dashboard-main-column space-y-4">
           <!-- Today's Targets -->
           <div
@@ -857,64 +899,6 @@
             </div>
           </div>
 
-          <!-- Best Next Meal -->
-          <div class="mt-0">
-            <button
-              id="bestMealBtn"
-              type="button"
-              class="w-full rounded-xl bg-nutri-emerald-600 hover:bg-nutri-emerald-700 text-white font-semibold py-3 px-4 transition"
-            >
-              Best Next Meal
-            </button>
-            <div
-              id="bestMealResult"
-              class="light-panel hidden mt-3 rounded-xl border border-nutri-bluegray-200 dark:border-nutri-bluegray-700 bg-white/70 dark:bg-nutri-bluegray-900/50 p-4 space-y-2"
-            >
-              <div
-                id="bestMealTitle"
-                class="font-semibold text-nutri-bluegray-900 dark:text-text-dark-primary"
-              ></div>
-              <div
-                id="bestMealText"
-                class="text-sm text-nutri-bluegray-700 dark:text-text-dark-secondary"
-              ></div>
-              <ul
-                id="bestMealFoods"
-                class="list-disc pl-5 space-y-1 text-sm text-nutri-bluegray-700 dark:text-text-dark-secondary"
-              ></ul>
-            </div>
-          </div>
-
-          <!-- Freud Smart Reminder -->
-          <div
-            id="smartReminderCard"
-            class="light-panel hidden rounded-2xl border border-nutri-emerald-200 bg-white/70 dark:bg-nutri-bluegray-900/50 p-4"
-          >
-            <div class="flex items-start justify-between gap-3">
-              <div class="flex-1">
-                <div
-                  class="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-nutri-emerald-100 dark:bg-nutri-emerald-900/40 text-nutri-emerald-700 dark:text-nutri-emerald-300 mb-3"
-                >
-                  Freud Reminder
-                </div>
-                <div
-                  id="smartReminderText"
-                  class="text-sm leading-6 text-nutri-bluegray-700 dark:text-text-dark-secondary"
-                >
-                  You’re doing well today. Keep going one meal at a time.
-                </div>
-              </div>
-              <button
-                id="smartReminderClose"
-                type="button"
-                class="text-xl leading-none text-nutri-bluegray-500 hover:text-rose-500"
-                aria-label="Close smart reminder"
-              >
-                &times;
-              </button>
-            </div>
-          </div>
-
           <!-- Today's Total Live Chart -->
           <div
             class="rounded-2xl border border-nutri-emerald-200 bg-white/70 dark:bg-nutri-bluegray-900/50 p-4"
@@ -986,110 +970,6 @@
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- RIGHT COLUMN -->
-        <div
-          class="w-full p-5 bg-nutri-bluegray-50 dark:bg-nutri-bluegray-800 rounded-xl shadow-sm border border-nutri-emerald-200 dark:border-nutri-emerald-900/30"
-        >
-          <h3
-            class="text-sm font-semibold text-nutri-emerald-700 dark:text-nutri-emerald-300 mb-4 text-center"
-          >
-            Remaining Today
-          </h3>
-          <div class="grid grid-cols-2 gap-4 text-center">
-            <div>
-              <div
-                class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
-                id="remainCal"
-              >
-                900
-              </div>
-              <div
-                class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
-              >
-                Calories
-              </div>
-            </div>
-            <div>
-              <div
-                class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
-                id="remainProt"
-              >
-                40
-              </div>
-              <div
-                class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
-              >
-                Protein (g)
-              </div>
-            </div>
-            <div>
-              <div
-                class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
-                id="remainFat"
-              >
-                20
-              </div>
-              <div
-                class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
-              >
-                Fat (g)
-              </div>
-            </div>
-            <div>
-              <div
-                class="text-xl font-bold text-nutri-emerald-600 dark:text-nutri-emerald-400"
-                id="remainSug"
-              >
-                12
-              </div>
-              <div
-                class="text-xs text-nutri-bluegray-600 dark:text-nutri-bluegray-400"
-              >
-                Sugar (g)
-              </div>
-            </div>
-          </div>
-          <div
-            id="remainPercent"
-            class="mt-4 text-center text-xs font-medium text-nutri-emerald-700 dark:text-nutri-emerald-300"
-          ></div>
-          <div
-            id="macroAnalysis"
-            class="mt-4 rounded-xl bg-white/70 dark:bg-nutri-bluegray-900/50 border border-nutri-bluegray-200 dark:border-nutri-bluegray-700 p-4 text-sm text-nutri-bluegray-700 dark:text-text-dark-secondary space-y-3"
-          >
-            <div
-              id="smartReminder"
-              class="hidden fixed bottom-5 right-5 w-72 bg-nutri-emerald-600 text-white p-4 rounded-2xl shadow-xl z-50"
-            >
-              <div class="flex justify-between items-start gap-3">
-                <div
-                  id="smartReminderText"
-                  class="text-sm leading-relaxed flex-1"
-                ></div>
-
-                <button
-                  id="smartReminderClose"
-                  class="text-white text-lg font-bold px-1 hover:opacity-70"
-                >
-                  ×
-                </button>
-              </div>
-            </div>
-            <div
-              class="font-semibold text-nutri-bluegray-900 dark:text-text-dark-primary"
-            >
-              Smart Analysis
-            </div>
-            <div id="analysisSummary">
-              Start logging your meals and I'll guide your next move.
-            </div>
-            <div
-              id="analysisRecommendation"
-              class="text-nutri-emerald-700 dark:text-nutri-emerald-300 font-medium"
-            ></div>
           </div>
         </div>
       </div>
@@ -1223,12 +1103,6 @@
               class="bg-nutri-bluegray-100 hover:bg-nutri-bluegray-200 text-nutri-bluegray-700 dark:bg-nutri-bluegray-800 dark:hover:bg-nutri-bluegray-700 dark:text-nutri-bluegray-300 px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5"
             >
               📅 Show All
-            </button>
-            <button
-              onclick="syncAllLocalHistoryToCloud()"
-              class="bg-nutri-emerald-100 hover:bg-nutri-emerald-200 text-nutri-emerald-700 dark:bg-nutri-emerald-900/50 dark:hover:bg-nutri-emerald-900 dark:text-nutri-emerald-300 px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1.5"
-            >
-              ☁️ Sync Cloud
             </button>
             <button
               onclick="exportData()"
@@ -1421,16 +1295,6 @@
     <script>
       // ==================== DATA & CONFIG ====================
 
-      const SUPABASE_URL = "https://yskshgrjoaksngfdmbnz.supabase.co";
-      const SUPABASE_KEY = "sb_publishable_fjUQf3Pd3ksu3GFbjNBiMQ_v8vK-6dr";
-
-      const nutriSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-        auth: {
-          storageKey: "nutritrack-auth-session-v1",
-        },
-      });
-      let currentNutriUser = null;
-
       const TARGETS_STORAGE_KEY = "nutriTrackTargets";
 
       const meals = [
@@ -1444,271 +1308,6 @@
         JSON.parse(localStorage.getItem("nutritionData")) || [];
       let currentDate = getLocalDateString();
       let showingAllHistory = false;
-
-      async function initNutriTrackAuth() {
-        const { data } = await nutriSupabase.auth.getSession();
-        currentNutriUser = data?.session?.user || null;
-
-        const authGate = document.getElementById("authGate");
-        const status = document.getElementById("authStatus");
-
-        if (currentNutriUser) {
-          if (authGate) authGate.classList.add("hidden");
-          if (status) status.textContent = "Signed in.";
-          await loadNutritionDataFromCloud();
-          await loadNutriTrackSettingsFromCloud();
-        } else {
-          if (authGate) authGate.classList.remove("hidden");
-          if (status) status.textContent = "Please sign in.";
-        }
-      }
-
-      async function signInNutriTrack() {
-        const email = document.getElementById("authEmail")?.value.trim();
-        const password = document.getElementById("authPassword")?.value;
-        const status = document.getElementById("authStatus");
-
-        if (!email || !password) {
-          if (status) status.textContent = "Enter email and password.";
-          return;
-        }
-
-        if (status) status.textContent = "Signing in...";
-
-        const { data, error } = await nutriSupabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) {
-          if (status) status.textContent = error.message;
-          return;
-        }
-
-        currentNutriUser = data.user;
-
-        if (status) status.textContent = "Signed in.";
-        document.getElementById("authGate")?.classList.add("hidden");
-        await loadNutritionDataFromCloud();
-        await loadNutriTrackSettingsFromCloud();
-      }
-
-      async function signOutNutriTrack() {
-        await nutriSupabase.auth.signOut({ scope: "local" });
-        currentNutriUser = null;
-        document.getElementById("authGate")?.classList.remove("hidden");
-
-        const status = document.getElementById("authStatus");
-        if (status) status.textContent = "Signed out.";
-      }
-
-      async function signUpNutriTrack() {
-        const email = document.getElementById("authEmail")?.value.trim();
-        const password = document.getElementById("authPassword")?.value;
-        const status = document.getElementById("authStatus");
-
-        if (!email || !password) {
-          if (status) status.textContent = "Enter email and password.";
-          return;
-        }
-
-        if (status) status.textContent = "Creating account...";
-
-        const { data, error } = await nutriSupabase.auth.signUp({
-          email,
-          password,
-        });
-
-        if (error) {
-          if (status) status.textContent = error.message;
-          return;
-        }
-
-        if (data?.session) {
-          currentNutriUser = data.user;
-          if (status) status.textContent = "Account created.";
-          document.getElementById("authGate")?.classList.add("hidden");
-          await loadNutritionDataFromCloud();
-          await loadNutriTrackSettingsFromCloud();
-        } else {
-          if (status) {
-            status.textContent =
-              "Account created. Please check email if confirmation is required, then sign in.";
-          }
-        }
-      }
-
-      function getEntryTotals(entry) {
-        const totals = { cal: 0, prot: 0, fat: 0, sug: 0 };
-
-        Object.values(entry?.meals || {}).forEach((mealRows) => {
-          (mealRows || []).forEach((food) => {
-            totals.cal += Number(food.cal) || 0;
-            totals.prot += Number(food.prot) || 0;
-            totals.fat += Number(food.fat) || 0;
-            totals.sug += Number(food.sug) || 0;
-          });
-        });
-
-        return totals;
-      }
-
-      async function saveEntryToCloud(entry) {
-        if (!currentNutriUser || !entry?.date) return;
-
-        console.log("Saving to cloud...", entry);
-
-        const { data, error } = await nutriSupabase
-          .from("nutritrack_entries")
-          .upsert(
-            {
-              user_id: currentNutriUser.id,
-              entry_date: entry.date,
-              weight: entry.weight,
-              workout: entry.workout || "",
-              meals: entry.meals || {},
-              totals: getEntryTotals(entry),
-              updated_at: new Date().toISOString(),
-            },
-            { onConflict: "user_id,entry_date" },
-          )
-          .select();
-
-        console.log("Supabase response:", data, error);
-
-        if (error) {
-          console.error("Cloud save failed:", error);
-          return false;
-        }
-
-        return true;
-      }
-
-      async function loadNutritionDataFromCloud() {
-        if (!currentNutriUser) return;
-
-        const { data, error } = await nutriSupabase
-          .from("nutritrack_entries")
-          .select("*")
-          .eq("user_id", currentNutriUser.id)
-          .order("entry_date", { ascending: true });
-
-        if (error) {
-          console.error("Cloud load failed:", error);
-          return;
-        }
-
-        nutritionData = (data || []).map((row) => ({
-          date: row.entry_date,
-          weight: row.weight,
-          workout: row.workout || "",
-          meals: row.meals || {},
-        }));
-
-        localStorage.setItem("nutritionData", JSON.stringify(nutritionData));
-
-        renderHistory();
-        updateStreak();
-        computeTotals();
-      }
-
-      async function deleteEntryFromCloud(date) {
-        if (!currentNutriUser || !date) return;
-
-        const { error } = await nutriSupabase
-          .from("nutritrack_entries")
-          .delete()
-          .eq("user_id", currentNutriUser.id)
-          .eq("entry_date", date);
-
-        if (error) {
-          console.error("Cloud delete failed:", error);
-        }
-      }
-
-      function getTargetsPayloadFromInputs() {
-        const els = getTargetElements();
-
-        return {
-          targetCal: Number(els.targetCal?.value) || 1500,
-          maxCal: Number(els.maxCal?.value) || 1700,
-          targetProt: Number(els.targetProt?.value) || 100,
-          maxProt: Number(els.maxProt?.value) || 130,
-          targetFat: Number(els.targetFat?.value) || 50,
-          maxFat: Number(els.maxFat?.value) || 70,
-          targetSug: Number(els.targetSug?.value) || 30,
-          maxSug: Number(els.maxSug?.value) || 45,
-        };
-      }
-
-      async function saveNutriTrackSettingsToCloud() {
-        if (!currentNutriUser) return;
-
-        const targets = getTargetsPayloadFromInputs();
-        const coachCommitments =
-          typeof getCoachCommitments === "function"
-            ? getCoachCommitments()
-            : [];
-
-        const { error } = await nutriSupabase
-          .from("nutritrack_user_settings")
-          .upsert(
-            {
-              user_id: currentNutriUser.id,
-              targets,
-              coach_commitments: coachCommitments,
-              updated_at: new Date().toISOString(),
-            },
-            { onConflict: "user_id" },
-          );
-
-        if (error) {
-          console.error("Cloud settings save failed:", error);
-          return false;
-        }
-
-        return true;
-      }
-
-      async function loadNutriTrackSettingsFromCloud() {
-        if (!currentNutriUser) return;
-
-        const { data, error } = await nutriSupabase
-          .from("nutritrack_user_settings")
-          .select("targets, coach_commitments")
-          .eq("user_id", currentNutriUser.id)
-          .maybeSingle();
-
-        if (error) {
-          console.error("Cloud settings load failed:", error);
-          return;
-        }
-
-        if (!data) {
-          await saveNutriTrackSettingsToCloud();
-          return;
-        }
-
-        if (data.targets && Object.keys(data.targets).length) {
-          localStorage.setItem(
-            TARGETS_STORAGE_KEY,
-            JSON.stringify(data.targets),
-          );
-          loadTargetsFromStorage();
-        }
-
-        if (Array.isArray(data.coach_commitments)) {
-          localStorage.setItem(
-            COACH_COMMITMENT_KEY,
-            JSON.stringify(data.coach_commitments),
-          );
-          if (typeof renderCoachCommitmentLog === "function") {
-            renderCoachCommitmentLog();
-          }
-        }
-
-        if (typeof computeTotals === "function") computeTotals();
-      }
 
       // ==================== UTILITY FUNCTIONS ====================
       function getLocalDateString(date = new Date()) {
@@ -1754,9 +1353,19 @@
       }
 
       function saveTargetsToStorage() {
-        const targets = getTargetsPayloadFromInputs();
+        const els = getTargetElements();
+        const targets = {
+          targetCal: Number(els.targetCal?.value) || 1500,
+          maxCal: Number(els.maxCal?.value) || 1700,
+          targetProt: Number(els.targetProt?.value) || 100,
+          maxProt: Number(els.maxProt?.value) || 130,
+          targetFat: Number(els.targetFat?.value) || 50,
+          maxFat: Number(els.maxFat?.value) || 70,
+          targetSug: Number(els.targetSug?.value) || 30,
+          maxSug: Number(els.maxSug?.value) || 45,
+        };
+
         localStorage.setItem(TARGETS_STORAGE_KEY, JSON.stringify(targets));
-        saveNutriTrackSettingsToCloud();
       }
 
       function loadTargetsFromStorage() {
@@ -3175,9 +2784,8 @@
       }
 
       // ==================== SAVE & HISTORY ====================
-      async function saveDay() {
+      function saveDay() {
         const date = document.getElementById("date").value;
-
         if (nutritionData.some((e) => e.date === date)) {
           if (!confirm(`Overwrite data for ${date}?`)) return;
           nutritionData = nutritionData.filter((e) => e.date !== date);
@@ -3193,7 +2801,6 @@
         meals.forEach((m) => {
           const rows = document.querySelectorAll(`#${m.id}_foods .food-row`);
           entry.meals[m.id] = [];
-
           rows.forEach((row) => {
             entry.meals[m.id].push({
               name: row.querySelector('[data-field="name"]')?.value || "",
@@ -3207,40 +2814,69 @@
 
         nutritionData.push(entry);
         localStorage.setItem("nutritionData", JSON.stringify(nutritionData));
-
-        let cloudSaved = false;
-
-        if (currentNutriUser && typeof saveEntryToCloud === "function") {
-          cloudSaved = await saveEntryToCloud(entry);
-        }
-
         updateStreak();
         renderHistory();
-
-        if (cloudSaved) {
-          alert(`Day ${date} saved to cloud! Keep going! 💪`);
-        } else {
-          alert(
-            `Day ${date} saved locally, but cloud save failed. Check console.`,
-          );
-        }
-
+        alert(`Day ${date} saved! Keep going! 💪`);
         localStorage.removeItem("nutriTempMeals");
         localStorage.removeItem("nutriLiveFields");
       }
 
-      async function deleteDay(date) {
+      function deleteDay(date) {
         if (!confirm(`Delete ${date}?`)) return;
-
         nutritionData = nutritionData.filter((d) => d.date !== date);
         localStorage.setItem("nutritionData", JSON.stringify(nutritionData));
-
-        if (currentNutriUser && typeof deleteEntryFromCloud === "function") {
-          await deleteEntryFromCloud(date);
-        }
-
         renderHistory();
         updateStreak();
+      }
+
+      function editDay(date) {
+        const entry = nutritionData.find((item) => item.date === date);
+        if (!entry) {
+          alert("Saved day not found.");
+          return;
+        }
+
+        document.getElementById("date").value = entry.date || currentDate;
+        document.getElementById("weight").value = entry.weight ?? "";
+        document.getElementById("workout").value = entry.workout || "";
+
+        meals.forEach((m) => {
+          const container = document.getElementById(`${m.id}_foods`);
+          if (!container) return;
+
+          container.innerHTML = "";
+          const mealRows = Array.isArray(entry.meals?.[m.id])
+            ? entry.meals[m.id]
+            : [];
+
+          if (!mealRows.length) {
+            container.innerHTML = createFoodRowHTML(m.id, 0);
+            return;
+          }
+
+          mealRows.forEach((item, index) => {
+            container.insertAdjacentHTML(
+              "beforeend",
+              createFoodRowHTML(m.id, index),
+            );
+
+            const row = container.lastElementChild;
+            row.querySelector('[data-field="name"]').value = item.name || "";
+            row.querySelector('[data-field="cal"]').value = item.cal || "";
+            row.querySelector('[data-field="prot"]').value = item.prot || "";
+            row.querySelector('[data-field="fat"]').value = item.fat || "";
+            row.querySelector('[data-field="sug"]').value = item.sug || "";
+          });
+        });
+
+        addInputListeners();
+        computeTotals();
+        autoSaveMeals();
+        autoSaveLiveFields();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        alert(
+          `Loaded ${date} for editing. Make your changes, then press Save Day to overwrite it.`,
+        );
       }
 
       function toggleHistoryView() {
@@ -3285,26 +2921,30 @@
             sug < t.sug.target * 0.8 ? "↓" : sug > t.sug.max ? "↑" : "✓";
 
           const workoutText = e.workout ? ` • ${e.workout}` : "";
+          const safeDate = String(e.date || "").replace(/'/g, "\\'");
           const div = document.createElement("div");
           div.className =
-            "card flex justify-between items-center py-3 px-4 text-sm";
+            "card flex justify-between items-center gap-3 py-3 px-4 text-sm";
           div.innerHTML = `
-                        <div>
+                        <div class="min-w-0 flex-1">
                           <div class="font-medium text-nutri-bluegray-900 dark:text-text-dark-primary">${e.date}</div>
                           <div class="text-nutri-bluegray-500 dark:text-nutri-bluegray-400">
                             ${Math.round(cal)} kcal ${calStatus} • ${Math.round(prot)}g prot ${protStatus} • ${Math.round(fat)}g fat ${fatStatus} • ${Math.round(sug)}g sug ${sugStatus}${workoutText}
                           </div>
                         </div>
-                        <button onclick="deleteDay('${e.date}')" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-lg">🗑</button>
+                        <div class="flex items-center gap-2 shrink-0">
+                          <button onclick="editDay('${safeDate}')" title="Edit saved day" class="text-nutri-emerald-600 hover:text-nutri-emerald-800 dark:text-nutri-emerald-400 dark:hover:text-nutri-emerald-300 text-lg">✏️</button>
+                          <button onclick="deleteDay('${safeDate}')" title="Delete saved day" class="text-rose-500 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 text-lg">🗑</button>
+                        </div>
                       `;
           container.appendChild(div);
         });
 
-        if (!showingAllHistory && nutritionData.length > 10) {
+        if (!showingAllHistory && nutritionData.length > 3) {
           const hint = document.createElement("div");
           hint.className =
             "text-center text-xs text-nutri-bluegray-400 dark:text-nutri-bluegray-500 mt-2";
-          hint.innerHTML = `Showing last 10 entries • ${nutritionData.length - 10} older entries hidden`;
+          hint.innerHTML = `Showing last 3 entries • ${nutritionData.length - 3} older entries hidden`;
           container.appendChild(hint);
         }
       }
@@ -3720,45 +3360,6 @@
         };
       }
 
-      async function syncAllLocalHistoryToCloud() {
-        if (!currentNutriUser) {
-          alert("Please sign in first before syncing history to cloud.");
-          return false;
-        }
-
-        if (!Array.isArray(nutritionData) || !nutritionData.length) {
-          alert("No local history to sync.");
-          return false;
-        }
-
-        const confirmed = confirm(
-          `Upload ${nutritionData.length} local history entries to Supabase cloud?`,
-        );
-
-        if (!confirmed) return false;
-
-        let successCount = 0;
-        let failCount = 0;
-
-        for (const entry of nutritionData) {
-          const ok = await saveEntryToCloud(entry);
-
-          if (ok === false) {
-            failCount++;
-          } else {
-            successCount++;
-          }
-        }
-
-        alert(
-          `Cloud sync finished.\n\nSaved: ${successCount}\nFailed: ${failCount}`,
-        );
-
-        await loadNutritionDataFromCloud();
-
-        return failCount === 0;
-      }
-
       function exportData() {
         const data = {
           nutritionData: nutritionData,
@@ -3803,13 +3404,7 @@
             renderHistory();
             updateStreak();
             loadTempMeals();
-            const shouldSync = confirm(
-              "📥 Data imported successfully!\n\nDo you want to upload this imported history to cloud now?",
-            );
-
-            if (shouldSync) {
-              syncAllLocalHistoryToCloud();
-            }
+            alert("📥 Data imported successfully! Welcome back! 🎉");
           } catch (err) {
             alert(
               "❌ Error reading file. Make sure it's a valid NutriTrack backup.",
@@ -3930,7 +3525,6 @@
             "foods.js is missing or not loaded. Default search database will not work until foods.js is in the same folder.",
           );
         }
-        initNutriTrackAuth();
       });
     </script>
     <script src="foods.js"></script>
@@ -3970,7 +3564,6 @@
 
       function saveCoachCommitments(logs) {
         localStorage.setItem(COACH_COMMITMENT_KEY, JSON.stringify(logs));
-        saveNutriTrackSettingsToCloud();
       }
 
       function renderCoachCommitmentLog() {
